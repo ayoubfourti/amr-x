@@ -1,0 +1,9 @@
+{
+  "project": {
+    "name": "AMR-X",
+    "fullName": "Autonomous Mobile Robot - Extended",
+    "description": "Advanced autonomous mobile robot platform",
+    "version": "1.0.0",
+    "team": "Summer Robotics Internship Team"
+  }
+}
