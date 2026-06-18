@@ -1,0 +1,105 @@
+\chapter{Functional Requirements}
+
+\section*{i. Document 1}
+
+This section defines the physical/performance targets and the functional content of V1. Each requirement has a unique identifier and carries a priority and verification method. Priority: M = mandatory, S = strongly desired, C = optional. Verification: T = test, D = demonstration, I = inspection, A = analysis.
+
+\subsection*{Performance and physical specifications}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.28\textwidth}L{0.22\textwidth}Y}
+\toprule
+Parameter & Target (V1) & Notes \\
+\midrule
+Payload capacity (rated) & 50 kg & Representative for totes, parcels, sensor rigs, or a light future module. \\
+Structural design margin & $\geq$ 1.5$\times$ rated & Frame and platform designed/tested toward $\sim$75 kg. \\
+Footprint (L $\times$ W) & $\leq$ 800 $\times$ 600 mm & Fits aisles $\geq$ 1.5 m and 0.9 m doorways. \\
+Base height (no module) & $\leq$ 450 mm & Low profile; modular area on top. \\
+Ground clearance & $\geq$ 30 mm & Clears small debris/thresholds. \\
+Unladen mass & $\leq$ 80 kg & Manageable for two-person handling/transport. \\
+Operating speed & 0.5--1.5 m/s & Normal autonomous/manual travel. \\
+Maximum speed & 1.5 m/s & Hard-limited in software. \\
+Safety-reduced speed & $\leq$ 0.3 m/s & Near detected obstacles/people. \\
+Gradeability & up to $\sim$5$^\circ$ & Transient ramps only. \\
+Endurance per charge & $\geq$ 3 h continuous & Under nominal load and duty. \\
+Min. operating aisle & 1.5 m & Required free corridor width. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection*{Mobile base and locomotion}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.12\textwidth}Y c c}
+\toprule
+ID & Requirement description & Pri. & Verif. \\
+\midrule
+FR-01 & The robot shall provide a custom powered mobile base capable of driving forward, reversing, and turning on a flat warehouse floor. & M & T \\
+FR-02 & The base shall be capable of turning within the defined footprint to manoeuvre in $\geq$1.5 m aisles. & M & T \\
+FR-03 & The drivetrain shall move the robot at a controlled speed across the 0.5--1.5 m/s range and shall not exceed the software speed limit of 1.5 m/s. & M & T \\
+FR-04 & The base shall carry the 50 kg rated payload without loss of traction, stability, or steering control on the specified floor. & M & T \\
+FR-05 & The base shall hold position on a $\sim$5$^\circ$ grade with rated payload. & S & T \\
+FR-06 & The chassis shall remain stable at maximum speed with rated payload during normal acceleration, braking, and turning. & M & A,T \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection*{Control, navigation, perception, payload, power, and modularity}
+
+\begin{longtable}{>{\bfseries}L{0.12\textwidth}L{0.65\textwidth}cc}
+\toprule
+ID & Requirement description & Pri. & Verif. \\
+\midrule
+\endhead
+FR-07 & The robot shall support manual control of speed and direction via a handheld controller or operator interface. & M & D \\
+FR-08 & Manual control shall operate with command latency below 200 ms within the defined test operating range. & S & T \\
+FR-09 & The robot shall support basic autonomous navigation by following a predefined route or waypoint sequence. & M & D,T \\
+FR-10 & The robot shall localise itself using on-board sensors without external positioning infrastructure. & M & T \\
+FR-11 & In autonomous mode the robot shall reach each commanded waypoint within $\pm$100 mm position and $\pm$5$^\circ$ heading. & S & T \\
+FR-12 & The robot shall allow an operator to take over manual control while in autonomous mode. & M & D \\
+FR-13 & The robot shall expose basic status to the operator interface. & S & D \\
+FR-14 & The robot shall detect static and dynamic obstacles in its direction of travel using on-board sensors. & M & T \\
+FR-15 & On detecting an obstacle in its path, the robot shall automatically reduce speed and stop before contact if the obstacle remains. & M & T \\
+FR-16 & The robot shall resume motion automatically or on operator confirmation once the path is clear. & S & D \\
+FR-17 & Obstacle detection shall function under variable warehouse artificial lighting. & M & T \\
+FR-18 & The robot should provide near-field/low-height detection to complement the primary scanner. & C & T \\
+FR-19 & The robot shall provide a flat payload platform rated for 50 kg. & M & I,T \\
+FR-20 & The platform shall include fixing points to secure or restrain a test load during travel. & M & I \\
+FR-21 & The platform shall be removable or reconfigurable for future modules. & S & I \\
+FR-22 & The robot shall be powered by an on-board rechargeable battery providing $\geq$3 h continuous operation. & M & T \\
+FR-23 & The battery shall include BMS protection. & M & I,T \\
+FR-24 & The robot shall provide protected power distribution for drive, compute, and sensor subsystems. & M & I \\
+FR-25 & The robot shall house an on-board compute unit. & M & I \\
+FR-26 & The robot shall provide state-of-charge indication and low-battery warning. & S & D \\
+FR-27 & The battery shall be rechargeable via a documented safe charging procedure/connector. & M & D \\
+FR-28 & The robot shall integrate LiDAR, IMU, and wheel encoders into the chassis with protected mounting and cabling. & M & I \\
+FR-29 & Sensor placement shall provide unobstructed coverage of the forward travel path. & M & I,A \\
+FR-30 & Sensor data shall be time-aligned/fused sufficiently to support localisation and obstacle detection. & S & T \\
+FR-31 & The robot shall provide a defined modular mounting area on the base for future attachments. & M & I \\
+FR-32 & The mounting area shall use a standardised mechanical interface documented for reuse. & M & I \\
+FR-33 & The mounting area shall provide power and data take-off for future modules. & S & I,T \\
+FR-34 & A representative dummy module shall be mountable and removable using hand tools within 10 minutes. & S & D \\
+\bottomrule
+\end{longtable}
+
+\section*{ii. Document 2}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.14\textwidth}Y}
+\toprule
+ID & Requirement description \\
+\midrule
+FR-01 & Manual Control: the robot shall support manual driving mode for testing, calibration, and debugging. \\
+FR-02 & Basic Autonomous Navigation: the robot shall navigate between predefined waypoints within a controlled warehouse environment. \\
+FR-03 & Obstacle Detection and Avoidance: the robot shall detect obstacles using onboard sensors and adjust or stop its motion to prevent collisions. \\
+FR-04 & Odometry and Position Estimation: the robot shall estimate its position using wheel encoders combined with IMU data. \\
+FR-05 & Payload Transport Platform: the robot shall include a stable platform capable of carrying test loads up to the defined payload capacity. \\
+FR-06 & Sensor Integration: the robot shall support integration of LiDAR, IMU, and encoders. \\
+FR-07 & Battery Monitoring: the system shall monitor battery status and provide low-battery alerts. \\
+FR-08 & Modular Mechanical Interface: the robot shall include a mechanical mounting area allowing future modules to be installed. \\
+\bottomrule
+\end{tabularx}
+\end{table}

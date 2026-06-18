@@ -1,0 +1,121 @@
+\chapter{HAI Robotics K50 Reference}
+
+\section*{AMR Inspired by HAI Robotics K50 Fast-Transit Companion System :}
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.85\textwidth}{
+\centering
+\textbf{Image placeholder}\\
+Insert the rack interaction reference image here.
+}}
+\caption{Rack interaction reference image placeholder.}
+\end{figure}
+
+\section*{Quick and convenient AMRs feature:}
+
+\begin{itemize}
+    \item A max speed of 4m/s
+\end{itemize}
+
+\begin{itemize}
+    \item Maximum jacking height of 0.75m suitable for ergonomic workstations
+\end{itemize}
+
+\begin{itemize}
+    \item LiDAR remote scanning
+\end{itemize}
+
+\section*{Mechanical specifications}
+
+Dimensions (L $\times$ W $\times$ H) (mm) : 658$\times$460$\times$330 Net weight (kg) : 81 Rated load (kg) : 30/50 Case type mode : Carton, tote, and other materials with regular shapes Driving mode : Differential-wheeled Navigation DM code + IMU
+
+\section*{Motion performance}
+
+Driving speed (m/s) $\leq$ 4.0 Stop accuracy (mm) $\pm$ 10 Travel direction: Forward and backward + rotation in place + turning
+
+\section*{Functional Description}
+
+The proposed AMR system is inspired by K50 Fast-Transit Companion AMR developed by HAI Robotics. The robot is designed to operate as a fast-transit mobile platform capable of interacting directly with standardized warehouse racks and handling totes through a structured ``backpack'' mechanism.
+
+The core operational concept is based on a three-step rack interaction workflow, enabling efficient retrieval, transport, and delivery of storage totes.
+
+a) Precise Positioning Under Rack
+
+The AMR navigates autonomously within warehouse aisles and performs precise alignment beneath storage racks equipped with low-height guide rails (approximately 0.43 m from the ground).
+
+Once positioned correctly, the robot aligns itself under the target rack bay where totes are pre-stored by an upper system or external automation layer.
+
+\section*{This phase requires:}
+
+\begin{itemize}
+    \item High-precision localization
+    \item Fine motion control near racks
+    \item Accurate rack alignment detection (visual/LiDAR-based)
+\end{itemize}
+
+b) Tote Securing (Backpack Mode Mechanism)
+
+After correct positioning, the AMR engages a mechanical lifting and securing mechanism composed of twin cradling supports or fork-like arms.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.85\textwidth}{
+\centering
+\textbf{Image placeholder}\\
+Insert the tote securing mechanism reference image here.
+}}
+\caption{Tote securing mechanism reference image placeholder.}
+\end{figure}
+
+\section*{This mechanism:}
+
+\begin{itemize}
+    \item Engages the tote from the underside
+    \item Stabilizes the load laterally
+    \item Locks the tote securely onto the robot chassis
+    \item Transforms the tote into a ``backpack-style carried load''
+\end{itemize}
+
+At this stage, the tote becomes mechanically integrated with the robot, ensuring stability during high-speed transport.
+
+c) High-Speed Transport and Delivery to Workstation
+
+Once the tote is secured, the AMR transitions into fast-transit mode, transporting the loaded tote to a designated workstation or drop-off zone.
+
+\section*{Upon arrival, the robot:}
+
+\begin{itemize}
+    \item Navigates to a predefined delivery point
+    \item Raises or positions the tote at an ergonomically optimized height for human
+operators
+
+    \item Allows efficient manual picking or unloading operations
+\end{itemize}
+
+This ensures smooth human-robot collaboration by minimizing worker bending and improving picking efficiency.
+
+\begin{figure}[H]
+\centering
+\fbox{\parbox{0.85\textwidth}{
+\centering
+\textbf{Image placeholder}\\
+Insert the delivery workflow reference image here.
+}}
+\caption{Delivery workflow reference image placeholder.}
+\end{figure}
+
+\section*{System Behavior Summary}
+
+\section*{The Fast-Transit Companion AMR operates as a rack-interacting logistics unit that:}
+
+\begin{itemize}
+    \item Locates and aligns under warehouse racks
+    \item Engages and secures totes mechanically (``backpack mode'')
+    \item Transports loads efficiently across warehouse zones
+    \item Delivers totes at ergonomic workstation heights for operators
+\end{itemize}
+
+These robots operate in coordination with ACR (Automated Case-handling Robots) that utilize a grappling-hook-based lifting mechanism. This design enables the ACR systems to directly engage and retrieve totes from storage racks configured in single-, double-, or triple-deep layouts.
+
+The AMR and ACR systems work as a complementary logistics pair: the ACR handles high-

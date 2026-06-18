@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import csv
+import re
 from pathlib import Path
 
 
@@ -18,6 +19,18 @@ TABLES = {
     ROOT / "data" / "modules" / "module_interface_requirements.csv": "module_interface_requirements_table.tex",
     ROOT / "data" / "requirements" / "requirements_matrix.csv": "requirements_matrix_table.tex",
 }
+
+SOFT_BREAK = "\u0000SOFT_BREAK\u0000"
+
+
+def add_soft_breaks(value: str) -> str:
+    """Allow LaTeX to wrap long tokens inside narrow generated table columns."""
+
+    def split_word(match: re.Match[str]) -> str:
+        word = match.group(0)
+        return SOFT_BREAK.join(word[index : index + 5] for index in range(0, len(word), 5))
+
+    return re.sub(r"[A-Za-z0-9]{6,}", split_word, value)
 
 
 def latex_escape(value: str) -> str:
@@ -35,7 +48,12 @@ def latex_escape(value: str) -> str:
         "/": r"/\allowbreak{}",
         "-": r"-\allowbreak{}",
     }
-    return "".join(replacements.get(char, char) for char in value)
+    chunks = []
+    for chunk in add_soft_breaks(value).split(SOFT_BREAK):
+        chunks.append("".join(replacements.get(char, char) for char in chunk))
+        chunks.append(r"\allowbreak{}")
+    chunks.pop()
+    return "".join(chunks)
 
 
 def render_table(csv_path: Path) -> str:
@@ -46,35 +64,31 @@ def render_table(csv_path: Path) -> str:
         return "% Generated table placeholder. Source CSV contains no rows.\nTBD\n"
 
     headers = list(rows[0].keys())
-    first_header = headers[0]
+    column_width = 0.98 / max(len(headers), 1)
+    font_size = r"\tiny" if len(headers) > 8 else r"\scriptsize"
+    column_spec = "".join(
+        [
+            rf">{{\raggedright\arraybackslash}}p{{{column_width:.3f}\textwidth}}"
+            for _ in headers
+        ]
+    )
     lines = [
         r"% !TEX root = ../../main.tex",
         f"% Generated from {csv_path.relative_to(ROOT)}. Do not edit manually.",
-        r"\small",
-        r"\begin{longtable}{>{\raggedright\arraybackslash}p{0.28\textwidth}>{\raggedright\arraybackslash}p{0.62\textwidth}}",
+        r"\begingroup",
+        font_size,
+        r"\setlength{\tabcolsep}{1pt}",
+        r"\setlength{\emergencystretch}{3em}",
+        rf"\begin{{longtable}}{{{column_spec}}}",
         r"\toprule",
-        r"Field & Value \\",
+        " & ".join(latex_escape(header.replace("_", " ").title()) for header in headers)
+        + r" \\",
         r"\midrule",
         r"\endhead",
     ]
-    for index, row in enumerate(rows, start=1):
-        record_id = row.get(first_header) or f"Row {index}"
-        lines.extend(
-            [
-                r"\multicolumn{2}{l}{\textbf{"
-                + latex_escape(str(record_id))
-                + r"}} \\",
-                r"\midrule",
-            ]
-        )
-        for header in headers:
-            label = header.replace("_", " ").title()
-            lines.append(
-                f"{latex_escape(label)} & {latex_escape(row.get(header, ''))} \\\\"
-            )
-        if index != len(rows):
-            lines.append(r"\midrule")
-    lines.extend([r"\bottomrule", r"\end{longtable}", r"\normalsize", ""])
+    for row in rows:
+        lines.append(" & ".join(latex_escape(row.get(header, "")) for header in headers) + r" \\")
+    lines.extend([r"\bottomrule", r"\end{longtable}", r"\endgroup", ""])
     return "\n".join(lines)
 
 

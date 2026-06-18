@@ -1,0 +1,44 @@
+\chapter{Functional Requirements}
+
+tions. 7. Establish the engineering baseline (CAD, BOM, wiring, and test data) for subsequent ver- sions.
+
+4 Functional Requirements This section defines the physical/performance targets and the functional content of V1. Targets are engineering estimates for the first prototype and may be refined during detailed design; any change is recorded against the relevant requirement ID. Conventions. Each requirement has a unique identifier and carries a priority and a verification method. Priority: M = mandatory (must), S = strongly desired (should), C = optional (could). Verification: T = test, D = demonstration, I = inspection, A = analysis.
+
+\section*{4.1 Performance and physical specifications}
+
+The following table captures the estimated payload capacity, acceptable dimensions, and desired speed range, together with the supporting physical targets.
+
+Parameter                        Target (V1)                    Notes Payload capacity (rated)         50 kg                          Representative for totes, parcels, sensor rigs, or a light future module. Structural design margin         $\geq$ 1.5$\times$ rated                   Frame and platform designed/tested toward $\sim$75 kg. Footprint (L $\times$ W)                $\leq$ 800 $\times$ 600 mm                 Fits aisles $\geq$ 1.5 m and 0.9 m doorways. Base height (no module)          $\leq$ 450 mm                       Low profile; modular area on top. Ground clearance                 $\geq$ 30 mm                        Clears small debris/thresholds. Unladen mass                     $\leq$ 80 kg                        Manageable for two-person handling/transport. Operating speed                  0.5--1.5 m/s                    Normal autonomous/manual travel. Maximum speed                    1.5 m/s                        Hard-limited in software. Safety-reduced speed             $\leq$ 0.3 m/s                      Near detected obstacles/people. Gradeability                     up to $\sim$5$^\circ$                      Transient ramps only. Endurance per charge             $\geq$ 3 h continuous               Under nominal load and duty. Min. operating aisle             1.5 m                          Required free corridor width.
+
+\section*{4.2 Mobile base and locomotion}
+
+ID          Requirement description                                         Pri.         Verif. FR-01       The robot shall provide a custom powered mobile base             M             T capable of driving forward, reversing, and turning on a flat warehouse floor. FR-02       The base shall be capable of turning within the defined          M             T footprint (e.g. differential / zero-radius style steering) to manoeuvre in $\geq$1.5 m aisles. FR-03       The drivetrain shall move the robot at a controlled              M             T speed across the 0.5--1.5 m/s range and shall not exceed the software speed limit of 1.5 m/s. FR-04       The base shall carry the 50 kg rated payload without             M             T loss of traction, stability, or steering control on the specified floor. FR-05       The base shall hold position on a $\sim$5$^\circ$ grade with rated           S             T payload (braking/holding).
+
+ID          Requirement description                                    Pri.         Verif. FR-06       The chassis shall remain stable (no tip-over) at           M             A,T maximum speed with rated payload during normal acceleration, braking, and turning.
+
+\section*{4.3 Control and navigation}
+
+ID          Requirement description                                    Pri.         Verif. FR-07       The robot shall support manual (teleoperated) control      M              D of speed and direction via a handheld controller or operator interface. FR-08       Manual control shall operate with command latency           S             T below 200 ms within the defined test operating range. FR-09       The robot shall support basic autonomous navigation:       M             D,T following a predefined route or sequence of waypoints between two points. FR-10       The robot shall localise itself within the warehouse       M              T using on-board sensors (e.g. 2D LiDAR with odometry/IMU) without external positioning infrastructure. FR-11       In autonomous mode the robot shall reach each               S             T commanded waypoint within $\pm$100 mm position and $\pm$5$^\circ$ heading. FR-12       The robot shall allow an operator to seamlessly take       M              D over manual control while in autonomous mode. FR-13       The robot shall expose basic status (mode, battery,         S             D fault) to the operator interface.
+
+\section*{4.4 Perception and obstacle detection}
+
+ID          Requirement description                                    Pri.         Verif. FR-14       The robot shall detect static and dynamic obstacles in     M              T its direction of travel using on-board sensors. FR-15       On detecting an obstacle in its path, the robot shall      M              T automatically reduce speed and, if the obstacle remains, stop before contact. FR-16       The robot shall resume motion automatically (or on          S             D operator confirmation) once the path is clear.
+
+ID          Requirement description                                     Pri.         Verif. FR-17       Obstacle detection shall function under the warehouse's     M              T variable artificial lighting (not dependent on ambient light alone). FR-18       The robot should provide near-field/low-height               C             T detection to complement the primary scanner (e.g. ultrasonic or depth sensing).
+
+\section*{4.5 Payload platform}
+
+ID          Requirement description                                     Pri.         Verif. FR-19       The robot shall provide a flat payload platform rated for   M             I,T 50 kg for carrying test loads. FR-20       The platform shall include fixing points to secure or       M               I restrain a test load against motion during travel. FR-21       The platform shall be removable or reconfigurable so         S              I the same mounting area can host future modules.
+
+\section*{4.6 Power and electronics}
+
+ID          Requirement description                                     Pri.         Verif. FR-22       The robot shall be powered by an on-board                   M              T rechargeable battery providing $\geq$3 h continuous operation under nominal load. FR-23       The battery shall include a battery management system       M             I,T (BMS) with over-current, over-temperature, and over/under-voltage protection. FR-24       The robot shall provide a power distribution system         M               I with appropriate fusing/protection for drive, compute, and sensor subsystems. FR-25       The robot shall house a compute unit able to run the        M               I navigation and control software on-board. FR-26       The robot shall provide a state-of-charge indication and     S             D shall warn before depletion. FR-27       The battery shall be rechargeable via a documented,         M              D safe charging procedure/connector.
+
+\section*{4.7 Navigation sensor integration}
+
+ID          Requirement description                                        Pri.         Verif. FR-28       The robot shall integrate the navigation sensor suite           M              I (e.g. LiDAR, IMU, wheel encoders) into the chassis with protected mounting and cabling. FR-29       Sensor placement shall provide unobstructed coverage            M            I,A of the forward travel path within the mechanical envelope. FR-30       Sensor data shall be time-aligned/fused sufficiently to          S            T support localisation and obstacle detection.
+
+\section*{4.8 Modular mounting interface}
+
+ID          Requirement description                                        Pri.         Verif. FR-31       The robot shall provide a defined modular mounting              M              I area on the base for future attachments. FR-32       The mounting area shall use a standardised mechanical           M              I
+

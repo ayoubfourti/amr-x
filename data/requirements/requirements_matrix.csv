@@ -1,6 +1,2 @@
 requirement_id,area,requirement,verification_method,source,status,owner,notes
-REQ-001,Payload,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
-REQ-002,Dimensions,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
-REQ-003,Speed,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
-REQ-004,Endurance,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
-REQ-005,Safety,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
+REQ-TBD-001,TBD,TBD,TBD,reports/system_requirements_v1/main.tex,Extraction pending,TBD,Requirements will be extracted from the standalone SRD report after review.

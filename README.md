@@ -8,8 +8,9 @@ This repository is structured for internship team work through GitHub issues, co
 
 - `reports/market_study/` - Final Market Study Report in LaTeX.
 - `reports/v1_product_definition/` - Final V1 Product Definition Dossier in LaTeX.
+- `reports/system_requirements_v1/` - Submitted SRD documents migrated as a standalone LaTeX report.
 
-Generated PDFs belong under `build/` and are not committed.
+Generated PDFs belong under `build/<report_name>/` and are not committed.
 
 ## Source of Truth
 
@@ -44,11 +45,17 @@ python3 tools/generate_specs.py
 python3 tools/generate_latex_tables.py
 ```
 
-Build reports into `build/`:
+Build reports into `build/<report_name>/`:
 
 ```bash
 bash tools/build_reports.sh
 ```
+
+Expected generated PDFs:
+
+- `build/market_study/market_study.pdf`
+- `build/v1_product_definition/v1_product_definition.pdf`
+- `build/system_requirements_v1/system_requirements_v1.pdf`
 
 ## Rules
 

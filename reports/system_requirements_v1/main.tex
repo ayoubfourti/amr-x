@@ -1,0 +1,51 @@
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{float}
+\usepackage{xcolor}
+\usepackage{hyperref}
+
+\geometry{margin=2.5cm}
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{System Requirements Document (SRD) - Version 1}
+\author{AMR-X Engineering Group}
+\date{June 2026}
+
+\begin{document}
+
+\hypersetup{pageanchor=false}
+\maketitle
+\pagenumbering{roman}
+\input{sections/00_abbreviations}
+\newpage
+
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
+
+\chapter*{Document Integration Note}
+\addcontentsline{toc}{chapter}{Document Integration Note}
+
+This report consolidates the AMR-X Version 1 system requirements work by topic. Where two source documents cover the same topic, the chapter is split into \textit{i. Document 1} and \textit{ii. Document 2} subsections.
+
+\input{sections/consolidated/01_project_overview.tex}
+\input{sections/consolidated/02_operational_scenario.tex}
+\input{sections/consolidated/03_objectives.tex}
+\input{sections/consolidated/04_functional_requirements.tex}
+\input{sections/consolidated/05_safety_requirements.tex}
+\input{sections/consolidated/06_constraints_and_assumptions.tex}
+\input{sections/consolidated/07_success_criteria.tex}
+\input{sections/consolidated/08_version_1_scope.tex}
+\input{sections/consolidated/09_hai_robotics_reference.tex}
+
+\end{document}

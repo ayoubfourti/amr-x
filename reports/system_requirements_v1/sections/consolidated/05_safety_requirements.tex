@@ -1,0 +1,46 @@
+\chapter{Safety Requirements}
+
+\section*{i. Document 1}
+
+These are the minimum safety requirements for V1. As a prototype, V1 operates in a controlled, restricted test area under supervision. The design should follow the intent of ISO 3691-4, ANSI/RIA R15.08, ISO 13849, and IEC 60204 so later versions can be certified without redesign.
+
+\begin{longtable}{>{\bfseries}L{0.12\textwidth}L{0.65\textwidth}cc}
+\toprule
+ID & Requirement description & Pri. & Verif. \\
+\midrule
+\endhead
+SR-01 & The robot shall provide at least one clearly marked, easily reachable hardware emergency stop that removes drive power. & M & T \\
+SR-02 & Activating the E-stop shall bring the robot to a complete stop within 0.5 s in all operating modes. & M & T \\
+SR-03 & On loss of power or critical fault, the braking system shall fail safe. & M & T \\
+SR-04 & The robot shall automatically slow and stop for obstacles detected in its path before contact. & M & T \\
+SR-05 & The robot shall limit speed near detected obstacles/people to $\leq$0.3 m/s and shall never exceed 1.5 m/s. & M & T \\
+SR-06 & The robot shall provide audible and visual indication when powered/moving. & M & D \\
+SR-07 & The robot shall remain stable within its rated payload, speed, and maneuver envelope. & M & A,T \\
+SR-08 & Battery and power electronics shall be protected against over-current, over-temperature, and short circuit. & M & I,T \\
+SR-09 & Exposed moving parts and pinch points shall be guarded or eliminated within the V1 envelope. & S & I \\
+SR-10 & The robot shall provide contact-based protection as a last line of defence behind sensor-based detection. & S & T \\
+SR-11 & V1 testing shall be confined to a defined, marked test area. & M & D \\
+SR-12 & E-stop and safety indicators shall be operable independently of the main navigation software. & M & T \\
+\bottomrule
+\end{longtable}
+
+\section*{ii. Document 2}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.26\textwidth}Y}
+\toprule
+Safety area & Required behavior \\
+\midrule
+Emergency Stop & Physical and dashboard emergency stop; activation cuts motor power, overrides commands, and may trigger automatically on critical sensor failure. \\
+Obstacle Avoidance and Collision Prevention & LiDAR-based perception, autonomous collision avoidance, speed reduction in congested areas, immediate stop for unrecoverable collision risk, and maintained safety buffer distance. \\
+Manual Override and Control & Operator can pause, resume, cancel, or manually control missions; all manual override actions are logged. \\
+Speed Limitation and Control & Configurable maximum speed per sector with automatic reduction near humans or obstacles. \\
+Low Battery Safety Behavior & Warning at 20\%, return-to-docking at 10\%, and safe mission pause or termination at critical battery level. \\
+Mission Failure Handling & Navigation, communication, and sensor failures lead to safe stop, notification, degraded safe behavior, or emergency stop depending on severity. \\
+Restricted Zones & Geofencing defines restricted areas; planning avoids them and unauthorized passage attempts are rejected. \\
+Human Safety & The robot monitors for humans, reduces speed in shared spaces, and uses visual/audio state indicators. \\
+Security Requirements & Dashboard authentication, RBAC, authenticated control endpoints, audit logs, and encrypted communication. \\
+\bottomrule
+\end{tabularx}
+\end{table}

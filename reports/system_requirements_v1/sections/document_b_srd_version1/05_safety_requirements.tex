@@ -1,0 +1,132 @@
+\chapter{Safety Requirements}
+
+FR-08 -- Modular Mechanical Interface The robot shall include a mechanical mounting area allowing future modules to be installed.
+
+4. Safety Requirements
+
+This section defines the safety mechanisms, constraints, and operational behaviors required to ensure safe deployment of the AMR-X mobile robot in indoor warehouse environments. The system must prioritize human safety, prevent collisions, ensure controlled motion, and guarantee safe failure handling under all operating conditions
+
+a) Emergency Stop
+
+\begin{itemize}
+    \item The robot shall include a physical emergency stop button accessible on the robot
+body.
+
+    \item The system shall provide an emergency stop function via the operator dashboard.
+    \item Activation of the emergency stop shall result in immediate motor power cutoff.
+    \item The emergency stop shall override all ongoing operations and motion commands.
+\end{itemize}
+
+\begin{itemize}
+    \item The system shall automatically trigger an emergency stop in case of critical sensor
+failure (e.g., LiDAR failure, IMU failure, or loss of odometry).
+
+\end{itemize}
+
+b) Obstacle Avoidance and Collision Prevention
+
+\begin{itemize}
+    \item The robot shall use LiDAR-based perception for real-time obstacle detection.
+    \item The system shall perform autonomous collision avoidance during navigation.
+    \item The robot shall reduce speed in congested or high-risk environments.
+    \item The robot shall stop immediately if an unrecoverable collision risk is detected.
+    \item The system shall maintain a safety buffer distance defined in the navigation costmap.
+c) Manual Override and Control
+
+    \item The operator shall be able to pause autonomous navigation at any time.
+    \item The operator shall be able to resume or cancel ongoing missions.
+    \item The system shall support a manual control mode (implementation method TBD:
+joystick or keyboard interface).
+
+    \item All manual override actions shall be logged with timestamp and operator identity for
+traceability.
+
+\end{itemize}
+
+d) Speed Limitation and Control
+
+\begin{itemize}
+    \item The robot shall enforce a configurable maximum speed per operational sector.
+    \item The system shall automatically reduce speed in areas with detected human presence
+or obstacles nearby.
+
+    \item Speed profiles shall be adaptable based on environmental mapping and risk level.
+    \item Specific numeric speed thresholds per sector remain TBD and will be defined during
+system design phase.
+
+\end{itemize}
+
+e) Low Battery Safety Behavior
+
+\begin{itemize}
+    \item The robot shall continuously monitor battery levels during operation.
+    \item A low battery warning shall be triggered at 20\% capacity.
+    \item At 10\% battery level, the robot shall initiate an autonomous return-to-docking
+behavior.
+
+    \item If battery level becomes critical during a mission, the system shall pause or safely
+terminate the mission. (we can add an integrating charging station like the one developed by HAI Robotics or a dedicated zone can be defined where robots with low battery levels are required to navigate for recharging or safe standby.)
+
+\end{itemize}
+
+f)    Mission Failure Handling
+
+\begin{itemize}
+    \item In case of navigation failure, the robot shall stop and notify the operator with an
+error code.
+
+    \item In case of communication loss, the robot shall enter a safe state and attempt return-
+to-dock behavior if possible.
+
+    \item In case of sensor failure, the system shall either:
+\end{itemize}
+
+degrade functionality safely, or perform an emergency stop depending on severity.
+
+\begin{itemize}
+    \item All failures shall be logged with diagnostic information for debugging and
+traceability.
+
+\end{itemize}
+
+g) Restricted Zones
+
+\begin{itemize}
+    \item The system shall support geofencing capabilities to define restricted or forbidden
+areas.
+
+    \item Navigation planning shall avoid restricted zones automatically.
+    \item Missions attempting to pass through restricted areas shall be rejected by the system.
+    \item Manual override of restricted zones may be allowed but must be logged and
+authorized.
+
+    \item Environmental constraints shall be enforced using Nav2 costmap-based planning (or
+equivalent system).
+
+\end{itemize}
+
+h) Human Safety
+
+\begin{itemize}
+    \item The robot shall continuously monitor its environment for human presence detection.
+    \item The robot shall reduce speed when operating in shared human-robot environments.
+    \item The system shall include visual indicators to show operational state (idle, moving,
+error, autonomous mode).
+
+    \item The robot shall provide audio or visual warnings during autonomous movement.
+\end{itemize}
+
+i)    Security Requirements
+
+\begin{itemize}
+    \item All dashboard access shall require secure authentication (login system).
+    \item The system shall enforce role-based access control (RBAC) (roles to be defined in
+future design phase).
+
+    \item The robot shall not expose any unauthenticated control endpoints.
+    \item All operator actions shall be recorded in an audit log with timestamps and user
+identification.
+
+    \item Communication between system components shall use encrypted channels.
+\end{itemize}
+

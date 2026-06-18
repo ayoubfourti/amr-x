@@ -5,6 +5,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{longtable}
+\usepackage{array}
 \usepackage{hyperref}
 \usepackage{geometry}
 
@@ -19,6 +20,7 @@
 
 \begin{document}
 
+\hypersetup{pageanchor=false}
 \begin{titlepage}
     % Logo in top left corner
     \includegraphics[width=0.15\textwidth]{images/CMS_Logo.png}
@@ -37,11 +39,19 @@
     \end{center}
 \end{titlepage}
 
+\pagenumbering{roman}
+\newpage
+
+\input{sections/00_abbreviations}
 \newpage
 
 \tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
 
 \input{sections/01_introduction}
+\input{sections/02_sector_market_analysis_part1}
 \input{sections/02_market_overview}
 \input{sections/03_competitors}
 \input{sections/04_target_clients}

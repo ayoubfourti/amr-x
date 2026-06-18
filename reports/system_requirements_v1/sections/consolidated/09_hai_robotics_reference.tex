@@ -1,0 +1,50 @@
+\chapter{HAI Robotics K50 Reference}
+
+\section*{ii. Document 2}
+
+The proposed AMR system is inspired by the K50 Fast-Transit Companion AMR developed by HAI Robotics. The robot is designed to operate as a fast-transit mobile platform capable of interacting directly with standardized warehouse racks and handling totes through a structured backpack mechanism.
+
+\section*{Quick and convenient AMR features}
+
+\begin{itemize}
+    \item Maximum speed of 4 m/s.
+    \item Maximum jacking height of 0.75 m suitable for ergonomic workstations.
+    \item LiDAR remote scanning.
+\end{itemize}
+
+\section*{Mechanical and motion specifications}
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.32\textwidth}Y}
+\toprule
+Parameter & Value \\
+\midrule
+Dimensions (L $\times$ W $\times$ H) & 658 $\times$ 460 $\times$ 330 mm \\
+Net weight & 81 kg \\
+Rated load & 30/50 kg \\
+Case type mode & Carton, tote, and other materials with regular shapes \\
+Driving mode & Differential-wheeled \\
+Navigation & DM code + IMU \\
+Driving speed & $\leq$ 4.0 m/s \\
+Stop accuracy & $\pm$10 mm \\
+Travel direction & Forward and backward, rotation in place, and turning \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{Functional description}
+
+The core operational concept is based on a three-step rack interaction workflow: precise positioning under rack, tote securing through a backpack mode mechanism, and high-speed transport and delivery to workstation.
+
+\subsection*{Precise positioning under rack}
+
+The AMR navigates autonomously within warehouse aisles and performs precise alignment beneath storage racks equipped with low-height guide rails, approximately 0.43 m from the ground. This phase requires high-precision localization, fine motion control near racks, and accurate rack alignment detection.
+
+\subsection*{Tote securing}
+
+After correct positioning, the AMR engages a mechanical lifting and securing mechanism composed of twin cradling supports or fork-like arms. The mechanism engages the tote from the underside, stabilizes the load laterally, locks the tote securely onto the robot chassis, and transforms the tote into a backpack-style carried load.
+
+\subsection*{Transport and delivery}
+
+Once the tote is secured, the AMR transitions into fast-transit mode, transporting the loaded tote to a designated workstation or drop-off zone. Upon arrival, the robot navigates to a predefined delivery point, raises or positions the tote at an ergonomic height, and allows efficient manual picking or unloading operations.

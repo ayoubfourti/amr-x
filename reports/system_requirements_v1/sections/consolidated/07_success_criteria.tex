@@ -1,0 +1,29 @@
+\chapter{Success Criteria}
+
+\section*{i. Document 1}
+
+V1 is considered successful when the following measurable criteria are met under the defined test conditions. Each criterion is traceable to the requirements it validates.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.12\textwidth}Y L{0.18\textwidth}c}
+\toprule
+ID & Success criterion (measurable) & Traces to & Verif. \\
+\midrule
+SC-01 & Complete a predefined route of $\geq$50 m autonomously in at least 8 of 10 runs ($\geq$80\% success). & FR-09,10,11 & T \\
+SC-02 & Carry the 50 kg rated payload over the full route with no loss of mobility, traction, or stability. & FR-04,19 & T \\
+SC-03 & Across $\geq$20 obstacle encounters, stop before contact every time (zero collisions). & FR-14,15; SR-04 & T \\
+SC-04 & Demonstrate controlled motion across the full 0.5--1.5 m/s range without exceeding 1.5 m/s. & FR-03; SR-05 & T \\
+SC-05 & E-stop brings the robot to a complete stop within 0.5 s in every operating mode. & SR-01,02,12 & T \\
+SC-06 & Operate continuously for $\geq$3 h on a single charge under nominal load. & FR-22 & T \\
+SC-07 & Reach commanded waypoints within $\pm$100 mm position. & FR-11 & T \\
+SC-08 & Mount and dismount a dummy module on the modular interface within 10 minutes, with verified mechanical fit and power/data connection. & FR-31,32,33,34 & D \\
+SC-09 & Teleoperate the robot manually with command latency $<$200 ms within the test range. & FR-07,08 & T \\
+SC-10 & No tip-over or instability at maximum speed with rated payload during the defined maneuver set. & FR-06; SR-07 & T \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section*{ii. Document 2}
+
+Document 2 does not define a separate numbered success-criteria table. Its measurable outcomes are covered by the functional and safety requirements for navigation, obstacle avoidance, payload transport, battery monitoring, emergency stop behavior, restricted zones, and operator override.

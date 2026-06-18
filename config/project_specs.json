@@ -5,6 +5,12 @@
     "version": "V1",
     "team": "AMR-X Engineering Group"
   },
+  "study_status": {
+    "specification_status": "Provisional study assumptions, not final confirmed specifications",
+    "payload_status": "50 kg is a starting study assumption only",
+    "component_reference_payload_range": "20 to 30 kg",
+    "final_target_status": "TBD after market, requirements, mechanical, electrical, and cost validation"
+  },
   "base_robot": {
     "rated_payload_kg": 50,
     "structural_design_margin": 1.5,

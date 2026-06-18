@@ -1,0 +1,18 @@
+\chapter{Constraints and Assumptions}
+
+behind sensor-based detection. SR-11       V1 testing shall be confined to a defined, marked test              M           D area (software/operational geofence or supervised boundary). SR-12       E-stop and safety indicators shall be operable                      M           T independently of the main navigation software (not blocked by a software fault).
+
+6 Constraints and Assumptions
+
+\section*{6.1 Assumptions}
+
+The following assumptions underpin the V1 requirements. If an assumption proves invalid, the affected requirements must be revisited.
+
+A-1 The operating floor is flat, level, sealed, dry, and load-bearing for the robot plus rated payload. A-2 Operation is single-level; no stairs, lifts, or steep ramps are involved. A-3 The environment is GPS-denied; localisation relies entirely on on-board sensors. A-4 Operating aisles are at least 1.5 m wide and passages at least 0.9 m. A-5 Ambient temperature stays within roughly 5--40 $^\circ$ C, non-condensing. A-6 A trained operator is present and supervises the robot during all V1 trials.
+
+A-7 A local network or RF link is available for teleoperation, monitoring, and status. A-8 The warehouse layout is largely known and only moderately dynamic during a run. A-9 No load manipulation (picking/lifting) is required of V1; the robot transports a load placed on its platform.
+
+\section*{6.2 Constraints}
+
+C-1 No facility modification. The solution must work in an existing warehouse without re- racking, installed guidance infrastructure, or layout redesign. C-2 Prototype budget. V1 favours commercially available, off-the-shelf components where feasible to control cost and lead time. C-3 Certification. V1 is a prototype and is not required to be fully safety-certified; it operates only within a supervised, restricted test area. C-4 Payload limit. V1 is limited to the 50 kg rated payload; higher capacities are deferred to later versions. C-5 No manipulation in V1. Arms, grippers, lifts, and similar are out of scope and treated as
+

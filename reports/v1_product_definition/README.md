@@ -17,7 +17,7 @@ From the repository root:
 bash tools/build_reports.sh
 ```
 
-Or from this folder, use `latexmk main.tex`. The local `.latexmkrc` sends output to `../../build/reports/v1_product_definition/`.
+Or from this folder, use `latexmk main.tex`. The local `.latexmkrc` sends output to `../../build/v1_product_definition/`.
 
 If an editor runs `pdflatex main.tex` directly, it may create `.aux`, `.log`, `.toc`, and `.pdf` files in this folder. Those are ignored build artifacts and should be deleted, not committed.
 

@@ -1,6 +1,2 @@
-item_id,subsystem,component_name,function,decision_type,candidate_part,supplier,quantity,unit,unit_cost,currency,status,owner,source_link,notes
-BASE-001,Chassis,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
-BASE-002,Drive,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
-BASE-003,Power,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
-BASE-004,Compute,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
-BASE-005,Safety,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+item_id,subsystem,component_name,function,decision_type,candidate_part,supplier,quantity,unit,unit_cost,currency,status,source,notes
+BASE-TBD-001,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TND,Not selected yet,TBD,Final BOM will be filled after component validation and prototype assumptions are reviewed.

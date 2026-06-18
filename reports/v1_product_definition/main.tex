@@ -10,6 +10,8 @@
 \usepackage{longtable}
 
 \geometry{margin=2.5cm}
+\hbadness=10000
+\hfuzz=25pt
 
 % Load project configuration generated from config/project_specs.json
 \input{tables/generated/project_specs.tex}
@@ -20,6 +22,7 @@
 
 \begin{document}
 
+\hypersetup{pageanchor=false}
 \begin{titlepage}
     \includegraphics[width=0.15\textwidth]{figures/CMS_Logo.png}
 
@@ -36,7 +39,14 @@
     \end{center}
 \end{titlepage}
 
+\pagenumbering{roman}
+\input{sections/00_abbreviations}
+\newpage
+
 \tableofcontents
+\clearpage
+\pagenumbering{arabic}
+\hypersetup{pageanchor=true}
 
 \input{sections/01_project_vision}
 \input{sections/02_scope_and_versions}

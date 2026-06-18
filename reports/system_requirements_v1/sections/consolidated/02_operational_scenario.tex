@@ -1,0 +1,44 @@
+\chapter{Operational Scenario}
+
+\section*{i. Document 1}
+
+\subsection*{Target operating environment}
+
+The robot is expected to operate inside a typical, working distribution or storage warehouse. The environment is indoor, single-level, and shared with human staff and powered industrial equipment. The defining environmental parameters assumed for V1 are summarised below; these values drive the mechanical, drivetrain, and sensing design.
+
+\begin{table}[H]
+\centering
+\begin{tabularx}{\textwidth}{>{\bfseries}L{0.28\textwidth}Y}
+\toprule
+Characteristic & Assumed condition for V1 \\
+\midrule
+Setting & Indoor, single floor, no operation outdoors or between levels. \\
+Floor surface & Sealed/painted concrete or epoxy; flat and level, dry, load-bearing. \\
+Floor condition & Generally clean; occasional small debris and surface thresholds up to $\sim$15 mm. \\
+Aisle width & Operating aisles $\geq$ 1.5 m; doorways/passages $\geq$ 0.9 m. \\
+Inclines & Predominantly flat; transient ramps up to $\sim$5$^\circ$. \\
+Lighting & Artificial, variable; sensing must not depend solely on ambient light. \\
+Temperature & Approximately 5$^\circ$C to 40$^\circ$C, non-condensing. \\
+Positioning & GPS-denied; localisation must be achieved with on-board sensors. \\
+Dynamic obstacles & Pedestrians, manually driven forklifts/pallet trucks, carts, other robots. \\
+Static obstacles & Racking, pallets, columns, dropped items, parked equipment. \\
+Layout & Semi-structured and largely known, but subject to day-to-day change. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection*{Concept of operations}
+
+In a representative V1 mission, a trained operator either teleoperates the robot directly or commands it to follow a defined route between two points, for example an inbound staging area and a storage zone. A payload is placed on the platform. The robot travels the route at a controlled speed, continuously monitoring its path. When an obstacle is detected, the robot slows and, if necessary, stops, resuming once the path is clear. At any time an operator can intervene via manual control or an emergency stop. After completing runs, the robot returns to a base/charging position. The modular mounting area is left available so that future task-specific modules can be fitted without changing the base.
+
+\subsection*{Users and stakeholders}
+
+The primary users of V1 are the project's engineers and trained test operators. Secondary stakeholders include warehouse operations staff, procurement, and project management.
+
+\section*{ii. Document 2}
+
+The robot is designed to operate in indoor warehouse environments characterized by structured layouts, defined aisles, and fixed storage zones. The environment includes human workers, shelves, pallets, and other mobile robots.
+
+In a typical operational scenario, the robot receives a task such as transporting an item or payload from one predefined location to another within the warehouse. During autonomous operation, the robot navigates between points while detecting and avoiding obstacles in real time. It follows planned routes across warehouse aisles, adjusts its path dynamically when obstacles are detected, and ensures safe movement within shared human-robot spaces.
+
+The robot may also operate in repetitive delivery loops, supporting internal logistics such as moving small goods between storage zones, packing stations, or dispatch areas.

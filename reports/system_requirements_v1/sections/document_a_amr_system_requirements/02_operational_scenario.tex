@@ -1,0 +1,20 @@
+\chapter{Operational Scenario}
+
+interface, on top of which task-specific capability will be added in later versions.
+
+2 Operational Scenario
+
+\section*{2.1 Target operating environment}
+
+The robot is expected to operate inside a typical, working distribution or storage warehouse. The environment is indoor, single-level, and shared with human staff and powered industrial equipment. The defining environmental parameters assumed for V1 are summarised below; these values drive the mechanical, drivetrain, and sensing design.
+
+Characteristic                Assumed condition for V1 Setting                       Indoor, single floor, no operation outdoors or between levels. Floor surface                 Sealed/painted concrete or epoxy; flat and level, dry, load-bearing. Floor condition               Generally clean; occasional small debris and surface thresholds up to $\sim$15 mm. Aisle width                   Operating aisles $\geq$ 1.5 m; doorways/passages $\geq$ 0.9 m. Inclines                      Predominantly flat; transient ramps up to $\sim$5$^\circ$ . Lighting                      Artificial, variable; sensing must not depend solely on ambient light. Temperature                   Approximately 5 $^\circ$ C to 40 $^\circ$ C, non-condensing. Positioning                   GPS-denied; localisation must be achieved with on-board sensors. Dynamic obstacles             Pedestrians, manually driven forklifts/pallet trucks, carts, other robots. Static obstacles              Racking, pallets, columns, dropped items, parked equipment. Layout                        Semi-structured and largely known, but subject to day-to-day change.
+
+\section*{2.2 Concept of operations (ConOps)}
+
+In a representative V1 mission, a trained operator either teleoperates the robot directly or com- mands it to follow a defined route between two points (for example, an inbound staging area and a storage zone). A payload is placed on the platform. The robot travels the route at a controlled speed, continuously monitoring its path. When an obstacle is detected, the robot slows and, if necessary, stops, resuming once the path is clear. At any time an operator can intervene via man- ual control or an emergency stop. After completing runs, the robot returns to a base/charging position. The modular mounting area is left available so that future task-specific modules can be fitted without changing the base.
+
+\section*{2.3 Users and stakeholders}
+
+The primary users of V1 are the project's engineers and trained test operators. Secondary stake- holders include warehouse operations staff (who share the floor during trials), the procurement
+

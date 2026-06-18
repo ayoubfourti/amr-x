@@ -18,7 +18,7 @@ Autonomous modular robot market research and analysis for AMR-X platform.
 - `sections/` - Section files (each chapter)
 - `tables/` - Data tables (competitors, clients, pricing)
 - `figures/` - Diagrams and images
-- `build/reports/market_study/main.pdf` - Generated PDF output (ignored)
+- `build/market_study/market_study.pdf` - Generated PDF output (ignored)
 
 ## Target Sectors
 
@@ -38,7 +38,7 @@ From the repository root:
 bash tools/build_reports.sh
 ```
 
-Or from this folder, use `latexmk main.tex`. The local `.latexmkrc` sends output to `../../build/reports/market_study/`.
+Or from this folder, use `latexmk main.tex`. The local `.latexmkrc` sends output to `../../build/market_study/`.
 
 If an editor runs `pdflatex main.tex` directly, it may create `.aux`, `.log`, `.toc`, and `.pdf` files in this folder. Those are ignored build artifacts and should be deleted, not committed.
 
@@ -47,4 +47,4 @@ If an editor runs `pdflatex main.tex` directly, it may create `.aux`, `.log`, `.
 - **sections/** - Individual chapters for market analysis
 - **tables/** - Structured data comparison (competitors, pricing, client segments)
 - **figures/** - Charts, graphs, and concept images
-- **build/reports/market_study/main.pdf** - Built PDF output (ignored)
+- **build/market_study/market_study.pdf** - Built PDF output (ignored)
