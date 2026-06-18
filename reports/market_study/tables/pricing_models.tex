@@ -1,10 +1,33 @@
-\begin{longtable}{|p{2.5cm}|p{2.5cm}|p{2cm}|p{2.5cm}|p{2cm}|p{1.5cm}|}
+\begingroup
+\small
+\setlength{\tabcolsep}{4pt}
+\begin{longtable}{|p{2.7cm}|p{2.2cm}|p{1.9cm}|p{2.5cm}|p{1.8cm}|p{1.3cm}|}
+\caption{Pricing models across competitors, with the recommended local model.}\label{tab:pricing}\\
 \hline
-\textbf{Company/Product} & \textbf{Pricing Model} & \textbf{Estimated Price} & \textbf{Included Services} & \textbf{Notes} & \textbf{Source} \\
+\textbf{Company / Product} & \textbf{Pricing Model} & \textbf{Estimated Price} & \textbf{Included Services} & \textbf{Notes} & \textbf{Source} \\
+\hline
+\endfirsthead
+\hline
+\textbf{Company / Product} & \textbf{Pricing Model} & \textbf{Estimated Price} & \textbf{Included Services} & \textbf{Notes} & \textbf{Source} \\
 \hline
 \endhead
 \hline
 \endfoot
-TBD & TBD & TBD & TBD & TBD & TBD \\
+MiR250/600 & Purchase (hardware) & USD 30--45k & Base + interchangeable top modules & Proprietary software lock-in & \cite{mir250} \\
+\hline
+Robotnik RB-KAIROS+ & Purchase & From EUR 50k & ROS2 base + plug-and-play arm & High entry price & \cite{robotnik_kairos} \\
+\hline
+Boston Dynamics Spot & Purchase & USD 75k+ & Legged base + sensor mounts & High cost and training overhead & \cite{standardbots_amr} \\
+\hline
+SMP Robotics & Purchase & USD 120--320k & Outdoor security patrol & Extremely high cost & \cite{mordor_security} \\
+\hline
+Cobalt Robotics & Subscription (RaaS) & USD 3.5--6.5k/mo & Indoor patrol + monitoring & Capex-light; security-only & \cite{coherent_security} \\
+\hline
+Locus Robotics & Subscription (RaaS) & Per-bot subscription & Collaborative picking fleet & Capex-light; single workflow & \cite{builtin_raas} \\
+\hline
+Large warehouse fleet & Purchase / project & USD 2--4M (50--100 bots) & Full goods-to-person system + integration & Out of scale for Tunisian SMEs & \cite{valuates_agv_amr} \\
+\hline
+\ProjectName{} (recommended) & RaaS / usage-based / shared / pilot & TBD (local) & Robot + local support, maintenance, training & Designed for the local cost-to-labor ratio & TBD (local) \\
+\hline
 \end{longtable}
-
+\endgroup

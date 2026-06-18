@@ -1,10 +1,44 @@
 \chapter{Pricing Models}
 
-Analyze pricing strategies in the autonomous mobile robot market.
+\section{How Competitors Price}
 
-\section{Contribution Guidelines}
+Competitor pricing falls into two camps: outright purchase and
+Robots-as-a-Service. Purchase prices range from about USD 30,000--45,000 for a
+MiR base \cite{mir250} and around EUR 50,000 for a Robotnik RB-KAIROS+
+\cite{robotnik_kairos}, up to USD 75,000+ for a Boston Dynamics Spot and USD
+120,000--320,000 for high-end security platforms
+\cite{standardbots_amr,mordor_security}. Full warehouse deployments of 50--100
+robots run into the millions. On the service side, players such as Locus and
+Cobalt sell subscriptions (Cobalt around USD 3,500--6,500 per month), which
+shift the customer from a large capital outlay to an operating expense
+\cite{builtin_raas,coherent_security}. A structured summary is given in
+Table~\ref{tab:pricing}.
 
-Add pricing model analysis. Use \texttt{pricing\_models.tex} table for structured data. Include market pricing trends and strategies.
+\section{Why Outright Purchase Fails Locally}
 
-No fake prices. Real sources only. Use TBD for undecided items.
+The Tunisian problem is not the sticker price in isolation but the
+robot-cost-to-labor-cost ratio. Against low local wages, an outright purchase
+has a much longer payback than it does in Europe, and the upfront cash plus
+foreign-currency exposure on imported hardware makes a large capital purchase
+hard for a Tunisian SME to approve. Outright sale is therefore the wrong default
+model here.
 
+\section{Recommended Pricing for the Local Market}
+
+\begin{itemize}
+    \item \textbf{Robots-as-a-Service / leasing} as the default, so the customer
+          pays from an operating budget instead of committing capital
+          \cite{builtin_raas}.
+    \item \textbf{Usage-based pricing} (per inspection round, per hour, per
+          delivery) where the value is measurable, aligning cost with benefit.
+    \item \textbf{Shared deployments} between several smaller companies in the
+          same zone, spreading the cost of one robot across more than one
+          buyer -- a model that fits Tunisia's SME structure and that no global
+          competitor offers.
+    \item \textbf{Pilot-first}: low-cost or free initial pilots in universities
+          and private clinics to generate references quickly, on the
+          understanding that the first reference is worth more than the first
+          margin.
+\end{itemize}
+
+\input{tables/pricing_models.tex}

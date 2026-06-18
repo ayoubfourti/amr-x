@@ -1,18 +1,57 @@
 \chapter{Use Cases}
 
-Document real-world applications and benefits of autonomous mobile robots.
+The deployments below are real, documented uses of mobile robots in the field.
+They are included as evidence of which configurations have proven value and
+which serve as cautionary cases, and each is mapped to the corresponding
+\ProjectName{} module configuration.
 
-\section{Contribution Guidelines}
+\section{Industrial Inspection (Sensor Configuration)}
 
-Add real-world use case analysis. Include application examples and benefits. Cover multiple sectors:
+Legged and wheeled inspection robots such as Boston Dynamics' Spot are deployed
+in energy and process facilities to carry camera, thermal, and LiDAR payloads on
+fixed inspection routes \cite{standardbots_amr}. The deployment requires no
+change to the customer's racking or process, and the economic case rests on the
+cost of an avoided incident rather than on wages. For \ProjectName{} this
+corresponds to a \emph{sensor module on the base} and is the lowest-friction
+entry point of any sector.
 
-- Factories
-- Warehouses
-- Logistics hubs
-- Hospitals
-- Hotels
-- Universities
-- Security operations
+\section{Healthcare and Internal Delivery (Compartment Configuration)}
 
-Use real sources. No fake use cases. Use TBD for undecided items.
+MiR and Aethon's TUG have been deployed in hospitals for medication, sample, and
+supply transport, addressing the large share of staff time otherwise lost to
+internal logistics \cite{mir_healthcare,researchgate_hospital}. The natural
+\ProjectName{} fit is a \emph{lockable compartment module on the base} for
+secure, auditable transport --- relevant to hospitals, but also to internal
+delivery on university and corporate campuses.
 
+\section{Manufacturing Intralogistics (Arm + Base)}
+
+In manufacturing, MiR bases and the Robotnik RB-KAIROS+ (a ROS2 base with a
+plug-and-play arm) are used for line-side parts delivery, machine tending, and
+kitting \cite{mir250,robotnik_kairos}. This maps to the \ProjectName{}
+\emph{arm-on-base configuration} and is the strongest mid-term fit for Tunisia's
+export-oriented automotive and electronics suppliers.
+
+\section{Logistics and Fulfillment (Base + Compartment)}
+
+Geek+ goods-to-person fleets are deployed regionally through integrators, for
+example at Dubai CommerCity \cite{fdatabot_amr2026}. This is the closest regional
+proof point for fulfillment automation and indicates where GCC export demand
+sits. For \ProjectName{} the relevant configuration is a \emph{base plus
+compartment/sensor} setup, sold via a service model given thin local 3PL
+margins.
+
+\section{Security and a Cautionary Case}
+
+Cobalt Robotics operates indoor patrol robots on a subscription model
+\cite{coherent_security}, and Tunisia has a notable local precedent in Enova
+Robotics' PGuard security UGV (locally built, deployed domestically and
+exported; source to be confirmed by the team). Security is best treated as a
+\emph{sensor add-on to an already-deployed base} rather than a standalone
+product, given a low local guard wage and an entrenched local incumbent.
+
+A cautionary case comes from retail: Bossa Nova's shelf-scanning robots, piloted
+at scale by Walmart, were ultimately discontinued by that customer
+\cite{dudarenok_retail_china}. It is a reminder that a single-purpose robot with
+a weak ROI does not survive contact with a real operating budget --- which is
+precisely why a modular base reusable across tasks is the more defensible bet.

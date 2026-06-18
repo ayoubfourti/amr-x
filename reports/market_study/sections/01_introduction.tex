@@ -1,9 +1,55 @@
 \chapter{Introduction}
 
-This market study analyzes the autonomous modular robot sector with focus on factories, warehouses, logistics, hospitals, hotels, universities, and security operations. The autonomous modular robot market is experiencing rapid growth across industrial sectors \cite{smith2023amr}.
+\section{What an AMR Is}
 
-\section{Contribution Guidelines}
+An Autonomous Mobile Robot (AMR) is a robot that navigates an environment
+without fixed infrastructure -- no magnetic strips and no rails -- using
+sensors such as LiDAR and cameras together with SLAM (Simultaneous
+Localization and Mapping) algorithms to move safely around obstacles and
+people. This is what separates an AMR from the older Automated Guided Vehicle
+(AGV), which can only follow pre-defined physical paths. Over the past decade
+AMRs have moved out of research labs into commercial use across manufacturing,
+warehousing, healthcare, hospitality and security \cite{standardbots_amr,valuates_agv_amr}.
 
-Add problem statement and market context. No fake market sizes or prices. Include real sources in references.bib.
+\section{Why the Market Is Growing}
 
-Use TBD for undecided items.
+Three forces are driving global adoption:
+
+\begin{itemize}
+    \item \textbf{Labor shortages and rising labor costs} in mature economies
+          (the US, Europe, China's coastal regions), which make automation of
+          repetitive transport and inspection tasks economically attractive.
+    \item \textbf{Falling sensor and compute costs} (LiDAR, depth cameras,
+          embedded GPUs), which have made AMR hardware progressively cheaper to
+          build over the last five years.
+    \item \textbf{Maturing open-source software} (ROS / ROS2 and the Nav2
+          navigation stack), which has lowered the barrier to building a working
+          navigation system without each company writing one from scratch.
+\end{itemize}
+
+A second, more recent trend is \textbf{modularity}: instead of selling a
+single-purpose robot, manufacturers increasingly sell a base platform that
+carries different payloads -- a delivery box, a robotic arm, a sensor pack --
+depending on the client's task \cite{fdatabot_amr2026,robotnik_kairos}. This is
+the segment this document focuses on, because it is the direction CyberMech
+Systems' own platform is being designed in: one mobile base accepting
+interchangeable modules.
+
+\section{Scope and Method}
+ 
+This study does \emph{not} assume that what works internationally will
+automatically work in Tunisia. A large part of the analysis below is dedicated
+specifically to testing that assumption against the Tunisian economic context --
+labor costs, company size, import dependency and procurement habits -- rather
+than treating global AMR growth figures as directly transferable. Concretely,
+the report covers the overall market and a sector-by-sector landscape
+(Chapters~2--3), the competitor field (Chapter~4), target clients, pricing,
+pain points and use cases (Chapters~5--8), and a consolidated set of
+opportunities and a final recommendation (Chapters~9--10).
+
+\textit{Note on method.} This chapter and those that follow consolidate two
+market-research efforts that the team produced in parallel: a global/regional
+sizing study built around a four-module platform framework, and a
+Tunisia-focused study built around local unit economics. Where the two agreed,
+the finding is reported plainly; where they differed, the stronger-evidenced
+position is taken and the disagreement is noted.

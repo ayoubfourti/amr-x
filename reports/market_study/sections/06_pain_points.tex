@@ -1,18 +1,67 @@
 \chapter{Client Pain Points}
 
-Identify challenges and needs across target sectors.
+Rather than repeat the sector-by-sector breakdown given in the sector analysis,
+this chapter synthesises the pain points that recur across sectors and isolates
+the single constraint that determines whether any of them justifies a robot in
+the Tunisian context.
 
-\section{Contribution Guidelines}
+\section{Recurring Operational Pain Points}
 
-Add customer pain point analysis. Include market needs and challenges. Cover all target sectors:
+Across factories, warehouses, logistics hubs, hospitals, hotels, universities,
+and security operations, the operational complaints cluster into a small number
+of recurring themes:
 
-- Factories
-- Warehouses
-- Logistics hubs
-- Hospitals
-- Hotels
-- Universities
-- Security operations
+\begin{itemize}
+    \item \textbf{Manual internal transport.} Moving parts between workstations
+          (factories), pallets and orders (warehouses, logistics), medication and
+          samples (hospitals), room deliveries (hotels), and mail between
+          buildings (universities) is slow, repetitive, and fatigue-prone. In
+          hospitals specifically, clinical staff can spend a large share of their
+          time on transport tasks rather than patient care
+          \cite{researchgate_hospital,mir_healthcare}.
+    \item \textbf{Repetitive and hazardous inspection rounds.} Manual gauge
+          reading, thermal and leak detection, and equipment monitoring are slow,
+          infrequent, and dangerous in some zones, with faults often detected
+          late.
+    \item \textbf{Labor scarcity and demand peaks.} Seasonal volume swings
+          (logistics, tourism) and turnover in repetitive roles are hard to
+          absorb with temporary staff.
+    \item \textbf{Data and coverage gaps.} Inconsistent inspection schedules and
+          fixed-camera blind spots leave facilities without a continuous record
+          of their own condition.
+\end{itemize}
 
-Use real sources. Use TBD for undecided items.
+\section{The Overarching Constraint: Cost-to-Labor Ratio}
 
+The pain points above are largely shared with the high-wage markets that
+existing AMRs were designed for. What changes locally is not the pain but the
+economics of solving it. Because Tunisian wages are substantially lower than in
+Europe or the GCC, a robot bought to replace a transport worker has a much
+longer payback than the same robot in a German factory --- a point international
+product sheets never make, because they are written for high-labor-cost markets.
+
+The practical consequence is that pure labor substitution is rarely the pain
+worth solving here. The cases where the economics work are those where the robot
+is compared against something other than a wage:
+
+\begin{itemize}
+    \item \textbf{Inspection}, where the robot is measured against the cost of an
+          avoided incident, downtime, or undetected failure --- which can exceed
+          the cost of a simple inspection robot even for a Tunisian factory.
+    \item \textbf{Universities}, where the robot is measured against the cost of
+          an imported research platform that institutions already buy, not
+          against a salary.
+\end{itemize}
+
+This distinction is the connective thread running through every sector
+assessment in this report.
+
+\section{Financial and Procurement Pain}
+
+A second, cross-cutting layer of pain is financial rather than operational.
+Local buyers are capex-averse and procurement is slow, particularly in the
+public sector. Imported hardware adds foreign-currency exposure and customs and
+lead-time friction. Thin-margin operators (3PL, retail) cannot absorb a large
+capital outlay at all. These constraints make an outright-purchase model a poor
+fit and push strongly toward a service-based commercial model
+\cite{builtin_raas}, which is addressed in the pricing chapter.
