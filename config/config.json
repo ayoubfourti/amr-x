@@ -1,0 +1,9 @@
+{
+  "project": {
+    "name": "AMR-X",
+    "fullName": "Autonomous Modular Robot - Extended",
+    "description": "Advanced autonomous modular robot platform",
+    "version": "1.0.0",
+    "team": "AMR-X Engineering Group"
+  }
+}

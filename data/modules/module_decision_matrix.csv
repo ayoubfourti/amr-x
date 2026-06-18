@@ -1,0 +1,6 @@
+module_id,module_name,use_case,customer_need,build_buy_modify_custom,reasoning,evidence_required,interfaces_required,status,owner,notes
+MOD-BASE,Base Platform,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+MOD-ARM,Robotic Arm Module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+MOD-SHELF,Shelf Access Module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+MOD-COMPARTMENT,Secure Delivery Compartment Module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+MOD-SENSOR,Sensor and Inspection Module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD

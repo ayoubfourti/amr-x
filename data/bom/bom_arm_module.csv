@@ -1,0 +1,5 @@
+item_id,subsystem,component_name,function,decision_type,candidate_part,supplier,quantity,unit,unit_cost,currency,status,owner,source_link,notes
+ARM-001,Structure,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+ARM-002,Actuation,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+ARM-003,End Effector,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+ARM-004,Control,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD

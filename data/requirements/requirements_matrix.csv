@@ -1,0 +1,6 @@
+requirement_id,area,requirement,verification_method,source,status,owner,notes
+REQ-001,Payload,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
+REQ-002,Dimensions,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
+REQ-003,Speed,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
+REQ-004,Endurance,TBD,TBD,config/project_specs.json,TBD,TBD,TBD
+REQ-005,Safety,TBD,TBD,config/project_specs.json,TBD,TBD,TBD

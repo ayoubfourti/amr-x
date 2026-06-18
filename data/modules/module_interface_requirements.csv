@@ -1,0 +1,6 @@
+requirement_id,module,module_interface_area,requirement,source,status,owner,notes
+INT-001,common_interface,Mechanical Mounting,TBD,TBD,TBD,TBD,TBD
+INT-002,common_interface,Electrical Power,TBD,TBD,TBD,TBD,TBD
+INT-003,common_interface,Data Communication,TBD,TBD,TBD,TBD,TBD
+INT-004,common_interface,Safety,TBD,TBD,TBD,TBD,TBD
+INT-005,common_interface,Documentation,TBD,TBD,TBD,TBD,TBD

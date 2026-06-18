@@ -1,0 +1,6 @@
+item_id,subsystem,component_name,function,decision_type,candidate_part,supplier,quantity,unit,unit_cost,currency,status,owner,source_link,notes
+BASE-001,Chassis,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+BASE-002,Drive,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+BASE-003,Power,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+BASE-004,Compute,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+BASE-005,Safety,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD

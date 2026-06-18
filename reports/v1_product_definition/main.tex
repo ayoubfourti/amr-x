@@ -1,0 +1,57 @@
+% !TEX program = latexmk
+\documentclass[12pt,a4paper]{report}
+
+\usepackage[utf8]{inputenc}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{longtable}
+
+\geometry{margin=2.5cm}
+
+% Load project configuration generated from config/project_specs.json
+\input{tables/generated/project_specs.tex}
+
+\title{AMR-X V1 Product Definition Dossier}
+\author{AMR-X Engineering Group}
+\date{\today}
+
+\begin{document}
+
+\begin{titlepage}
+    \includegraphics[width=0.15\textwidth]{figures/CMS_Logo.png}
+
+    \vspace{3cm}
+
+    \begin{center}
+        {\Large \textbf{AMR-X V1 Product Definition Dossier}} \\
+        \vspace{1cm}
+        {\large \SpecProjectFullName} \\
+        \vspace{0.5cm}
+        {\large \SpecProjectTeam} \\
+        \vspace{0.5cm}
+        {\large \today}
+    \end{center}
+\end{titlepage}
+
+\tableofcontents
+
+\input{sections/01_project_vision}
+\input{sections/02_scope_and_versions}
+\input{sections/03_global_specifications}
+\input{sections/04_base_platform_definition}
+\input{sections/05_module_interface}
+\input{sections/06_requirements_matrix}
+\input{sections/07_component_strategy}
+\input{sections/08_base_bom}
+\input{sections/modules/09_arm_module}
+\input{sections/modules/10_shelf_access_module}
+\input{sections/modules/11_secure_compartment_module}
+\input{sections/modules/12_sensor_inspection_module}
+\input{sections/13_build_buy_modify_custom}
+\input{sections/14_verification_plan}
+\input{sections/15_open_decisions}
+
+\end{document}

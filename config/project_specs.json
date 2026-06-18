@@ -1,0 +1,45 @@
+{
+  "project": {
+    "name": "AMR-X",
+    "full_name": "Autonomous Modular Robot - Extended",
+    "version": "V1",
+    "team": "AMR-X Engineering Group"
+  },
+  "base_robot": {
+    "rated_payload_kg": 50,
+    "structural_design_margin": 1.5,
+    "max_test_load_kg": 75,
+    "max_length_mm": 800,
+    "max_width_mm": 600,
+    "max_base_height_mm": 450,
+    "min_ground_clearance_mm": 30,
+    "max_unladen_mass_kg": 80,
+    "operating_speed_min_mps": 0.5,
+    "operating_speed_max_mps": 1.5,
+    "safety_reduced_speed_mps": 0.3,
+    "endurance_hours": 3,
+    "min_aisle_width_m": 1.5,
+    "min_door_width_m": 0.9,
+    "max_ramp_deg": 5,
+    "temperature_min_c": 5,
+    "temperature_max_c": 40
+  },
+  "navigation": {
+    "route_test_distance_m": 50,
+    "waypoint_position_tolerance_mm": 100,
+    "waypoint_heading_tolerance_deg": 5
+  },
+  "safety": {
+    "estop_stop_time_s": 0.5,
+    "obstacle_test_count": 20
+  },
+  "module_interface": {
+    "mounting_pattern": "TBD",
+    "mounting_grid_spacing_mm": "TBD",
+    "max_module_mass_kg": "TBD",
+    "power_output_voltage_v": "TBD",
+    "power_output_current_a": "TBD",
+    "data_interface": "TBD",
+    "communication_protocol": "TBD"
+  }
+}

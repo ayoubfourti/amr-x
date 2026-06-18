@@ -114,6 +114,7 @@ COLCON_IGNORE
 *.fls
 *.log
 *.out
+*.run.xml
 *.synctex.gz
 *.toc
 *.lof
@@ -121,7 +122,6 @@ COLCON_IGNORE
 *.nav
 *.snm
 *.vrb
-*.pdf
 *.backup
 
 # CAD & Mechanical
@@ -168,5 +168,5 @@ cache/
 docker-compose.override.yml
 
 # Git
-.gitkeep
-
+reports/**/build/
+reports/**/*.pdf

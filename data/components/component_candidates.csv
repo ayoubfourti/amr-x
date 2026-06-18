@@ -1,0 +1,6 @@
+component_id,system,module,component_name,required_function,key_requirements,decision_type,candidate_part,supplier,source_link,status,owner,notes
+COMP-001,Base Platform,base_platform,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+COMP-002,Arm Module,arm_module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+COMP-003,Shelf Access Module,shelf_access_module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+COMP-004,Secure Compartment Module,secure_compartment_module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
+COMP-005,Sensor Inspection Module,sensor_inspection_module,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD,TBD
