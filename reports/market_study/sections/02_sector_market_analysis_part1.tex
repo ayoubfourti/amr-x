@@ -2,287 +2,142 @@
 
 \section{Executive Summary}
 
-The global AMR market is real and growing, but mid-sized rather than enormous.
-Most estimates put the 2025 global market somewhere between roughly USD
-2.3~billion and USD 4.9~billion; the range is wide because some sources count
-only the mobile bases while others include software and services, and across
-forecasts the growth rate clusters around 14--16\% per year (CAGR)
-\cite{valuates_agv_amr}. The Middle East \& Africa region is one of the
-fastest-growing markets, but it starts from a small base and is overwhelmingly
-concentrated in the GCC (the UAE and Saudi Arabia), not in North Africa
-\cite{grandview_mea}.
+The global AMR market is estimated at USD 2.3--4.9 billion (2025) growing at 14--16\% CAGR \cite{valuates_agv_amr}. The MEA region grows fastest but is concentrated in the GCC, not North Africa \cite{grandview_mea}.
 
-The single most important finding of this study is a Tunisia-specific one: the
-\textbf{ratio of robot cost to labor cost is structurally different here}. A
-skilled Tunisian worker costs far less than an equivalent worker in Germany, so
-a robot that is justified abroad purely by replacing wages has a much longer
-payback locally -- something international product sheets never mention, because
-they are written for high-labor-cost markets. The practical consequence is that
-the sectors worth pursuing first are \emph{not} the ones with the biggest global
-numbers, but the ones where the robot is measured against something other than a
-Tunisian salary: against the \textbf{cost of an avoided incident} (industrial
-inspection) or against the \textbf{cost of an imported research robot}
-(universities).
+\textbf{Critical Tunisia-specific finding}: the robot-cost-to-labor-cost ratio is fundamentally different. Tunisian wages are much lower than European ones, so wage-replacement robots have longer payback periods. International product sheets ignore this.
 
-A second finding tempers the team's original direction. The shelf-access
-retrofit module sits in the most capital-intensive and crowded corner of the
-market, contested by very well-funded specialists (Exotec, Hai Robotics,
-Brightpick, Geek+). It is the wrong wedge for a budget-constrained entrant. The
-team's defensible advantages lie elsewhere: low local manufacturing and support
-cost, proximity to the EU, French/Arabic-language service, and a modular base
-that can carry different payloads with minimal change to the customer's
-facility.
+Thus, the best initial sectors are those where the robot is compared to something other than wages: avoided incident cost (inspection) or imported research platform cost (universities).
 
-\textbf{Consolidated recommendation (developed in Chapters~9--10):} enter first
-through \emph{industrial inspection and university pilots}, the two sectors
-where the economic case works without matching an international price and where
-decision cycles are fast. Treat \emph{export-oriented manufacturing}
-(automotive-components suppliers under EU just-in-time and quality discipline)
-and \emph{3PL} as the strategic mid-term, sold on a Robots-as-a-Service basis.
-Defer the shelf-access module to a later, partner-funded phase, and treat the
-GCC as the higher-budget export market for Years~2--3.
+\textbf{Secondary finding}: the shelf-access retrofit module is in a crowded, capital-intensive segment dominated by well-funded specialists (Exotec, Hai Robotics, etc.). It is not a viable entry point.
+
+Defensible advantages lie in low-cost local manufacturing, EU proximity, French/Arabic language support, and minimal facility modifications.
+
+\textbf{Recommendation (Chapters 9--10)}: Enter via industrial inspection and university pilots. Mid-term: export-oriented manufacturing and 3PL via RaaS. Defer shelf-access. Target GCC for later export.
 
 \section{Sector Map}
 
-The table below summarises which sectors could benefit from a modular AMR, how
-mature each is internationally, and how realistic it is for a Tunisian SME in
-2026--2027. The detailed per-sector analysis follows.
-
-\begin{longtable}{>{\raggedright\arraybackslash}p{0.24\textwidth}>{\raggedright\arraybackslash}p{0.30\textwidth}>{\raggedright\arraybackslash}p{0.14\textwidth}>{\raggedright\arraybackslash}p{0.24\textwidth}}
-\toprule
-\textbf{Sector} & \textbf{Main robot use case} & \textbf{Intl. maturity} & \textbf{Realism for a Tunisian SME} \\
-\midrule
-\endhead
-Manufacturing & Parts transport, machine tending, inspection & High & Medium -- depends on factory size; strongest for export plants \\
-Warehousing / Logistics & Pallet transport, picking & High & Low--Medium -- local warehouses smaller than international ones \\
-Retail & Inventory checks, restocking & Medium & Low -- margins too thin to justify investment \\
-Healthcare / Hospitals & Medication / sample transport & Medium--High & Low (public) / Medium (private) \\
-Hospitality & Room and amenity delivery & Medium & Medium -- tourist zones and international chains only \\
-Industrial Inspection & Monitoring, sensing & Medium & High -- cost of one avoided incident justifies it \\
-Security / Patrol & Surveillance & Medium & Low -- human labor still cheaper locally \\
-Universities / Smart Campus & Internal delivery, research platform & Low--Medium & High -- research budgets and a local-support advantage \\
-\bottomrule
-\end{longtable}
+\input{tables/sector_map.tex}
 
 \section{Detailed Sector Analysis}
 
-Each sector is mapped to the platform's four modules: \textbf{(A) Arm}
-(mountable arm with swappable end-effectors), \textbf{(S) Shelf-access}
-(rail-guided vertical extension), \textbf{(C) Compartment} (lockable RFID/code
-transport box), and \textbf{(N) Sensors} (camera, LiDAR, thermal, RFID,
-barcode, environmental).
+Each sector maps to four modules: \textbf{(A) Arm}, \textbf{(S) Shelf-access}, \textbf{(C) Compartment}, \textbf{(N) Sensors}.
 
 \subsection{Manufacturing and Industrial Intralogistics}
 
-\textbf{Pain points.}
-\begin{itemize}
-    \item Line-side parts replenishment (the ``milk runs'') is still done by
-          manual tuggers, which ties up labor and creates mixed-traffic safety
-          risk.
-    \item Machine tending and kitting are repetitive, ergonomically harmful and
-          error-prone.
-    \item Just-in-time pressure from EU OEM customers penalises any delivery or
-          quality slip.
-\end{itemize}
-\textbf{Module relevance.} A is the headline fit -- arm-on-base for machine
-tending, kitting and palletising; the base for parts delivery; N for in-line
-quality inspection.\\
-\textbf{Existing solutions.} MiR (MiR250/600/1350, roughly USD 30,000--45,000)
-\cite{mir250}, Robotnik RB-KAIROS+ (a modular ROS2 base from about EUR 50,000)
-\cite{robotnik_kairos}, and ABB's Flexley Mover \cite{mordor_commercial_security}.\\
-\textbf{Market size.} Manufacturing is the second-largest AMR end-use globally.
-In Tunisia the automotive-components sector alone is worth on the order of EUR
-2.4--4~billion in exports, with about 300 firms and roughly 120,000 employees,
-ranking second in Africa after Morocco (Tunisian Automotive Association). The
-serviceable local manufacturing-automation opportunity is estimated at USD
-15--40~million over five years, plus electronics and aerospace subcontractors.\\
-\textbf{Tunisian economic reality.} A USD 30,000--50,000 transport robot has a
-much longer ROI against low local wages than against German ones, and none of
-these products is designed for the typical Tunisian industrial SME of 50--300
-employees. \emph{However}, export plants under contract with European clients
-face real pressure to modernise -- so manufacturing is a strong mid-term target
-\emph{if} offered as a cheaper single-task configuration rather than a
-full-feature AMR.\\
-\textbf{Adoption readiness.} Medium (sophisticated, EU-integrated, but
-cost-conscious). \textbf{Barriers:} capex justification, MES/line integration,
-slow procurement.
+\textbf{Pain points}: Manual milk-runs; repetitive machine tending; JIT pressure from EU.
+
+\textbf{Module relevance}: Arm (tending, kitting) + base (transport) + sensors (inspection).
+
+\textbf{Existing solutions}: MiR (USD 30--45k) \cite{mir250}; Robotnik RB-KAIROS+ (EUR 50k+) \cite{robotnik_kairos}; ABB Flexley \cite{mordor_commercial_security}.
+
+\textbf{Market size}: Tunisia automotive: ~EUR 2.4--4B exports, 300 firms, 120k employees (TAA). Local opportunity: USD 15--40M over 5 years.
+
+\textbf{Adoption readiness}: Medium. Barriers: capex, MES integration, slow procurement.
 
 \subsection{Warehousing and Fulfillment}
 
-\textbf{Pain points.}
-\begin{itemize}
-    \item Worker travel time: in goods-to-person operations, roughly 60--70\% of
-          a picker's shift is spent walking, not picking.
-    \item Pick-accuracy errors (around 1--3\%) drive costly returns, especially
-          in e-commerce.
-    \item Wasted vertical space in warehouses with 8--12~m ceilings.
-\end{itemize}
-\textbf{Module relevance.} A (item handling), C (order consolidation), N
-(barcode/RFID accuracy), and in principle S (vertical reach); the base itself
-addresses travel time.\\
-\textbf{Existing solutions.} MiR, Locus Robotics, Geek+, Hai Robotics; a
-large-scale 50--100 robot deployment runs about USD 2--4~million
-\cite{standardbots_amr,fdatabot_amr2026}.\\
-\textbf{Market size.} Warehousing is the largest AMR end-use globally (around
-one-third of revenue per industry trackers), but Tunisia-specific demand is
-currently negligible -- low single-digit millions of USD (estimated).\\
-\textbf{Tunisian economic reality.} Local warehouses are far smaller than the
-international e-commerce facilities that justify a 50-robot fleet; that model
-does not apply here. A single, well-used robot on a fixed repetitive task could
-make sense, but no competitor sells ``one simple robot'' -- they sell complex,
-expensive fleet ecosystems.\\
-\textbf{Adoption readiness.} High globally / Low in Tunisia. \textbf{Barriers:}
-high capex, WMS integration, enterprise-grade Wi-Fi, and the simple scarcity of
-large modern fulfillment centers locally.
+\textbf{Pain points}: 60--70\% walking time; 1--3\% pick errors; wasted vertical space.
+
+\textbf{Module relevance}: Arm + Compartment + Sensors + Shelf-access; base reduces travel.
+
+\textbf{Existing solutions}: MiR, Locus, Geek+, Hai. Large fleets cost USD 2--4M \cite{standardbots_amr,fdatabot_amr2026}.
+
+\textbf{Market size}: Largest AMR end-use globally; Tunisia demand negligible ($<$ USD 5M).
+
+\textbf{Adoption readiness}: High globally / Low locally. Barriers: high capex, WMS integration, Wi-Fi, few modern warehouses.
 
 \subsection{Third-Party Logistics (3PL) and Last-Mile}
 
-\textbf{Pain points.} Labor scarcity and turnover in repetitive roles
-(wages rising along GCC corridors); peak-season volume swings that fixed
-conveyors cannot flex to; cross-dock and yard movement still done by manual
-tugging.\\
-\textbf{Module relevance.} Base transport + C (secure parcel transport) + N
-(parcel scanning); arm secondary.\\
-\textbf{Market size.} GCC logistics-and-warehouse automation was projected
-around USD 1.6~billion by 2025. In Tunisia, 3PL serves chains such as Carrefour
-Tunisie and Monoprix and regional e-commerce like Jumia, but at low automation
-maturity -- early-stage demand, under USD 5~million annually (estimated).\\
-\textbf{Adoption readiness.} High in GCC / Low--Medium in Tunisia.
-\textbf{Barriers:} thin 3PL margins make capex hard, so a RaaS/leasing model is
-almost mandatory \cite{builtin_raas}.
+\textbf{Pain points}: Labor scarcity; peak swings; manual cross-dock movement.
+
+\textbf{Module relevance}: Base + Compartment (parcels) + Sensors (scanning); arm secondary.
+
+\textbf{Existing solutions}: GCC logistics automation ~USD 1.6B by 2025.
+
+\textbf{Market size}: Tunisia: Carrefour, Monoprix, Jumia -- under USD 5M/year.
+
+\textbf{Adoption readiness}: High in GCC / Low--Medium locally. Barriers: thin margins, RaaS mandatory \cite{builtin_raas}.
 
 \subsection{Industrial Inspection}
 
-\textbf{Pain points.} Long, sometimes hazardous manual inspection rounds (gas,
-heat, hard-to-reach areas); late fault detection from inconsistent schedules; no
-continuous trend record.\\
-\textbf{Module relevance.} N is the core fit (thermal, LiDAR, camera,
-environmental sensing) on the base. Crucially this requires \emph{no change} to
-the customer's racking or process -- the lowest-friction deployment of any
-sector.\\
-\textbf{Existing solutions.} Boston Dynamics Spot (USD 75,000+), Capra Hircus,
-DEEP Robotics X30 \cite{standardbots_amr,generationrobots_amr}.\\
-\textbf{Why this sector works differently.} Spot costs well above a Tunisian
-inspection salary and is unsuitable as-is. But here the robot is compared to the
-\textbf{avoided cost} of an industrial accident, downtime, or an undetected
-failure -- which can exceed the cost of a simple inspection robot even for a
-Tunisian factory. This is one of the few sectors where the economic case works
-\emph{without} matching international pricing, because the comparison is to
-avoided-incident cost, not to a wage.\\
-\textbf{Market size.} Strong global growth niche; Tunisian buyers include
-cement, phosphate/chemical (e.g.\ Groupe Chimique Tunisien), energy and
-food-processing plants. Local opportunity estimated at USD 5--15~million over
-five years, with high replicability.\\
-\textbf{Adoption readiness.} Medium--High -- the lowest integration burden is
-the key advantage. \textbf{Barriers:} convincing buyers a robot beats a cheaper
-fixed-sensor network, and ATEX/explosive-zone certification for some plants.
-\emph{One of the two best first-market candidates}, with a simplified
-camera-plus-sensor version (no arm) sold to export-oriented factories in
-Sousse, Sfax and Ben Arous.
+\textbf{Pain points}: Hazardous manual rounds; late fault detection; no continuous records.
+
+\textbf{Module relevance}: Sensors (thermal, LiDAR, camera, environmental) on base. No facility changes required.
+
+\textbf{Existing solutions}: Boston Dynamics Spot (USD 75k+); Capra; DEEP Robotics \cite{standardbots_amr,generationrobots_amr}.
+
+\textbf{Market size}: Global niche; Tunisia: USD 5--15M over 5 years.
+
+\textbf{Adoption readiness}: Medium--High. ROI vs avoided incident cost, not wages. One of two best first markets; simplified camera+sensor version (no arm) for export-oriented factories.
 
 \subsection{Universities and Smart Campus}
 
-\textbf{Pain points.} Mail and parcel delivery between buildings; a standing
-need for affordable research and teaching platforms.\\
-\textbf{Module relevance.} Base + C (internal delivery) + N (navigation,
-sensing); the platform doubles as a teaching/research robot.\\
-\textbf{Existing solutions.} Clearpath Dingo, AgileX Scout Mini, Robotnik
-RB-VOGUI and similar academic platforms \cite{generationrobots_amr,robotnik_kairos}.\\
-\textbf{Why this sector works particularly well for Tunisia.} This market does
-not require beating an international price: universities already buy relatively
-expensive imported research robots and would likely welcome a local alternative
-that is cheaper to buy and support (no import/customs friction, French/Arabic
-support, local maintenance). There is double value -- a teaching tool for
-robotics students \emph{and} an operational demonstrator that generates
-visible use cases.\\
-\textbf{Adoption readiness.} High -- faster decision cycle, fewer regulatory
-constraints, and direct access to future talent. \emph{The best first market,
-alongside industrial inspection.} Candidate anchors: engineering schools with
-active robotics/AI programs (e.g.\ ESPRIT, INSAT, Tunisia Polytechnic School).
+\textbf{Pain points}: Inter-building mail/parcel delivery; need for affordable research platforms.
+
+\textbf{Module relevance}: Base + Compartment (delivery) + Sensors (navigation). Doubles as teaching/research robot.
+
+\textbf{Existing solutions}: Clearpath Dingo; AgileX Scout; Robotnik RB-VOGUI \cite{generationrobots_amr,robotnik_kairos}.
+
+\textbf{Market size}: Institutions already buy imported research robots.
+
+\textbf{Adoption readiness}: High. Fast decisions, fewer regulations, access to talent. Best first market alongside inspection.
 
 \subsection{Healthcare and Hospitals}
 
-\textbf{Pain points.} Clinical staff spend significant time fetching supplies,
-medications and lab samples; internal logistics can absorb a large share of
-hospital operating cost; risk of contamination and medication-delivery error
-\cite{researchgate_hospital}.\\
-\textbf{Module relevance.} Base + C (lockable RFID compartment for secure
-medication/sample transport) + N (UV/environmental sensing); arm and
-shelf-access not relevant.\\
-\textbf{Existing solutions.} MiR in hospitals across Denmark, Sweden and China;
-Aethon TUG; Savioke \cite{mir_healthcare,researchgate_hospital}.\\
-\textbf{Public vs private.} Tunisian public hospitals operate under tight
-budgets and slow procurement -- unrealistic short-term. Private clinics are
-more realistic, but their internal flow volume is smaller than a large European
-hospital, reducing the measurable benefit.\\
-\textbf{Adoption readiness.} Medium globally / Low in Tunisia. A high
-image-value sector, best approached through private clinics first with a
-low-cost or free pilot; the public sector stays out of reach short-term.
+\textbf{Pain points}: Staff time fetching supplies/meds; internal logistics cost; contamination/error risk \cite{researchgate_hospital}.
+
+\textbf{Module relevance}: Base + Compartment (secure RFID) + Sensors (UV/environmental); arm not relevant.
+
+\textbf{Existing solutions}: MiR (Denmark, Sweden, China); Aethon TUG; Savioke \cite{mir_healthcare,researchgate_hospital}.
+
+\textbf{Market size}: Large global market.
+
+\textbf{Adoption readiness}: Medium globally / Low locally. Approach private clinics first with free/low-cost pilot.
 
 \subsection{Hospitality}
 
-\textbf{Pain points.} Slow in-room delivery at peak periods; seasonal staff
-shortages; secure delivery to guests without staff presence.\\
-\textbf{Module relevance.} Base + C (lockable delivery compartment) + N
-(navigation, elevator integration); the compartment is the natural fit.\\
-\textbf{Existing solutions.} Savioke and Aethon hotel-delivery robots; the niche
-is dominated by purpose-built players such as Bear Robotics and Pudu.\\
-\textbf{Tunisian economic reality.} Tunisian tourism is highly seasonal and
-cost-pressured; the independent hotels that make up most of the stock cannot
-afford a US-calibrated RaaS subscription, and elevator/door integration varies
-hotel by hotel.\\
-\textbf{Adoption readiness.} Medium in GCC / Low in Tunisia. A good
-demonstration sector, best targeted at international chains already present in
-Tunisia rather than independent hotels.
+\textbf{Pain points}: Slow peak-time delivery; seasonal staff shortages; secure guest delivery.
+
+\textbf{Module relevance}: Base + Compartment (lockable) + Sensors (navigation, elevator integration).
+
+\textbf{Existing solutions}: Savioke; Aethon; dominated by Bear Robotics, Pudu.
+
+\textbf{Market size}: Large global market.
+
+\textbf{Adoption readiness}: Medium in GCC / Low locally. Target international hotel chains already present.
 
 \subsection{Security and Surveillance}
 
-\textbf{Pain points.} 24/7 human surveillance is expensive abroad; blind spots
-in fixed-camera coverage; slow incident detection.\\
-\textbf{Module relevance.} N (thermal, camera, LiDAR, audio) on the base; other
-modules not relevant.\\
-\textbf{Existing solutions.} Knightscope, Cobalt Robotics (about USD
-3,500--6,500 per month), SMP Robotics (USD 120,000--320,000)
-\cite{mordor_security,coherent_security}.\\
-\textbf{Tunisian economic reality.} The cost of a human security guard in
-Tunisia is well below the cost of even a low-cost security robot -- the opposite
-of the US, where guard wages are high. There is, however, a proven local
-precedent: Enova Robotics (Sousse, founded 2014) built the PGuard security UGV,
-deployed by the interior ministry and exported (around 50 units to a US buyer),
-which proves local capability and buyer willingness.\\
-\textbf{Adoption readiness.} Low as a standalone product locally. Best treated
-as a possible future add-on module on a robot already deployed for another task,
-not as an entry point.
+\textbf{Pain points}: Expensive 24/7 surveillance abroad; blind spots; slow detection.
+
+\textbf{Module relevance}: Sensors (thermal, camera, LiDAR, audio) on base.
+
+\textbf{Existing solutions}: Knightscope; Cobalt (~USD 3.5--6.5k/mo); SMP (USD 120--320k) \cite{mordor_security,coherent_security}.
+
+\textbf{Market size}: Large global market.
+
+\textbf{Adoption readiness}: Low as standalone. Best as add-on to an existing base.
 
 \subsection{Retail}
 
-\textbf{Pain points.} Manual inventory management and stockouts; slow
-restocking; shelf-gap detection.\\
-\textbf{Module relevance.} N (shelf-scanning, RFID audit) and base navigation;
-shelf-access largely irrelevant in stores.\\
-\textbf{Existing solutions.} Bossa Nova (used by Walmart) and JD.com's
-in-store robots; the global retail-robotics market is large and fast-growing
-(reported around USD 20~billion in 2024, projected to roughly USD 181~billion by
-2031) \cite{gii_retail2030,nordmodules_retail,dudarenok_retail_china}.\\
-\textbf{Tunisian economic reality.} Those global figures reflect Western and
-Chinese high-volume retail margins. Tunisian retail runs on much thinner
-margins in mostly small-store formats, where a restocking robot has no obvious
-use case, and a dense human environment raises safety cost for a low-purchasing-power
-market.\\
-\textbf{Adoption readiness.} Low. Deprioritise short- and mid-term; monitor only
-if a large retail chain already established in Tunisia shows interest.
+\textbf{Pain points}: Manual inventory; stockouts; slow restocking; shelf gaps.
+
+\textbf{Module relevance}: Sensors (shelf-scanning, RFID) + base; shelf-access irrelevant.
+
+\textbf{Existing solutions}: Bossa Nova (Walmart); JD.com; global market: USD 20B (2024) $\rightarrow$ USD 181B (2031) \cite{gii_retail2030,nordmodules_retail,dudarenok_retail_china}.
+
+\textbf{Market size}: Large global market, but local negligible.
+
+\textbf{Adoption readiness}: Low. Deprioritize; monitor only if large retail chain shows interest.
 
 \subsection{Smart Buildings (Cross-Cutting)}
 
-\textbf{Pain points.} Internal mail/parcel movement across multi-floor
-campuses; facility condition monitoring (HVAC, environmental);
-access-controlled delivery between secure zones.\\
-\textbf{Module relevance.} C (secure internal delivery) + N (environmental
-monitoring) + base -- a combined ``delivery + sensing'' configuration.\\
-\textbf{Market size.} Mostly embedded inside the figures above rather than a
-standalone market; thin in Tunisia, more relevant to GCC smart-city
-mega-projects (NEOM, Masdar-type developments).\\
-\textbf{Adoption readiness.} Low in Tunisia / Medium in GCC. \textbf{Barriers:}
-long real-estate development cycles and integration with building-management
-systems. In the Tunisian context this theme is best approached through its most
-concrete instance -- the university/smart-campus case above.
+\textbf{Pain points}: Mail/parcel movement across campuses; facility monitoring (HVAC); secure delivery.
+
+\textbf{Module relevance}: Compartment + Sensors + base.
+
+\textbf{Existing solutions}: Embedded in other figures.
+
+\textbf{Market size}: Thin locally; relevant to GCC smart-city projects.
+
+\textbf{Adoption readiness}: Low in Tunisia / Medium in GCC. Approach through university/smart-campus case.

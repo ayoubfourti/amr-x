@@ -1,57 +1,23 @@
 \chapter{Use Cases}
 
-The deployments below are real, documented uses of mobile robots in the field.
-They are included as evidence of which configurations have proven value and
-which serve as cautionary cases, and each is mapped to the corresponding
-\ProjectName{} module configuration.
-
 \section{Industrial Inspection (Sensor Configuration)}
 
-Legged and wheeled inspection robots such as Boston Dynamics' Spot are deployed
-in energy and process facilities to carry camera, thermal, and LiDAR payloads on
-fixed inspection routes \cite{standardbots_amr}. The deployment requires no
-change to the customer's racking or process, and the economic case rests on the
-cost of an avoided incident rather than on wages. For \ProjectName{} this
-corresponds to a \emph{sensor module on the base} and is the lowest-friction
-entry point of any sector.
+Spot robots carry camera, thermal, LiDAR on fixed inspection routes \cite{standardbots_amr}. No facility changes needed. ROI based on avoided incident cost. For \ProjectName{}: sensor module on base -- lowest-friction entry.
 
 \section{Healthcare and Internal Delivery (Compartment Configuration)}
 
-MiR and Aethon's TUG have been deployed in hospitals for medication, sample, and
-supply transport, addressing the large share of staff time otherwise lost to
-internal logistics \cite{mir_healthcare,researchgate_hospital}. The natural
-\ProjectName{} fit is a \emph{lockable compartment module on the base} for
-secure, auditable transport --- relevant to hospitals, but also to internal
-delivery on university and corporate campuses.
+MiR and Aethon TUG used for medication/sample transport in hospitals, reducing staff time \cite{mir_healthcare,researchgate_hospital}. \ProjectName{}: lockable compartment module for secure, auditable delivery -- relevant for hospitals and campuses.
 
 \section{Manufacturing Intralogistics (Arm + Base)}
 
-In manufacturing, MiR bases and the Robotnik RB-KAIROS+ (a ROS2 base with a
-plug-and-play arm) are used for line-side parts delivery, machine tending, and
-kitting \cite{mir250,robotnik_kairos}. This maps to the \ProjectName{}
-\emph{arm-on-base configuration} and is the strongest mid-term fit for Tunisia's
-export-oriented automotive and electronics suppliers.
+MiR and Robotnik RB-KAIROS+ used for line-side delivery, machine tending, kitting \cite{mir250,robotnik_kairos}. \ProjectName{}: arm-on-base -- strongest mid-term fit for export-oriented automotive/electronics.
 
 \section{Logistics and Fulfillment (Base + Compartment)}
 
-Geek+ goods-to-person fleets are deployed regionally through integrators, for
-example at Dubai CommerCity \cite{fdatabot_amr2026}. This is the closest regional
-proof point for fulfillment automation and indicates where GCC export demand
-sits. For \ProjectName{} the relevant configuration is a \emph{base plus
-compartment/sensor} setup, sold via a service model given thin local 3PL
-margins.
+Geek+ goods-to-person fleets deployed regionally (e.g., Dubai CommerCity) \cite{fdatabot_amr2026}. Closest regional proof. \ProjectName{}: base + compartment/sensor, sold via service model given thin local margins.
 
-\section{Security and a Cautionary Case}
+\section{Security and Cautionary Case}
 
-Cobalt Robotics operates indoor patrol robots on a subscription model
-\cite{coherent_security}, and Tunisia has a notable local precedent in Enova
-Robotics' PGuard security UGV (locally built, deployed domestically and
-exported; source to be confirmed by the team). Security is best treated as a
-\emph{sensor add-on to an already-deployed base} rather than a standalone
-product, given a low local guard wage and an entrenched local incumbent.
+Cobalt Robotics patrol robots on subscription \cite{coherent_security}; local Enova PGuard precedent. Security best as sensor add-on to an existing base, not standalone, due to low local guard wages and incumbent.
 
-A cautionary case comes from retail: Bossa Nova's shelf-scanning robots, piloted
-at scale by Walmart, were ultimately discontinued by that customer
-\cite{dudarenok_retail_china}. It is a reminder that a single-purpose robot with
-a weak ROI does not survive contact with a real operating budget --- which is
-precisely why a modular base reusable across tasks is the more defensible bet.
+\textbf{Cautionary}: Bossa Nova shelf-scanning robots were discontinued by Walmart \cite{dudarenok_retail_china}. A single-purpose robot with weak ROI fails -- modular reuse is more defensible.

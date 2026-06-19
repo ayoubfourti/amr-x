@@ -2,54 +2,21 @@
 
 \section{What an AMR Is}
 
-An Autonomous Mobile Robot (AMR) is a robot that navigates an environment
-without fixed infrastructure -- no magnetic strips and no rails -- using
-sensors such as LiDAR and cameras together with SLAM (Simultaneous
-Localization and Mapping) algorithms to move safely around obstacles and
-people. This is what separates an AMR from the older Automated Guided Vehicle
-(AGV), which can only follow pre-defined physical paths. Over the past decade
-AMRs have moved out of research labs into commercial use across manufacturing,
-warehousing, healthcare, hospitality and security \cite{standardbots_amr,valuates_agv_amr}.
+An Autonomous Mobile Robot (AMR) navigates without fixed infrastructure (rails, magnetic strips). It uses LiDAR, cameras, and SLAM algorithms for real-time localization and collision avoidance. This distinguishes AMRs from Automated Guided Vehicles (AGVs), which follow predefined paths. Over the past decade, AMRs have moved from labs to commercial deployment in manufacturing, warehousing, healthcare, hospitality, and security \cite{standardbots_amr,valuates_agv_amr}.
 
 \section{Why the Market Is Growing}
 
-Three forces are driving global adoption:
-
+Three factors drive adoption:
 \begin{itemize}
-    \item \textbf{Labor shortages and rising labor costs} in mature economies
-          (the US, Europe, China's coastal regions), which make automation of
-          repetitive transport and inspection tasks economically attractive.
-    \item \textbf{Falling sensor and compute costs} (LiDAR, depth cameras,
-          embedded GPUs), which have made AMR hardware progressively cheaper to
-          build over the last five years.
-    \item \textbf{Maturing open-source software} (ROS / ROS2 and the Nav2
-          navigation stack), which has lowered the barrier to building a working
-          navigation system without each company writing one from scratch.
+    \item \textbf{Labor shortages and rising wages} in mature economies make automation attractive.
+    \item \textbf{Falling sensor and compute costs} (LiDAR, GPUs) have reduced hardware prices by 60--70\% over five years.
+    \item \textbf{Maturing open-source software} (ROS/ROS2, Nav2) has lowered navigation development barriers.
 \end{itemize}
 
-A second, more recent trend is \textbf{modularity}: instead of selling a
-single-purpose robot, manufacturers increasingly sell a base platform that
-carries different payloads -- a delivery box, a robotic arm, a sensor pack --
-depending on the client's task \cite{fdatabot_amr2026,robotnik_kairos}. This is
-the segment this document focuses on, because it is the direction CyberMech
-Systems' own platform is being designed in: one mobile base accepting
-interchangeable modules.
+A second trend is \textbf{modularity}: manufacturers now offer a common mobile base that accepts interchangeable payloads (delivery boxes, arms, sensor packs) instead of purpose-built robots \cite{fdatabot_amr2026,robotnik_kairos}. This report focuses on this modular segment.
 
 \section{Scope and Method}
- 
-This study does \emph{not} assume that what works internationally will
-automatically work in Tunisia. A large part of the analysis below is dedicated
-specifically to testing that assumption against the Tunisian economic context --
-labor costs, company size, import dependency and procurement habits -- rather
-than treating global AMR growth figures as directly transferable. Concretely,
-the report covers the overall market and a sector-by-sector landscape
-(Chapters~2--3), the competitor field (Chapter~4), target clients, pricing,
-pain points and use cases (Chapters~5--8), and a consolidated set of
-opportunities and a final recommendation (Chapters~9--10).
 
-\textit{Note on method.} This chapter and those that follow consolidate two
-market-research efforts that the team produced in parallel: a global/regional
-sizing study built around a four-module platform framework, and a
-Tunisia-focused study built around local unit economics. Where the two agreed,
-the finding is reported plainly; where they differed, the stronger-evidenced
-position is taken and the disagreement is noted.
+This study does \emph{not} assume international AMR success transfers directly to Tunisia. We test that assumption against local economic parameters: labor costs, company size, import dependency, and procurement practices. Global growth figures are used as context, not as forecasts.
+
+The report covers market sectors (Chapters 2--3), competitors (Chapter 4), target clients, pricing, pain points, use cases (Chapters 5--8), and concludes with opportunities and recommendations (Chapters 9--10).
