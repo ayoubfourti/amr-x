@@ -1,78 +1,57 @@
-\vspace*{0.3cm}
-    \begin{center}
-    \renewcommand{\arraystretch}{1.6}
-    
-    \makebox[\textwidth][c]{%
-    \begin{tabular}{|>{\centering\arraybackslash}m{2.5cm}|
-                    >{\centering\arraybackslash}m{2cm}|
-                    >{\centering\arraybackslash}m{2.5cm}|
-                    >{\centering\arraybackslash}m{3cm}|
-                    >{\centering\arraybackslash}m{1.5cm}|
-                    >{\centering\arraybackslash}m{1.5cm}|
-                    >{\centering\arraybackslash}m{2cm}|
-                    >{\centering\arraybackslash}m{0.5cm}|}
-    
-    \hline
-    \rowcolor{gray!15}
-     \textbf{Company} &\textbf{Product }&\textbf{Sector  }  & \textbf{Key features} & \textbf{Pricing } & \textbf{Strengths } & \textbf{Weaknesses}& \textbf{Source} \\
-    \hline
-    
-    \textbf{(Teradyne)}& MiR250 / 600 / 1350&  Warehousing, Mfg.&Interchangeable top modules; arm option (MC600)  & USD 30--45k& Mature, large install base &Proprietary software lock-in & \cite{mir250} \\
-    \hline
-    \textbf{Robotnik}& RB-KAIROS+& Mfg., R\&D& ROS2 base, plug-and-play arm &From EUR 50k &Open, modular & High entry price  & \cite{robotnik_kairos}\\
-    \hline
-    \textbf{Geek+}& P-series, RoboShuttle&Warehousing&Goods-to-person, sortation, shuttle &  Project-based  & Huge fleet scale & System-level, not one robot & \cite{fdatabot_amr2026}\\
-    \hline
-    \textbf{Locus Robotics}& LocusBots & Warehousing, 3PL & Collaborative picking, RaaS & RaaS subscription & Capex-light model & Single workflow; financial stress & \cite{standardbots_amr,builtin_raas} \\
-    \hline
-    \textbf{Hai Robotics}& HaiPick / Climb & Warehousing (totes) & Tote/case ACR, vertical reach & Project-based & Vertical density & Needs engineered racking & \cite{standardbots_amr} \\
-    \hline
-       \textbf{Exotec}&Skypod & Warehousing (high-density) & Shelf-climbing goods-to-person & Project, multi-million & High throughput & System-level only, costly & \cite{fdatabot_amr2026} \\
-    \hline       \textbf{Boston Dynamics}&Spot & Inspection & Legged; camera/sensor mounts & USD 75k+ & Best-in-class mobility & Very high cost and training & \cite{standardbots_amr} \\
-    \hline       \textbf{Capra Robotics}&Capra Hircus & Outdoor inspection/patrol & Fully modular, rugged & Quote-based & Outdoor-rugged & Narrow niche & \cite{generationrobots_amr} \\
-    \hline
-
-      \textbf{Fetch / Zebra}& Freight AMRs & Warehouse transport & Transport + data & Project / fleet & Zebra channel reach & Transport-focused only & \cite{standardbots_amr} \\
-    \hline
-      \textbf{Aethon}& TUG & Healthcare, hospitality & Secure cart delivery & Quote-based subscription & Proven in hospitals & Single-purpose, not reconfigurable & \cite{researchgate_hospital} \\
-    \hline
-      \textbf{Cobalt Robotics}&Indoor patrol & Security & Patrol + teleoperation & USD 3.5--6.5k/mo & Indoor security & Security-only & \cite{coherent_security} \\
-    \hline
-   
-  \end{tabular}%
-    }
-    \end{center}
-       \begin{center}
-    \renewcommand{\arraystretch}{1.6}
-    
-    \makebox[\textwidth][c]{%
-    \begin{tabular}{|>{\centering\arraybackslash}m{2.5cm}|
-                    >{\centering\arraybackslash}m{2cm}|
-                    >{\centering\arraybackslash}m{2cm}|
-                    >{\centering\arraybackslash}m{3cm}|
-                    >{\centering\arraybackslash}m{1.5cm}|
-                    >{\centering\arraybackslash}m{1.5cm}|
-                    >{\centering\arraybackslash}m{2cm}|
-                    >{\centering\arraybackslash}m{0.5cm}|}
-    
-    \hline
-   \textbf{SMP Robotics}& Outdoor patrol & Security & Additional sensors & USD 120--320k & Large-area patrol & Extremely high cost & \cite{mordor_security} \\
-    \hline
-
-      \textbf{Bossa Nova}& Shelf scanner & Retail & Scanner only & Undisclosed & Shelf analytics & Scanning only; Walmart ended use & \cite{nordmodules_retail,dudarenok_retail_china} \\
-    \hline
-     \textbf{Enova Robotics (TN)}&PGuard & Security, inspection & Custom design + AI; locally built & Undisclosed & Local capability; exported & UGV/security-focused & TBD (local) \\
-    \hline
-
-
-
-    
-    \end{tabular}%
-    }
-    \end{center}
-
-
-
-
-
-
+% Competitor comparison table (referenced as \ref{tab:competitors}).
+% Fitted to text width: footnotesize, ragged columns so long words wrap
+% instead of crossing the cell border. Content unchanged.
+{\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|>{\raggedright\arraybackslash}m{1.7cm}|
+                  >{\raggedright\arraybackslash}m{1.6cm}|
+                  >{\raggedright\arraybackslash}m{2.0cm}|
+                  >{\raggedright\arraybackslash}m{2.5cm}|
+                  >{\raggedright\arraybackslash}m{1.7cm}|
+                  >{\raggedright\arraybackslash}m{1.8cm}|
+                  >{\raggedright\arraybackslash}m{2.2cm}|
+                  >{\centering\arraybackslash}m{1.4cm}|}
+\caption{Competitor comparison -- global and regional AMR platforms.}\label{tab:competitors}\\
+\hline
+\rowcolor{gray!15}
+\textbf{Company} & \textbf{Product} & \textbf{Sector} & \textbf{Key features} & \textbf{Pricing} & \textbf{Strengths} & \textbf{Weaknesses} & \textbf{Source} \\
+\hline
+\endfirsthead
+\hline
+\rowcolor{gray!15}
+\textbf{Company} & \textbf{Product} & \textbf{Sector} & \textbf{Key features} & \textbf{Pricing} & \textbf{Strengths} & \textbf{Weaknesses} & \textbf{Source} \\
+\hline
+\endhead
+\hline
+\endfoot
+MiR (Teradyne) & MiR250 / 600 / 1350 & Warehousing, Mfg. & Interchangeable top modules; arm option (MC600) & USD 30--45k & Mature, large install base & Proprietary software lock-in & \cite{mir250} \\
+\hline
+Robotnik & RB-KAIROS+ & Mfg., R\&D & ROS2 base, plug-and-play arm & From EUR 50k & Open, modular & High entry price & \cite{robotnik_kairos} \\
+\hline
+Geek+ & P-series, RoboShuttle & Warehousing & Goods-to-person, sortation, shuttle & Project-based & Huge fleet scale & System-level, not one robot & \cite{fdatabot_amr2026} \\
+\hline
+Locus Robotics & LocusBots & Warehousing, 3PL & Collaborative picking, RaaS & RaaS subscription & Capex-light model & Single workflow; financial stress & \cite{standardbots_amr,builtin_raas} \\
+\hline
+Hai Robotics & HaiPick / Climb & Warehousing (totes) & Tote/case ACR, vertical reach & Project-based & Vertical density & Needs engineered racking & \cite{standardbots_amr} \\
+\hline
+Exotec & Skypod & Warehousing (high-density) & Shelf-climbing goods-to-person & Project, multi-million & High throughput & System-level only, costly & \cite{fdatabot_amr2026} \\
+\hline
+Boston Dynamics & Spot & Inspection & Legged; camera/sensor mounts & USD 75k+ & Best-in-class mobility & Very high cost and training & \cite{standardbots_amr} \\
+\hline
+Capra Robotics & Capra Hircus & Outdoor inspection/patrol & Fully modular, rugged & Quote-based & Outdoor-rugged & Narrow niche & \cite{generationrobots_amr} \\
+\hline
+Fetch / Zebra & Freight AMRs & Warehouse transport & Transport + data & Project / fleet & Zebra channel reach & Transport-focused only & \cite{standardbots_amr} \\
+\hline
+Aethon & TUG & Healthcare, hospitality & Secure cart delivery & Quote-based subscription & Proven in hospitals & Single-purpose, not reconfigurable & \cite{researchgate_hospital} \\
+\hline
+Cobalt Robotics & Indoor patrol & Security & Patrol + teleoperation & USD 3.5--6.5k/mo & Indoor security & Security-only & \cite{coherent_security} \\
+\hline
+SMP Robotics & Outdoor patrol & Security & Additional sensors & USD 120--320k & Large-area patrol & Extremely high cost & \cite{mordor_security} \\
+\hline
+Bossa Nova & Shelf scanner & Retail & Scanner only & Undisclosed & Shelf analytics & Scanning only; Walmart ended use & \cite{nordmodules_retail,dudarenok_retail_china} \\
+\hline
+Enova Robotics (TN) & PGuard & Security, inspection & Custom design + AI; locally built & Undisclosed & Local capability; exported & UGV/security-focused & TBD (local) \\
+\hline
+\end{longtable}
+}

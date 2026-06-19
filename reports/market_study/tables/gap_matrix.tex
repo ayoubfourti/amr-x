@@ -1,31 +1,42 @@
-\begingroup
-\small
+{\small
 \setlength{\tabcolsep}{4pt}
-\begin{longtable}{>{\raggedright}p{3.5cm} >{\raggedright\arraybackslash}p{5.8cm} >{\raggedright\arraybackslash}p{2.5cm} >{\raggedright\arraybackslash}p{2.2cm}}
+\renewcommand{\arraystretch}{1.3}
+\begin{longtable}{|>{\raggedright\arraybackslash}m{3.3cm}|
+                  >{\raggedright\arraybackslash}m{6cm}|
+                  >{\raggedright\arraybackslash}m{2.4cm}|
+                  >{\raggedright\arraybackslash}m{2.4cm}|}
 \caption{Gap and opportunity matrix by sector.}\label{tab:gap}\\
-\toprule
+\hline
+\rowcolor{gray!15}
 \textbf{Sector} & \textbf{Gap in current solutions} & \textbf{Best-fit module} & \textbf{Opportunity level} \\
-\midrule
+\hline
 \endfirsthead
-\multicolumn{4}{c}{{\tablename\ \thetable{} -- continued}} \\
-\toprule
+\hline
+\rowcolor{gray!15}
 \textbf{Sector} & \textbf{Gap in current solutions} & \textbf{Best-fit module} & \textbf{Opportunity level} \\
-\midrule
+\hline
 \endhead
-\bottomrule
-\multicolumn{4}{r}{{Continued on next page}} \\
+\hline
 \endfoot
-\bottomrule
-\endlastfoot
 Manufacturing intralogistics & Global AMRs priced for large EU/US/GCC plants; no low-cost, locally supported option for Tunisian SME exporters & Arm + base & \textbf{High} \\
+\hline
 Inspection (industrial/facility) & Buyers want continuous data without changing racking or process; few low-friction local offerings & Sensors & \textbf{High} \\
+\hline
 3PL / e-commerce fulfillment & Thin-margin 3PLs cannot afford capex; RaaS options scarce locally & Base + compartment + sensors & Medium--High \\
+\hline
 Universities / Smart Campus & Institutions buy costly imported research robots; no cheaper locally supported alternative & Base (+ sensors) & \textbf{High} \\
+\hline
 Security / surveillance & Strong local incumbent (Enova) already serves this; hard to displace & Sensors & Medium \\
+\hline
 Healthcare & Secure medication/sample transport underserved; public-hospital budgets tight & Compartment + base & Medium \\
+\hline
 Warehousing (high-bay/vertical) & Retrofit-on-existing-shelves is unserved, but technically risky and capital-heavy & Shelf-access & Low now / High later (defer) \\
+\hline
 Hospitality & Cheaper single-purpose delivery robots already win this task & Compartment & Low \\
+\hline
 Retail in-store & Weak ROI; safety/liability in customer-facing space & Sensors & Low \\
+\hline
 Smart buildings & Long development cycles; better fit for GCC mega-projects & Compartment + sensors & Low (TN) / Medium (GCC) \\
+\hline
 \end{longtable}
-\endgroup
+}
