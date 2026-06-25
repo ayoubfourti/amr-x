@@ -1,27 +1,22 @@
-# Simulation
+# simulation
 
-Gazebo simulation environment for robot development and testing.
+Gazebo Fortress (Ignition Gazebo 6) simulation assets for AMR-X.
 
-## Purpose
+## Contents
 
-Create and maintain simulation environments for algorithm validation, navigation testing, and behavior verification before real-world deployment.
+- `worlds/warehouse.sdf` - the indoor warehouse (walls, racks, aisles,
+  obstacles, loading/delivery/docking zones). Auto-generated.
+- `scripts/generate_warehouse.py` - parametric world generator
+  (e.g. `python3 generate_warehouse.py --aisle 1.8`).
+- `config/bridge.yaml` - ROS <-> Gazebo topic bridge configuration.
+- `launch/warehouse.launch.py` - start Gazebo with the warehouse (no robot).
+- `models/` - optional reusable SDF models.
 
-## Selected Stack
+## Run
 
-- Gazebo Harmonic
-- URDF / SDF for robot models
-- Nav2 for autonomous navigation testing
+```bash
+ros2 launch simulation warehouse.launch.py
+```
 
-## Future Content
-
-- Gazebo world files
-- Robot simulation models
-- Sensor simulation setup
-- Scenario and test environments
-
-## Open Questions
-
-- Simulation fidelity requirements
-- Physics parameter tuning
-- Sensor noise models
-- Performance optimization
+The full robot-in-world launch lives in the `bringup` package.
+Implements the original `simulation/` planning notes as working code.

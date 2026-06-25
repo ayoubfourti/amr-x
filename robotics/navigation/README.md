@@ -1,29 +1,28 @@
-# Navigation
+# navigation
 
-Robot autonomous navigation and path planning.
+Nav2 configuration for AMR-X autonomous navigation.
 
-## Purpose
+## Contents
 
-Implement and configure autonomous navigation using Nav2 and SLAM Toolbox for indoor environments.
+- `config/nav2_params.yaml` - tuned Nav2 parameter set (planner, controller,
+  costmaps, AMCL, behavior tree). Carried forward from the original planning
+  structure; this is real, usable configuration.
 
-## Selected Stack
+## Status
 
-- Nav2 navigation stack
-- SLAM Toolbox for mapping
-- ROS 2 Jazzy
-- Ubuntu 24.04
+Configuration is ready. Launch files (SLAM mapping + Nav2 bringup) will be added
+here once the simulation is validated and a map of the warehouse is produced.
 
-## Future Content
+## Planned usage
 
-- Nav2 configuration files
-- Path planning algorithms
-- Costmap configuration
-- Behavior tree definitions
-- Navigation testing scenarios
+```bash
+# 1. Build a map of the warehouse (after launching the simulation)
+ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
 
-## Open Questions
+# 2. (future) Bring up Nav2 with this config
+ros2 launch navigation nav2.launch.py use_sim_time:=true \
+     params_file:=$(ros2 pkg prefix navigation)/share/navigation/config/nav2_params.yaml
+```
 
-- Navigation accuracy requirements
-- Planning algorithm selection
-- Obstacle detection sensitivity
-- Multi-floor navigation support
+The robot publishes `/scan`, `/odom`, and the `odom -> base_footprint` TF from the
+simulation, which is exactly what SLAM Toolbox and Nav2 consume.

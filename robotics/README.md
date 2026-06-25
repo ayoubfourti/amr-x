@@ -1,40 +1,63 @@
 # Robotics
 
-Robot software, navigation, and simulation for AMR-X.
+Robot software, simulation, and navigation for AMR-X. Built simulation-first on
+ROS 2 so behaviour is validated before deploying to real hardware.
 
-## Purpose
+## Stack (as installed on the team machine)
 
-Develop autonomous robot software using ROS 2 with simulation-first approach.
+| Component | Version |
+|---|---|
+| OS | Ubuntu 22.04 |
+| ROS 2 | Humble |
+| Simulator | Gazebo Fortress (Ignition Gazebo 6), via ros_gz |
+| Control | ros2_control + diff_drive_controller (DiffDrive plugin for sim) |
+| Navigation | Nav2 + SLAM Toolbox |
+| Teleop | teleop_twist_keyboard / teleop_twist_joy / joy |
 
-## Selected Stack
+> An earlier draft of this file listed ROS 2 Jazzy + Gazebo Harmonic. The code
+> targets the installed Humble + Fortress stack. The only Fortress-specific bits
+> live in `robot_description/urdf/amr_gazebo.xacro` and
+> `simulation/config/bridge.yaml`.
 
-- **OS** - Ubuntu 24.04
-- **Middleware** - ROS 2 Jazzy
-- **Navigation** - Nav2
-- **Simulation** - Gazebo Harmonic
-- **Mapping** - SLAM Toolbox
-- **Robot Model** - URDF / SDF
-- **Language** - Python, C++ only when needed
+## This folder is the colcon workspace
 
-## Simulation-First Approach
+The five packages live directly here (original folder names kept):
 
-Validate algorithms and behaviors in simulation before real robot deployment. Use Gazebo for physics and sensor simulation.
+| Package | Role |
+|---|---|
+| `robot_description/` | Configurable URDF/Xacro robot model. |
+| `simulation/` | Gazebo Fortress warehouse world + ROS-Gazebo bridge. |
+| `control/` | ros2_control / diff_drive_controller config. |
+| `navigation/` | Nav2 config (integration point for SLAM + Nav2). |
+| `bringup/` | Top-level launch files. **Start here.** |
 
-## Future Areas
+## Build
 
-- Simulation environments and scenarios
-- Navigation stack configuration and tuning
-- Robot description (URDF/SDF models)
-- Control systems and motor drivers
-- Custom ROS 2 packages (TBD)
+```bash
+cd robotics
+rosdep install --from-paths . --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+```
 
-## Current Status
+## Run
 
-Documentation only. No ROS 2 packages created yet.
+```bash
+# Full simulation: robot + warehouse + sensors + RViz
+ros2 launch bringup simulation.launch.py
 
-## Subfolders
+# Drive it (second terminal, after sourcing install/setup.bash)
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 
-- `simulation/` - Gazebo environments and scenarios
-- `navigation/` - Nav2 configuration and algorithms
-- `robot_description/` - Robot models and URDF files
-- `control/` - Motor and actuator control systems
+# Model only, in RViz
+ros2 launch robot_description display.launch.py
+
+# Environment only
+ros2 launch simulation warehouse.launch.py
+```
+
+## Topics
+
+`/cmd_vel` (in), `/odom`, `/scan`, `/imu`, `/joint_states`, `/tf`, `/clock`.
+
+See each package's README for details, and `COLCON_WORKSPACE.md` for build notes.
