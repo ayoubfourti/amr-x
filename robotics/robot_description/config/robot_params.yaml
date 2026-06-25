@@ -1,0 +1,120 @@
+# =============================================================================
+# AMR-X  -  Configurable robot parameters
+# =============================================================================
+# This is the SINGLE SOURCE OF TRUTH for the digital twin geometry.
+# All values are consumed by amr.urdf.xacro via xacro arguments / properties.
+#
+# Values are aligned with the global project specification:
+#   config/project_specs.json -> base_robot
+#
+# Envelope constraints (hard limits from the mechanical study):
+#   max_length_mm        : 800
+#   max_width_mm         : 600
+#   max_base_height_mm   : 450
+#   min_ground_clearance : 30
+#   max_unladen_mass_kg  : 80
+#
+# The interior design values below stay INSIDE that envelope so the twin can
+# never accidentally exceed the approved mechanical limits. When the mechanical
+# team approves new dimensions, update ONLY this file (see README "Updating the
+# digital robot whenever approved mechanical dimensions change").
+#
+# Units: metres, kilograms, radians, seconds.  (project_specs.json uses mm.)
+# =============================================================================
+
+amr_x:
+  # ---------------------------------------------------------------------------
+  # Chassis (the main body box). Inside the 0.800 x 0.600 x 0.450 envelope.
+  # ---------------------------------------------------------------------------
+  chassis:
+    length: 0.700          # X  (<= 0.800 max_length)
+    width: 0.480           # Y  (<= 0.600 max_width)
+    height: 0.220          # Z  (body box height, top plate adds clearance to 0.45 limit)
+    mass: 45.0             # kg, unladen body (total stays <= 80 kg max_unladen_mass)
+    z_offset_from_axle: 0.06   # how far chassis bottom sits above the wheel axle line
+
+  # ---------------------------------------------------------------------------
+  # Drive wheels (differential drive: 2 powered wheels + 2 caster supports)
+  # ---------------------------------------------------------------------------
+  wheel:
+    radius: 0.0825         # m  -> wheel diameter 165 mm
+    width: 0.040           # m  -> tyre width 40 mm
+    mass: 1.2              # kg per wheel
+    separation: 0.420      # m  -> distance between the two drive wheel contact points
+    x_offset: 0.0          # wheels centred on the chassis X (mid-mounted differential)
+    # ground_clearance is derived = wheel.radius - (caster drop). Kept >= 0.030 m.
+
+  # ---------------------------------------------------------------------------
+  # Caster wheels (passive spherical supports front + rear)
+  # ---------------------------------------------------------------------------
+  caster:
+    radius: 0.0525         # m, sized so the chassis sits level with the drive wheels
+    mass: 0.3              # kg
+    x_offset: 0.270        # m, distance forward/back from centre to each caster
+
+  # ---------------------------------------------------------------------------
+  # Differential drive limits (from project_specs.json operating speeds)
+  # ---------------------------------------------------------------------------
+  drive:
+    max_linear_velocity: 1.5      # m/s  (operating_speed_max_mps)
+    min_linear_velocity: 0.5      # m/s  (operating_speed_min_mps, informational)
+    safety_reduced_speed: 0.3     # m/s  (safety_reduced_speed_mps)
+    max_angular_velocity: 1.5     # rad/s
+    max_linear_accel: 1.0         # m/s^2
+    max_angular_accel: 2.0        # rad/s^2
+    wheel_torque: 20.0            # N.m max per wheel (study assumption)
+
+  # ---------------------------------------------------------------------------
+  # LiDAR  (2D safety/navigation scanner, top-front mounted)
+  # ---------------------------------------------------------------------------
+  lidar:
+    enabled: true
+    x: 0.300               # forward of centre
+    y: 0.0
+    z: 0.250               # on top plate
+    radius: 0.038
+    height: 0.040
+    mass: 0.20
+    samples: 720           # 0.5 deg resolution
+    min_angle: -3.141592   # -180 deg
+    max_angle: 3.141592    # +180 deg
+    min_range: 0.10
+    max_range: 12.0
+    update_rate: 15.0
+    noise_stddev: 0.01
+
+  # ---------------------------------------------------------------------------
+  # IMU  (mounted near the centre of mass)
+  # ---------------------------------------------------------------------------
+  imu:
+    enabled: true
+    x: 0.0
+    y: 0.0
+    z: 0.120
+    size: 0.030
+    mass: 0.05
+    update_rate: 100.0
+    # noise model (typical MEMS IMU)
+    gyro_noise_stddev: 0.0002
+    gyro_bias_stddev: 0.0000075
+    accel_noise_stddev: 0.017
+    accel_bias_stddev: 0.001
+
+  # ---------------------------------------------------------------------------
+  # Wheel encoders are simulated via the diff-drive plugin odometry output.
+  # These parameters describe their published characteristics.
+  # ---------------------------------------------------------------------------
+  encoders:
+    enabled: true
+    publish_rate: 50.0     # Hz, joint_states / odom rate
+    ticks_per_rev: 4096    # informational (quadrature encoder resolution)
+
+  # ---------------------------------------------------------------------------
+  # Frame / topic naming
+  # ---------------------------------------------------------------------------
+  frames:
+    base_footprint: base_footprint
+    base_link: base_link
+    odom: odom
+    lidar_link: lidar_link
+    imu_link: imu_link

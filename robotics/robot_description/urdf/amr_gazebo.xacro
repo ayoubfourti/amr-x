@@ -1,0 +1,153 @@
+<?xml version="1.0"?>
+<!-- =========================================================================
+     AMR-X  =  Gazebo (Ignition Gazebo 6 / FORTRESS) integration
+     Target stack: ROS 2 Humble + Gazebo Fortress + ros_gz.
+
+     = DiffDrive system  : differential drive + wheel-encoder odometry
+     = JointStatePublisher system : publishes joint states
+     = Sensors system    : runs the LiDAR + IMU sensors
+     = Per-link <sensor> tags for the 2D LiDAR and the IMU
+
+     NOTE: Fortress uses the "ignition-gazebo" plugin filenames and the
+     "ignition::gazebo::systems" namespace. (Harmonic would use gz-sim /
+     gz::sim instead.) If you ever migrate to Harmonic, swap those prefixes
+     and change <ignition_frame_id> to <gz_frame_id>.
+     ========================================================================= -->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ====================================================================
+       Differential drive controller + odometry (simulated wheel encoders)
+       Publishes odom on /odom and the odom=>base_footprint TF on /tf.
+       Subscribes to /cmd_vel for teleop / Nav2.
+       ==================================================================== -->
+  <gazebo>
+    <plugin filename="libignition-gazebo-diff-drive-system.so"
+            name="ignition::gazebo::systems::DiffDrive">
+      <!-- joints -->
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+
+      <!-- kinematics (from robot_params.yaml) -->
+      <wheel_separation>${wheel_separation}</wheel_separation>
+      <wheel_radius>${wheel_radius}</wheel_radius>
+
+      <!-- limits -->
+      <max_linear_velocity>${drive_max_linear_velocity}</max_linear_velocity>
+      <min_linear_velocity>${-drive_max_linear_velocity}</min_linear_velocity>
+      <max_angular_velocity>${drive_max_angular_velocity}</max_angular_velocity>
+      <min_angular_velocity>${-drive_max_angular_velocity}</min_angular_velocity>
+      <max_linear_acceleration>${drive_max_linear_accel}</max_linear_acceleration>
+      <min_linear_acceleration>${-drive_max_linear_accel}</min_linear_acceleration>
+      <max_angular_acceleration>${drive_max_angular_accel}</max_angular_acceleration>
+      <min_angular_acceleration>${-drive_max_angular_accel}</min_angular_acceleration>
+
+      <!-- topics & frames -->
+      <topic>cmd_vel</topic>
+      <odom_topic>odom</odom_topic>
+      <tf_topic>tf</tf_topic>
+      <frame_id>odom</frame_id>
+      <child_frame_id>base_footprint</child_frame_id>
+      <odom_publish_frequency>${encoders_publish_rate}</odom_publish_frequency>
+    </plugin>
+
+    <!-- Publishes joint states for every joint (drives robot_state_publisher TF) -->
+    <plugin filename="libignition-gazebo-joint-state-publisher-system.so"
+            name="ignition::gazebo::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+    </plugin>
+
+    <!-- Sensors system: required for LiDAR / IMU to produce data. -->
+    <plugin filename="libignition-gazebo-sensors-system.so"
+            name="ignition::gazebo::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+  </gazebo>
+
+  <!-- ====================================================================
+       LiDAR sensor (gpu_lidar) attached to lidar_link
+       ==================================================================== -->
+  <xacro:if value="${lidar_enabled}">
+    <gazebo reference="lidar_link">
+      <sensor name="lidar" type="gpu_lidar">
+        <topic>scan</topic>
+        <ignition_frame_id>lidar_link</ignition_frame_id>
+        <update_rate>${lidar_update_rate}</update_rate>
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>${lidar_samples}</samples>
+              <resolution>1</resolution>
+              <min_angle>${lidar_min_angle}</min_angle>
+              <max_angle>${lidar_max_angle}</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <resolution>1</resolution>
+              <min_angle>0</min_angle>
+              <max_angle>0</max_angle>
+            </vertical>
+          </scan>
+          <range>
+            <min>${lidar_min_range}</min>
+            <max>${lidar_max_range}</max>
+            <resolution>0.01</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>${lidar_noise_stddev}</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+    </gazebo>
+  </xacro:if>
+
+  <!-- ====================================================================
+       IMU sensor attached to imu_link
+       ==================================================================== -->
+  <xacro:if value="${imu_enabled}">
+    <gazebo reference="imu_link">
+      <sensor name="imu" type="imu">
+        <topic>imu</topic>
+        <ignition_frame_id>imu_link</ignition_frame_id>
+        <update_rate>${imu_update_rate}</update_rate>
+        <always_on>true</always_on>
+        <imu>
+          <angular_velocity>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>${imu_gyro_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_gyro_bias_stddev}</bias_stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>${imu_gyro_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_gyro_bias_stddev}</bias_stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>${imu_gyro_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_gyro_bias_stddev}</bias_stddev></noise></z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x><noise type="gaussian"><mean>0.0</mean><stddev>${imu_accel_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_accel_bias_stddev}</bias_stddev></noise></x>
+            <y><noise type="gaussian"><mean>0.0</mean><stddev>${imu_accel_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_accel_bias_stddev}</bias_stddev></noise></y>
+            <z><noise type="gaussian"><mean>0.0</mean><stddev>${imu_accel_noise_stddev}</stddev>
+              <bias_mean>0.0</bias_mean><bias_stddev>${imu_accel_bias_stddev}</bias_stddev></noise></z>
+          </linear_acceleration>
+        </imu>
+      </sensor>
+    </gazebo>
+  </xacro:if>
+
+  <!-- ====================================================================
+       Visual material hints + caster friction for Gazebo
+       ==================================================================== -->
+  <gazebo reference="base_link">
+    <material>
+      <ambient>0.10 0.35 0.65 1.0</ambient>
+      <diffuse>0.10 0.35 0.65 1.0</diffuse>
+    </material>
+  </gazebo>
+  <gazebo reference="left_wheel_link"><material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></gazebo>
+  <gazebo reference="right_wheel_link"><material><ambient>0.05 0.05 0.05 1</ambient><diffuse>0.05 0.05 0.05 1</diffuse></material></gazebo>
+  <gazebo reference="front_caster_link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
+  <gazebo reference="rear_caster_link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
+
+</robot>

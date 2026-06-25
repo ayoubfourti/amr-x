@@ -1,0 +1,28 @@
+# =============================================================================
+# AMR-X  -  Joystick teleop parameters (teleop_twist_joy)
+# =============================================================================
+# Defaults assume an Xbox-style gamepad. Hold the "enable" button (deadman)
+# while moving the left stick to drive; hold "enable_turbo" for full speed.
+# Speeds are clamped to the project operating limits (see project_specs.json).
+# =============================================================================
+teleop_twist_joy_node:
+  ros__parameters:
+    # Left stick: axis 1 = forward/back, axis 0 = (used for strafing; n/a here)
+    axis_linear:
+      x: 1
+    scale_linear:
+      x: 0.5          # normal speed m/s (operating_speed_min)
+    scale_linear_turbo:
+      x: 1.5          # turbo = operating_speed_max
+
+    # Right stick horizontal for yaw
+    axis_angular:
+      yaw: 3
+    scale_angular:
+      yaw: 1.0
+    scale_angular_turbo:
+      yaw: 1.5
+
+    enable_button: 4          # LB : deadman / enable
+    enable_turbo_button: 5    # RB : turbo
+    require_enable_button: true
