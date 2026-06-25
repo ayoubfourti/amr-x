@@ -1,0 +1,1691 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{booktabs}
+\usepackage{titlesec}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+\geometry{margin=2.5cm}
+
+\title{
+\textbf{Component Selection Report}\\
+Modular Warehouse AMR Prototype V1}
+
+
+
+\begin{document}
+
+\maketitle
+
+\section{Design Requirements Summary}
+
+\begin{itemize}
+\item Base dimensions: $800 \times 600 \times 420$ mm 
+\item Ground clearance: 40 mm 
+\item Drive architecture: differential drive 
+\item Drive wheels: 2 centrally positioned wheels 
+\item Initial wheel diameter: 180 mm 
+\item Passive support: 2 caster wheels 
+\item Initial caster diameter: 100 mm 
+\item Initial module interface area: $500 \times 400$ mm 
+\item Module interface position: centred on the upper platform 
+\item Electrical baseline: 24 V 
+\item Normal speed: 0.8 to 1.2 m/s 
+\item Maximum design speed: 1.5 m/s
+\end{itemize}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Computing unit}
+\subsection{ Main Computer}
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+NVIDIA Jetson Orin Nano Developer Kit \\
+\hline
+
+Function &
+Provides the onboard computing platform responsible for autonomous navigation, sensor fusion, SLAM, obstacle detection, teleoperation, and future AI applications. \\
+\hline
+
+Alternative Options &
+Raspberry Pi 5 (8 GB)
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item CPU: 6-core Arm Cortex-A78AE
+\item GPU: 1024-core NVIDIA Ampere
+\item AI Performance: Up to 40 TOPS
+\item RAM: 8 GB LPDDR5
+\item Storage: microSD / NVMe SSD
+\item Ethernet: Gigabit
+\item USB 3.2 Ports: 4
+\item Power Consumption: 7--15 W
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 1500--2000 TND. \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item 2B TRADING
+\item DigiKey
+\item NVIDIA Authorized Resellers
+\end{itemize}
+\\
+\hline
+
+Availability &
+Imported; moderate delivery time. \\
+\hline
+
+Delivery Difficulty &
+Medium \\
+\hline
+
+Compatibility &
+Fully compatible with Ubuntu 22.04, ROS2 Humble, Nav2, SLAM Toolbox, Intel RealSense cameras, and RPLIDAR sensors. \\
+\hline
+
+Software Support &
+Official NVIDIA JetPack SDK, CUDA, TensorRT, ROS2 packages. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Higher cost than Raspberry Pi.
+\item Requires active cooling.
+\item Availability may fluctuate.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it provides enough computational power for navigation, perception, and future AI modules while remaining compact and energy efficient. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Microcontroller}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+STM32 Nucleo-F446RE Development Board \\
+\hline
+
+Function &
+Handles low-level control tasks such as motor control, encoder acquisition, sensor interfacing, and communication with the onboard computer. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item ESP32 DevKit
+\item Arduino Mega 2560
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item CPU: ARM Cortex-M4
+\item Clock Frequency: 180 MHz
+\item Flash Memory: 512 KB
+\item SRAM: 128 KB
+\item Interfaces: UART, SPI, I2C, CAN, USB
+\item Operating Voltage: 3.3 V
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 90--130 TND. \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item RS Components 
+\item Soulilah Electronics
+\item 2B TRADING
+\end{itemize}
+\\
+\hline
+
+Availability &
+Widely available internationally. \\
+\hline
+
+Delivery Difficulty &
+Low \\
+\hline
+
+Compatibility &
+Fully compatible with ROS2 through micro-ROS and serial communication interfaces. \\
+\hline
+
+Software Support &
+STM32CubeIDE, FreeRTOS, micro-ROS. \\
+\hline
+
+Risks &
+Requires proper firmware design. \\
+\hline
+
+Final Recommendation &
+Recommended because it provides industrial reliability, real-time capabilities, and excellent peripheral support. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sensors}
+\subsection{LiDAR}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+RPLIDAR A2M12 Laser Scanner \\
+\hline
+
+Function &
+Provides environmental mapping, localization, and obstacle detection. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item RPLIDAR A3
+\item Hokuyo UST-10LX
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Range: Up to 12 m
+\item Scan Frequency: 5--15 Hz
+\item Angular Resolution: $0.225°$ to $0.45°$
+\item Interface: USB
+\item Power Consumption: Under 3 W
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 1200--1600 TND. \\
+\hline
+
+Supplier &
+2B TRADING, Didactico. \\
+\hline
+
+Availability &
+Generally available. \\
+\hline
+
+Delivery Difficulty &
+Low \\
+\hline
+
+Compatibility &
+Fully compatible with ROS2 and SLAM Toolbox. \\
+\hline
+
+Software Support &
+Official ROS drivers available. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Sensitive to direct sunlight.
+\item Performance decreases on transparent surfaces.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it provides sufficient range and accuracy for indoor warehouse navigation at a reasonable cost. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Depth Camera}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Intel RealSense D435i \\
+\hline
+
+Function &
+Provides near-field obstacle detection and 3D perception. \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Intel RealSense D455
+\item Orbbec Astra
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Depth Range: 0.11--10 m
+\item RGB Resolution: $1920 \times 1080$
+\item Stereo Cameras: Yes
+\item IMU: Integrated
+\item Interface: USB 3.0
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 2000--3000 TND. \\
+\hline
+
+Supplier &
+Didactico, UBuy tunisia. \\
+\hline
+
+Availability &
+Usually available on order. \\
+\hline
+
+Delivery Difficulty &
+Medium \\
+\hline
+
+Compatibility &
+Fully compatible with ROS2. \\
+\hline
+
+Software Support &
+Intel RealSense SDK and ROS drivers. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item High depth noise/error at distances exceeding 3 meters.
+\item Sensitive to direct sunlight.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it significantly improves obstacle detection and future computer vision applications. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{IMU}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+BNO055 9-Axis IMU \\
+\hline
+
+Function &
+Measures acceleration, angular velocity, and orientation for sensor fusion and localization. \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item MPU9250
+\item ICM20948
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item 3-axis Accelerometer
+\item 3-axis Gyroscope
+\item 3-axis Magnetometer
+\item Integrated Sensor Fusion
+\item Interfaces: I2C, UART
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 100--120 TND. \\
+\hline
+
+Supplier &
+UBuy tunisia. \\
+\hline
+
+Availability &
+Usually available on order. \\
+\hline
+
+Delivery Difficulty &
+Medium to High \\
+\hline
+
+Compatibility &
+Fully compatible with ROS2 IMU packages. \\
+\hline
+
+Final Recommendation &
+Recommended because its onboard sensor fusion greatly simplifies localization implementation. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proximity Sensor}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Industrial Ultrasonic Sensor M18 \\
+\hline
+
+Function &
+Provides near-field and low-height obstacle detection that complements the LiDAR. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item HC-SR04
+\item Sharp GP2Y0A21
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Range: 20 cm--4 m
+\item Response Time: $<$50 ms
+\item Supply Voltage: 12--24 V
+\item Protection Rating: IP67
+\item Quantity Required: 4
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 20--50 TND each. \\
+\hline
+
+Supplier &
+CoThings, 2B TRADING. \\
+\hline
+
+Availability &
+Usually available. \\
+\hline
+
+Delivery Difficulty &
+Low to Medium \\
+\hline
+
+Final Recommendation &
+Recommended because it can detect low obstacles that may not be visible to the LiDAR. \\
+\hline
+
+\end{longtable}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{RGB Camera}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Logitech C920 HD Pro Webcam \\
+\hline
+
+Function &
+Provides RGB image acquisition for monitoring, computer vision applications, object detection, QR code recognition, and future AI modules. Although not strictly required for Version 1 navigation, an RGB camera significantly improves the extensibility of the platform. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item Raspberry Pi Camera Module 3
+\item Intel RealSense RGB Camera (integrated with D455)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Resolution: $1920 \times 1080$ pixels (1080p)
+\item Frame Rate: 30 fps
+\item Field of View: $78°$
+\item Interface: USB 2.0
+\item Autofocus: Yes
+\item Integrated Microphones: Yes
+\item Power Consumption: Approximately 2 W
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 500 TND. \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item MyTek Tunisia
+\item Tunisianet
+\end{itemize}
+\\
+\hline
+
+Delivery Difficulty &
+Very Low \\
+\hline
+
+Compatibility &
+Fully compatible with Ubuntu 22.04, ROS2, OpenCV, and AI frameworks such as TensorFlow and PyTorch. \\
+\hline
+
+Software Support &
+Official Linux UVC drivers, OpenCV support, ROS2 usb\_cam package. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Limited depth perception.
+\item Performance depends on lighting conditions.
+\item Not suitable as the sole navigation sensor.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it is inexpensive, reliable, easy to integrate with ROS2, and provides a solid foundation for future computer vision applications while keeping the cost of the prototype low.
+\\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Wheel Encoder}
+Only necessary when drive motors don't come with integrated encoders.
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Omron E6B2-CWZ6C Incremental Rotary Encoder \\
+\hline
+
+Function &
+Measures wheel rotational speed and displacement to estimate the robot's position and velocity. Wheel encoder data are essential for odometry, localization, and sensor fusion with the IMU and LiDAR.\\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item Generic 600 PPR Incremental Encoder
+\item CUI AMT102-V Modular Encoder
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Encoder Type: Incremental
+\item Resolution: 600 Pulses per Revolution (PPR)
+\item Output Channels: A, B, Z
+\item Supply Voltage: 5--24 V
+\item Maximum Rotation Speed: 6000 rpm
+\item Protection Rating: IP50
+\item Quantity Required: 2
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 500--700 TND per encoder. \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item UBuy Tunisia
+\item Schneider and Omron distributors in Tunisia
+
+\end{itemize}
+\\
+\hline
+
+Availability &
+Usually available on order. \\
+\hline
+
+Delivery Difficulty &
+Medium to High \\
+\hline
+
+Compatibility &
+Fully compatible with STM32 timer peripherals, ROS2 Control, and differential-drive odometry packages. \\
+\hline
+
+Software Support &
+Supported by STM32 HAL libraries, micro-ROS, and ROS2 diff\_drive\_controller packages. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Mechanical misalignment can reduce accuracy.
+\item Wheel slippage introduces odometry errors.
+\item Dust and vibration may affect long-term performance.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it offers industrial reliability, sufficient resolution for indoor navigation, and straightforward integration with ROS2 localization and SLAM algorithms.
+\\
+\hline
+
+\end{longtable}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Safety}
+\subsection{Emergency stop system}
+
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Schneider Electric XB2-BS542 Emergency Stop Push Button \\
+\hline
+
+Function &
+Provides an immediate and reliable method to safely stop the robot in emergency situations by cutting power to the drive system and placing the robot in a safe state. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item Omron A22E Emergency Stop Push Button
+\item Generic Industrial Emergency Stop Button
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Mushroom Head Diameter: 40 mm
+\item Contact Configuration: 1 NC + 1 NO
+\item Mechanical Life: $>$100,000 operations
+\item Mounting Diameter: 22 mm
+\item Degree of Protection: IP65
+\item Compliance: IEC 60947-5-5
+\item Quantity Required: 1 
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 10--20 TND \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item Seli tn
+\item Schneider Electric Tunisia
+
+\end{itemize}
+\\
+\hline
+
+Availability &
+Generally available locally. \\
+\hline
+
+Delivery Difficulty &
+Low \\
+\hline
+
+Compatibility &
+Compatible with all motor drivers and safety relay architectures. \\
+\hline
+
+Software Support &
+No software required. The E-stop should be implemented as a hardware safety mechanism independent of software. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Incorrect wiring may prevent proper shutdown.
+\item Inadequate placement may reduce accessibility.
+\item Must be tested periodically.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because it is inexpensive, highly reliable, and complies with industrial safety standards while being readily available in Tunisia.
+\\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Warning Beacon and Audible Alarm}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+AD22-22MSD LED Indicator with Integrated Audible Alarm \\
+\hline
+
+Function &
+Provides both visual and audible warnings to indicate the operating state of the robot, including movement, emergency stop activation, fault conditions, and low-battery situations. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item PATLITE Industrial Signal Tower
+\item WERMA KombiSIGN 40
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Operating Voltage: 24 VAC/DC and 220 VAC 
+\item Indicator Color: Red 
+\item Integrated Audible Alarm (Buzzer) 
+\item Mounting Diameter: 22 mm 
+\item Mounting Type: Panel Mount 
+\item Technology: LED 
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately:  10 TND
+\\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item Seli tn
+
+\end{itemize}
+\\
+\hline
+
+Availability &
+Generally available \\
+\hline
+
+Delivery Difficulty &
+Low \\
+\hline
+
+Compatibility &
+Compatible with the 24 V electrical architecture of the robot and can be directly controlled by the STM32 microcontroller using a relay or transistor driver circuit. \\ 
+\hline 
+
+Software Support &
+No dedicated software required. The device can be activated through digital outputs controlled by the microcontroller or ROS2 nodes. \\ 
+\hline 
+
+Risks &
+\begin{itemize} 
+\item Lower visibility compared to industrial signal towers. 
+\item Fixed red color provides limited status indication. 
+\item Audible level may be insufficient in noisy industrial environments. 
+\end{itemize} \\ 
+\hline 
+
+Final Recommendation &
+Recommended for Prototype V1 because it combines visual and audible warning functions in a single, low-cost device that satisfies the basic safety requirements of the prototype. \\ 
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Safety Relay}
+
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Pilz PNOZ X2.8P Safety Relay \\
+\hline
+
+Function &
+Monitors the emergency stop circuit and safely disconnects power to the drive system when an emergency condition or fault occurs. The relay provides hardware-based safety independent of the onboard computer and software. \\
+\hline
+
+
+Alternative Options &
+\begin{itemize}
+\item Omron G9SE-201 Safety Relay
+\item Schneider Preventa XPS Safety Relay
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Supply Voltage: 24 VAC/DC
+\item Safety Outputs: 3 Normally Open (NO)
+\item Auxiliary Output: 1 Normally Closed (NC)
+\item Single-channel or dual-channel emergency-stop monitoring
+\item Short-circuit detection capability
+\item DIN Rail Mounting
+\item Response Time: $<$ 50 ms
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 600--900 TND (refurbished unit). \\
+\hline
+
+Supplier / Link &
+Automation technics (on order)
+\\
+\hline
+
+Availability &
+Available on special order. Procurement may require an extended lead time depending on supplier availability and import conditions. \\
+\hline
+
+Delivery Difficulty &
+Medium to High \\
+\hline
+
+Compatibility &
+Compatible with 24 V emergency stop circuits, motor contactors, and industrial control architectures. Easily integrated into the robot's safety chain. \\
+\hline
+
+Software Support &
+No software required. The relay operates independently of the onboard computer and ensures a hardware-based emergency shutdown mechanism. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item The available unit is refurbished and may have limited warranty.
+\item Requires proper wiring according to safety standards.
+\item Additional cost compared with a simple relay-based shutdown circuit.
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended for Prototype V1 because it provides an industrial-grade and standards-compliant emergency shutdown mechanism while remaining simpler and less expensive than a complete safety PLC solution.
+\\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Power System}
+
+\subsection{Battery Pack}
+
+\textbf{Role:} Provides the primary onboard power for the complete AMR-X system, supporting differential-drive motors, compute, sensors, and safety systems for $\geq 3$ hours continuous operation under nominal load ($1.0$ m/s cruise, 50 kg payload).
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Nominal Voltage: $24$ V DC
+\item Capacity: $20$ Ah ($480$ Wh) minimum for Maxon EC45 motors (upgraded from $15$ Ah)
+\item Chemistry: LiFePO$_4$ preferred for safety and cycle life
+\item Built-in BMS: Over-current, over-temperature, over/under-voltage protection
+\item Discharge Connectors: Suitable for continuous $30$--$50$ A draw and peak $80$--$100$ A transients
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Custom LiFePO$_4$ $24$ V $20$ Ah Battery Pack (UPGRADED) \\
+\hline
+
+Function &
+Provides primary onboard power for motors, compute, sensors, and safety systems. Supports $3+$ hours of continuous operation carrying $50$ kg payload at nominal $1.0$ m/s cruise speed. Upgraded to $20$ Ah (from $15$ Ah) to maintain endurance with higher-power Maxon EC45 motors ($70$ W vs $25$ W). \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option B: Pre-made $24$ V Power Tool Battery (FLEX, Greenworks, Kobalt..) (insufficient capacity at $5$ Ah per pack; requires $4$ packs in parallel; heavy)
+\item Option C: $24$ V LiPo Battery Pack (poor cycle life of $300$--$500$ cycles; safety concerns; not recommended)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Nominal Voltage: $24.0$ V
+\item Capacity: $20$ Ah ($480$ Wh) — UPGRADED from $15$ Ah
+\item Chemistry: Lithium Iron Phosphate (LiFePO$_4$)
+\item Dimensions: approximately $180 \times 180 \times 100$ mm
+\item Mass: approximately $5.7$ kg ($20$ Ah)
+\item Cycle Life: $2000$--$3000$ cycles
+\item Built-in BMS: $60$--$80$ A continuous, $100$--$150$ A peak
+\item Round-trip Efficiency: approximately $95\%$
+\item Charge Connector: XT90 or Anderson PowerPole
+\item Quantity Required: 1
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately $1800$--$2200$ TND (upgraded from $1500$--$2000$). \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item requested from GPE Tunisia 
+\item SeeepShop Tunisia 
+\end{itemize}
+\\
+\hline
+
+Availability &
+Increasingly available from major distributors. Custom packs have lead time. \\
+\hline
+
+Delivery Difficulty &
+Medium ($2$--$4$ weeks for custom pack) \\
+\hline
+
+Compatibility &
+Fully compatible with Pololu VNH5019 motor driver ($60+$ A BMS rating). Works with $24$ V distribution system. XT90 connectors standard for industrial applications. Supports $70$ W Maxon EC45 motors (vs. $25$ W JGA25-370). \\
+\hline
+
+Software Support &
+BMS provides autonomous protection. No software control required. Battery Management System monitors voltage, current, and temperature independently. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Customization lead time ($2$--$4$ weeks)
+\item Heavier than Li-Po ($5$--$6$ kg vs. $3$--$4$ kg) but better for stability and cycle life
+\item Requires external charger (PSU or dedicated battery charger)
+\item Must be mounted centrally and low for centre-of-gravity optimisation
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+\textbf{STRONGLY RECOMMENDED (upgraded capacity).} LiFePO$_4$ chemistry is safe and durable ($2000+$ cycles), built-in BMS manages protection autonomously, $480$ Wh capacity ($20$ Ah) maintains $3+$ hour endurance requirement with higher-power Maxon EC45 motors, fits mass budget, and is increasingly available in Tunisia. Upgrade from $15$ Ah to $20$ Ah is REQUIRED to support $70$ W motors and maintain endurance target. Optimal choice for long-term prototype operation ($3+$ years). \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Power Distribution and DC-DC Converters}
+
+\textbf{Role:} Routes $24$ V battery power safely to all subsystems (motors, compute, sensors, safety) with appropriate overcurrent protection, voltage conversion, and electromagnetic interference filtering.
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Main Fuse: $80$ A (battery short-circuit protection)
+\item Motor Power Rail: $30$ A fused (motor driver protection)
+\item Compute Regulator: $24$ V $\rightarrow$ $12$ V at $5$ A (Jetson input)
+\item Sensor Regulator: $24$ V $\rightarrow$ $5$ V at $5$ A (all sensors and safety beacon)
+\item Wiring: 4/6/8/10 AWG depending on current rating
+\item EMI Filtering: Ferrite clamps on motor lines
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+$24$ V Power Distribution System with Protection and DC-DC Conversion \\
+\hline
+
+Function &
+Safely distributes battery power to three independent rails: motor power ($24$ V direct, $30$ A), compute power ($24$ V $\rightarrow$ $12$ V regulated), and sensor power ($24$ V $\rightarrow$ $5$ V regulated). Includes overcurrent protection, EMI filtering, and voltage regulation. Supports higher current draw from Maxon EC45 motors (vs. JGA25-370). \\
+\hline
+
+Sub-Components &
+\begin{itemize}
+\item Main Fuse: ANL $80$ A cartridge + holder
+\item Motor Fuse: ANL $30$ A cartridge
+\item Compute Regulator: XL4005 buck converter ($24$ V $\rightarrow$ $12$ V, $5$ A)
+\item Sensor Regulator: HLK-5M05 buck converter ($24$ V $\rightarrow$ $5$ V, $5$ A)
+\item Wiring: $4$ AWG (main), $6$ AWG (motor), $8$ AWG (compute), $10$ AWG (sensors)
+\item Connectors: XT90 (battery), Anderson PowerPole (distribution)
+\item Capacitors: $100$ $\mu$F $\times$ $3$ (filtering)
+\item Ferrite Clamps: Toroid clamps for motor lines (EMI suppression)
+\end{itemize}
+\\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option A: DIY MOSFET H-Bridge with discrete components (requires PCB design; risky for V1 timeline)
+\item Option B: Custom PCB (integrates all components, cleaner but requires design)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item System Voltage: $24$ V DC (distributed)
+\item Main Protection: $80$ A fuse (battery short-circuit)
+\item Motor Rail: $30$ A fused, direct $24$ V to motor driver
+\item Compute Rail: $24$ V $\rightarrow$ $12$ V at $5$ A, approximately $85\%$ efficiency, $<5\%$ ripple
+\item Sensor Rail: $24$ V $\rightarrow$ $5$ V at $5$ A, approximately $90\%$ efficiency
+\item Wiring: Mixed gauge ($4$--$10$ AWG) per current rating
+\item EMI Filtering: Ferrite clamps on motor power lines
+\item Quantity Required: $1$ complete system
+\end{itemize}
+\\
+\hline
+
+Procurement &
+\begin{itemize}
+    \item \textbf{Option A: Modular Components} Purchase fuse holders, DC-DC converters, connectors, wiring, and ferrite clamps; assemble into a distribution system.
+    \item \textbf{Option B: Custom PCB} Integrates fuses, converters, and connectors into a single board. Cleaner and compact but requires design, fabrication, and testing.
+\end{itemize} \\
+\hline
+
+Price &
+ \begin{itemize}
+    \item Option A: 540 TND
+    \item Option B: 800--1,000 TND
+\end{itemize}\\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item Local electronics shops: fuses, capacitors, ferrite clamps
+\item 2B TRADING: wiring, connectors, buck converter modules
+\item DigiKey: XL4005, HLK-5M05 converter modules
+\end{itemize}
+\\
+\hline
+
+Availability &
+All components readily available (stock items, under 1 week). 
+If option B depends on the PCB design delivery ( more than 3 layers PCB needs an international supplier)\\
+\hline
+
+Delivery Difficulty &
+Low (buck converters and fuses are standard parts) \\
+\hline
+
+Compatibility &
+Fully compatible with $24$ V LiFePO$_4$ battery, Pololu VNH5019 motor driver, NVIDIA Jetson ($12$ V barrel jack input), STM32 via $5$ V logic rail, and all sensors. Wiring gauges are suitable for continuous motor draw and peak transients. Supports higher current demand from Maxon EC45 motors. \\
+\hline
+
+Software Support &
+Power distribution operates autonomously (no software control). DC-DC converters self-regulate. BMS and fuses provide hardware protection independent of firmware. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Regulator dropout if overloaded (mitigation: $5$ A rating is $2$--$10$ $\times$ motor duty)
+\item EMI noise on sensor lines if motor cables are routed nearby (mitigation: ferrite clamps and separate routing)
+\item Fuse blowout if short circuit occurs (mitigation: design fuse as protective device, not fault indicator)
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+Recommended because the tiered architecture (main fuse, per-rail fuses, dual voltage regulators) provides redundant protection while keeping cost low (approximately 540 TND). Buck converters are proven, efficient designs. Ferrite clamps suppress motor EMI. Wiring gauges ensure safety margins on all current paths. Modular design allows testing each subsystem independently. Supports higher current draw from $70$ W Maxon EC45 motors. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\section{Motion System}
+
+\subsection{Drive Motors with Gearbox}
+
+\textbf{Role:} Provide primary motive power for differential drive with sufficient torque to handle rated payload ($50$ kg), future modular attachments (arm/gripper up to $10$ kg), and transient ramps. Two identical motors drive the $180$ mm wheels at the target speed range ($0.8$--$1.5$ m/s) while maintaining excellent load-carrying capacity and climb performance.
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Type: $24$ V brushless DC motor with integrated planetary gearbox
+\item Nominal Power: $70$ W per motor (sufficient for warehouse load)
+\item Output Torque: $8$--$10$ N$\cdot$m per wheel (strong enough for payload + future arm)
+\item Wheel Output Speed: $100$--$150$ RPM (to achieve $0.8$--$1.5$ m/s on $180$ mm wheels)
+
+\item Efficiency: $\geq 75\%$ overall (motor + gearbox)
+\item Quantity Required: $2$ (identical)
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Maxon EC 45 Flat Brushless Motor ($70$ W @ $24$ V) + Maxon GP 42C Planetary Gearbox ($33:1$) \\
+\hline
+
+Function &
+Provides high-torque motive power for differential drive. Brushless motor with integrated planetary gearbox produces $8$--$10$ N$\cdot$m output torque, enabling reliable operation under full payload ($50$ kg) and supporting future modular attachments (arms, grippers) up to $10$ kg additional mass. Maintains $1.0$ m/s nominal wheel speed for warehouse operation. \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option A: ZLTECH 4-inch Hub Motor ($100$ W, $3.0$ N$\cdot$m, direct-drive, budget-friendly, slower at $0.28$ m/s)
+\item Option B: FAULHABER 3242G 45W + Series 26/4 Gearbox ($7$--$12$ N$\cdot$m, maximum torque density, German precision, higher cost)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Motor Type: Brushless DC ($3$-phase)
+\item Motor Nominal Voltage: $24$ V DC
+\item Motor Nominal Power: $70$ W
+\item Motor Nominal Speed: $10,000$ RPM (unloaded)
+\item Motor Torque (alone): $\approx 130$ mN$\cdot$m
+\item Gearbox Type: Maxon GP 42C Planetary
+\item Gearbox Ratio: $33:1$ (recommended for balance of speed and torque)
+\item Output Speed: Approximately $303$ RPM ($10,000 \div 33 = \approx 303$ RPM motor shaft)
+\item Wheel Rotational Speed: $\approx 100$ RPM at wheel = $1.0$ m/s at $180$ mm diameter
+\item Output Torque (at gearbox): $8$--$10$ N$\cdot$m (conservative estimate, $90\%$ efficiency motor $\times$ $85\%$ gearbox)
+\item Motor Dimensions: $45$ mm flat, $75$ g mass
+\item Gearbox Dimensions: $42$ mm diameter, $36$ mm length
+\item Total Mass (motor + gearbox): $\approx 0.35$ kg each
+\item Encoder: Hall sensors ($3$-pin) integrated in motor; compatible with Omron E6B2 external encoders
+\item Feedback Compatibility: YES (Hall signals route to STM32 timer capture)
+\item Shaft Coupling: Flexible coupling required (Oldham or jaw type; $0.1$ mm concentricity tolerance)
+
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+\begin{itemize}
+\item Motor (EC 45 flat $70$ W @ $24$ V): 215 EUR 
+\item Gearbox (GP 42C $33:1$): 300 EUR
+\item Combined per motor pair:  515 EUR(1700 TND)
+\end{itemize}
+\\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item Maxon Motor
+\item Delivery to Tunisia: Via DHL ( 30--50 international shipping)
+\end{itemize}
+\\
+\hline
+
+Availability &
+Swiss manufacturer, widely available in Europe. \\
+\hline
+
+Delivery Difficulty &
+Medium ($2$--$3$ weeks international; EU sourcing  \\
+\hline
+
+Compatibility &
+Fully compatible with Pololu VNH5019 motor driver (accepts PWM and direction GPIO from STM32). Motor output shaft couples to $180$ mm wheels via flexible coupling and set screws. Hall sensor signals compatible with STM32 timer peripherals (same as Omron E6B2 encoder interface). Brushless control does not require commutator, reducing electrical noise on sensitive sensor lines. \\
+\hline
+
+Software Support &
+Motor speed controlled via STM32 PWM (variable duty cycle, $0$--$100\%$). Direction control via GPIO digital outputs. Hall feedback via STM32 timer capture (odometry, localization). ROS2 diff\_drive\_controller compatible via micro-ROS bridge. Brushless operation provides cleaner power draw with minimal EMI compared to brushed motors. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Requires precision shaft alignment ($\pm 0.1$ mm concentricity); misalignment reduces efficiency and durability
+\item Motor and gearbox must be coupled with flexible coupling; 
+\item Imported component ($2$--$3$ week lead time from Europe)
+\item Higher cost than brushed alternatives (justified by reliability and torque margin for future modules)
+\item Precision bearings require clean environment; avoid heavy vibration during installation
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+\textbf{Strongly recommended} for V1 warehouse prototype because:
+\begin{enumerate}
+\item \textbf{Balanced performance:} $8$--$10$ N$\cdot$m output torque ($3$--$4$ $\times$ previous motor) handles $50$ kg payload + future $10$ kg arm/gripper with comfortable safety margin
+\item \textbf{Maintains speed:} $1.0$ m/s wheel speed matches original SRD requirement, not sacrificing mobility
+\item \textbf{Future-proof:} Modular design (motor separable from gearbox); if you need more torque later, simply upgrade to $50:1$ or $100:1$ planetary gearbox
+\item \textbf{Industry-proven:} Used in marine cleaning robots, stick insect robots, lunar rovers, underwater crawlers; thousands deployed successfully
+\item \textbf{Warehouse-ready:} Designed for AGVs and mobile robots in industrial environments; climbs transient ramps up to $8$--$10°$
+\item \textbf{Long-term reliability:} Brushless motor eliminates brush wear; sealed bearings handle $3+$ years continuous operation
+\item \textbf{Modular gearbox:} GP 42C is upgradeable if application expands beyond V1 scope
+\end{enumerate}
+\\
+\hline
+
+\end{longtable}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Motor Driver}
+
+\textbf{Role:} Accepts PWM control signals from the STM32 microcontroller and delivers controlled $24$ V power to the two brushless drive motors via Hall sensor feedback, supporting speed regulation, direction reversal, and smooth acceleration without brush arcing.
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Input Voltage: $24$ V DC (direct from battery)
+\item Output Channels: $2$ (one per motor)
+\item Continuous Current per Channel: $\geq 10$ A (Maxon motors typical draw: $3$--$5$ A nominal, $8$--$10$ A peak)
+\item Peak Current: $\geq 15$ A (acceleration transients)
+\item Control Interface: PWM and direction pins ($3.3$ V logic compatible with STM32)
+\item Hall Sensor Support: YES (for sensorless speed control or feedback integration)
+\item Efficiency: $\geq 85\%$ at motor load
+\item Quantity Required: $1$ (dual-channel) or $2 \times$ single-channel modules
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Pololu VNH5019 Dual Motor Driver Carrier (unchanged; compatible with Maxon brushless via Hall integration) \\
+\hline
+
+Function &
+Receives PWM control signals ($0$--$100\%$ duty cycle) and GPIO direction commands from STM32 microcontroller. Delivers smoothly regulated $24$ V power to both brushless drive motors with Hall sensor feedback integration, enabling speed control, direction reversal (forward/reverse), and emergency braking. Integrates over-current protection and fault reporting. Brushless operation eliminates commutator noise, improving power supply quality for sensitive sensors. \\
+\hline
+
+Compatibility with Maxon EC45 &
+The VNH5019 is fully compatible with the Maxon EC45 brushless motor via Hall sensor bridging:
+\begin{itemize}
+\item PWM inputs control motor speed (standard H-bridge interface)
+\item Direction GPIO selects forward/reverse
+\item Hall sensor wires (from Maxon motor) route independently to STM32 timer pins (not through VNH5019)
+\item Fault detection still available via FAULT1/FAULT2 pins
+\item No additional ESC (Electronic Speed Controller) required; VNH5019 acts as the motor controller
+\end{itemize}
+\\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option B: Dedicated $24$ V Brushless ESC (if using ZLTECH hub motor alternative; not needed for Maxon + VNH5019)
+\item Option C: Custom H-bridge PCB with brushless drivers ($100$--$150$ TND parts; risky for V1 timeline)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Type: Integrated dual-channel H-bridge
+\item Input Voltage Range: $5.5$--$24$ V DC
+\item Continuous Output Current: $30$ A per channel
+\item Peak Output Current: $50$ A per channel
+\item Logic Voltage: $3.3$--$5$ V (STM32 Nucleo compatible)
+\item Control Method: PWM and direction control
+\item Number of Channels: $2$ (dual motor)
+\item Protection: Over-current detection, over-temperature shutdown, under-voltage lockout
+\item Size: Approximately $5 \times 5$ cm module
+\item Efficiency: Approximately $90\%$ at motor operating currents
+\item Thermal Management: Passive (no heatsink required; Maxon $70$ W @ $3$--$5$ A draw = $<3$ W loss)
+\item Hall Sensor Interface: NOT on VNH5019 board; Hall wires connect directly to STM32 GPIO/timers
+\item Quantity Required: $1$ dual-channel module (sufficient for $2$ motors)
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 220-300 TND (same as previous specification; no change required). \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item DigiKey europe
+\item RobotShop
+\end{itemize}
+\\
+\hline
+
+Availability &
+ Widely available ($1$--$3$ weeks). \\
+\hline
+Delivery Difficulty &
+ Medium ($1$--$3$ weeks) \\
+\
+
+Compatibility &
+Fully compatible with STM32 Nucleo timer PWM outputs (TIM1, TIM2, etc.) for speed control and GPIO digital outputs (GPIOA, GPIOB, etc.) for direction. Hall sensor wires from Maxon motor connect directly to STM32 timer input pins (TIM3, TIM4, etc.) for incremental feedback capture---same interface as Omron E6B2 encoder. No additional hardware bridging required. Motor power inputs connect to motor terminals. Fault pins (FAULT1, FAULT2) connect to STM32 GPIO for status monitoring. \\
+\hline
+
+Software Support &
+Motor speed controlled via PWM duty cycle (STM32 timer PWM, $1$--$20$ kHz typical). Direction controlled via GPIO digital outputs (HIGH/LOW logic). Hall feedback captured via STM32 timer capture interrupts (odometry, localization, PID speed control). Brushless operation ensures minimal EMI on $5$ V sensor rail. ROS2 diff\_drive\_controller fully compatible via micro-ROS bridge. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Hall sensor wiring must be shielded to avoid interference (already a best practice for encoders)
+\item Imported component ($1$--$2$ weeks lead time)
+\item Requires clean $24$ V power rail; noise filtering essential for Hall signal integrity
+\item Peak current rating of $50$ A rarely needed but provides $10 \times$ safety margin
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+\textbf{Strongly recommended} (no change from previous). VNH5019 continues as the motor driver backbone. Hall sensor integration from Maxon EC45 requires no additional hardware; signals route directly to STM32 firmware. This design maintains simplicity while enabling brushless torque density. Pololu modules are proven in thousands of projects; technical support excellent. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Drive Wheels}
+
+\textbf{Role:} Provide traction and speed transmission from Maxon gearbox output to the ground. Support $130$ kg total load (base + $50$ kg rated payload + future $10$ kg arm) on smooth indoor concrete with sufficient grip for acceleration and turning.
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Diameter: $180$ mm (baseline specification; maintained to avoid suspension re-design)
+\item Material: Rubber or foam (traction)
+\item Bore: $8$--$10$ mm (motor shaft coupling)
+\item Load Rating: $\geq 65$ kg per wheel (half of $130$ kg total)
+\item Coefficient of Friction: $\geq 0.6$ on concrete
+\item Quantity Required: $2$
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+$180$ mm Solid Rubber Wheels with $8$ mm Keyed Bore \\
+\hline
+
+Function &
+Transmit Maxon gearbox torque ($8$--$10$ N$\cdot$m) to the ground, providing robust traction for acceleration, braking, and turning under full payload. Two wheels mounted on gearbox output shafts enable differential drive (independent speed control per wheel). Solid rubber provides reliable grip on smooth warehouse concrete and light debris. Wheel diameter maintained at $180$ mm baseline to avoid suspension re-design. \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option B: Foam or polyurethane wheels (excellent grip but custom order; $3$--$4$ week lead time; heavier than rubber)
+\item Option C: High-pressure pneumatic tyres (exceptional grip but puncture risk in warehouse; maintenance overhead; unsuitable for V1)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Diameter: $180$ mm $\pm$ $2$ mm
+\item Width: $50$ mm (typical for small robots)
+\item Material: Natural or synthetic rubber
+\item Shore Hardness: $60$--$70$ A (standard for industrial wheels)
+\item Bore: $8$ mm keyed (standard motor shaft interface)
+\item Load Rating: $\geq 100$ kg per wheel
+\item Coefficient of Friction (concrete): $0.6$--$0.8$
+\item Mass: Approximately $0.3$--$0.5$ kg per wheel
+\item Attachment: Set screws and key to motor shaft (via flexible coupling)
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+Approximately 60-120 TND per wheel. \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item AVO Tunisia
+\end{itemize}
+\\
+\hline
+
+Availability &
+Widely available (standard robotics component). \\
+\hline
+
+Delivery Difficulty &
+Low to Medium ($1$--$2$ weeks international shipping) \\
+\hline
+
+Compatibility &
+Couples to Maxon gearbox output shaft via flexible coupling and set screws. Wheel bore must match coupling diameter exactly (typically $8$ mm). Mounting ensures both wheels on the same vertical plane (critical for differential drive accuracy). Flexible coupling accommodates slight angular misalignment ($<0.5°$) while maintaining torque transmission. \\
+\hline
+
+Software Support &
+No software control required. Wheel grip is purely mechanical. Speed regulation via Maxon motor PWM control (indirect). Odometry estimated via Hall sensors on motors or external wheel encoders (Omron E6B2 can still be mounted on wheel hubs if required for redundancy). \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Alignment tolerance critical ($<2$ mm lateral offset); use dial indicator to verify
+\item Wheel wear over $500+$ hours of operation (replacement tyres available from Pololu, REV, Andymark)
+\item Slippage on extremely smooth surfaces (unlikely in warehouses with minor debris)
+\item Coupling misalignment can reduce efficiency and durability; precision assembly essential
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+\textbf{Recommended}  $180$ mm diameter is directly specified in baseline and avoids suspension redesign. Solid rubber wheels provide excellent grip ($0.6$--$0.8$ $\mu$) without maintenance. Affordable, widely available with $1$--$2$ week lead time, and standard $8$ mm keyed bore ensures compatibility with flexible couplings. Proven in countless small robots. \\
+\hline
+
+\end{longtable}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Caster Wheels}
+
+\textbf{Role:} Provide passive support (no motor drive) at front and rear, preventing tipping and allowing free rotation to accommodate differential steering of the two drive wheels under increased load ($130$ kg total).
+
+\textbf{Specifications to Meet:}
+\begin{itemize}
+\item Diameter: $100$ mm (baseline specification)
+\item Type: Swivel caster (free to rotate on vertical pin)
+\item Load Rating: $\geq 65$ kg per caster (half of $130$ kg total; conservative safety margin)
+\item Mounting: Stem bolt ($10$ mm standard)
+\item Quantity Required: $2$ (front and rear on centreline)
+\end{itemize}
+
+\begin{longtable}{|p{4cm}|p{10cm}|}
+\hline
+\textbf{Parameter} & \textbf{Details} \\
+\hline
+
+Component &
+Swivel Caster Wheel:ROUE PIVOTANTE FREIN LISS 80 AVO
+\\
+\hline
+
+Function &
+Provides passive support without motor drive. Two casters (one front, one rear on centreline) prevent tipping and allow free omnidirectional rotation to accommodate differential steering of the main drive wheels. Ball-bearing swivel enables smooth turning with minimal friction. Caster load rating ($80$--$120$ kg) provides comfortable margin above $130$ kg total design load. \\
+\hline
+
+Alternative Options &
+\begin{itemize}
+\item Option B: Low-profile plate-mount caster (adds complexity; higher cost $200$--$300$ TND; unnecessary for V1)
+\end{itemize}
+\\
+\hline
+
+Technical Specifications &
+\begin{itemize}
+\item Diameter: $100$ mm $\pm$ $2$ mm
+\item Type: Ball-bearing swivel (not fixed)
+\item Material: Hard rubber or polyurethane
+\item Stem Mounting: $10$ mm bolt (M10 standard)
+\item Mounting Style: Stem bolt to chassis frame
+\item Load Rating: $80$--$120$ kg per caster (conservative margin)
+\item Mass: Approximately $0.3$--$0.4$ kg per caster
+\item Swivel Resistance: Minimal (smooth ball bearing)
+\item Quantity Required: $2$
+\end{itemize}
+\\
+\hline
+
+Procurement &
+Buy \\
+\hline
+
+Price &
+26 TND per one \\
+\hline
+
+Supplier / Link &
+\begin{itemize}
+\item AVO Italy ( in Tunisia )
+\end{itemize}
+\\
+\hline
+
+Availability &
+Widely available (industrial standard component). \\
+\hline
+
+Delivery Difficulty &
+Low ($1$--$2$ weeks; usually stock items) \\
+\hline
+
+Compatibility &
+Mounts to chassis frame via $10$ mm bolt stem (standard). Both casters must be on centreline ($Y = 0$) and aligned front-to-rear. Height must allow wheel contact with floor when chassis is level. \\
+\hline
+
+Risks &
+\begin{itemize}
+\item Swivel binding if stem is over-tightened (mitigation: lubricate bearing initially)
+\item Uneven wear if alignment is off (mitigation: check height and centreline during assembly)
+\item Bearing failure over extended use ($100,000+$ hour rating typical; unlikely during V1)
+\end{itemize}
+\\
+\hline
+
+Final Recommendation &
+\textbf{Recommended} Stem-bolt mount is simple and proven in thousands of industrial applications. Load rating ($80$--$120$ kg) provides comfortable margin above $130$ kg total design load. Affordable and readily available. \\
+\hline
+
+\end{longtable}
+
+\newpage
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Summary: Component Selection Overview}
+
+\subsection{Complete Bill of Materials (BOM) --- Selected Components (UPDATED FOR MAXON EC45)}
+
+\begin{longtable}{|p{1.2cm}|p{3.5cm}|p{1.5cm}|p{2cm}|p{1.5cm}|p{1cm}|}
+\hline
+\textbf{\#} & \textbf{Component} & \textbf{Qty} & \textbf{Selected Model} & \textbf{Cost (TND)} & \textbf{Lead} \\
+\hline
+\multicolumn{6}{|c|}{\textbf{COMPUTING UNIT}} \\
+\hline
+1 & Main Computer & 1 & NVIDIA Jetson Orin Nano & 1500--2000 & 2--4w \\
+\hline
+2 & Microcontroller & 1 & STM32 Nucleo-F446RE & 90--130 & 1w \\
+\hline
+\multicolumn{6}{|c|}{\textbf{SENSORS}} \\
+\hline
+3 & LiDAR Scanner & 1 & RPLIDAR A2M12 & 1200--1600 & 1w \\
+\hline
+4 & Depth Camera & 1 & Intel RealSense D435i & 2000--3000 & 2w \\
+\hline
+5 & IMU ($9$-axis) & 1 & BNO055 & 100--120 & 1--2w \\
+\hline
+6 & RGB Camera & 1 & Logitech C920 HD Pro & 500 & $<$1w \\
+\hline
+7 & Proximity Sensors & 4 & Industrial Ultrasonic M18 & 20--50 each & 1w \\
+\hline
+8 & Wheel Encoders & 2 & Omron E6B2-CWZ6C (optional) & 500--700 each & 1--2w \\
+\hline
+\multicolumn{6}{|c|}{\textbf{SAFETY SYSTEM}} \\
+\hline
+9 & Emergency Stop & 1 & Schneider XB2-BS542 & 10--20 & $<$1w \\
+\hline
+10 & Safety Relay & 1 & Pilz PNOZ X2.8P & 600--900 & 2--3w \\
+\hline
+11 & Warning Beacon & 1 & AD22-22MSD LED+Alarm & 10 & $<$1w \\
+\hline
+\multicolumn{6}{|c|}{\textbf{POWER SYSTEM}} \\
+\hline
+12 & Battery Pack & 1 & LiFePO$_4$ $24$ V $20$ Ah (UPGRADED) & 1800--2200 & 2--4w \\
+\hline
+13 & Main Fuse ($80$ A) & 1 & ANL $80$ A + holder & 50 & $<$1w \\
+\hline
+14 & Motor Fuse ($30$ A) & 1 & ANL $30$ A & 20 & $<$1w \\
+\hline
+15 & Compute Regulator & 1 & XL4005 buck conv. ($24 \to 12$ V) & 80--120 & $<$1w \\
+\hline
+16 & Sensor Regulator & 1 & HLK-5M05 buck conv. ($24 \to 5$ V) & 100--150 & $<$1w \\
+\hline
+17 & Wiring/Connectors & --- & 4/6/8/10 AWG + XT90 & 200--250 & $<$1w \\
+\hline
+18 & Capacitors/EMI & --- & $100$ $\mu$F $\times$ $3$ + ferrite clamps & 50 & $<$1w \\
+\hline
+\multicolumn{6}{|c|}{\textbf{MOTION SYSTEM (UPDATED)}} \\
+\hline
+19 & Drive Motor (EC45) & 2 & Maxon EC 45 Flat $70$ W @ $24$ V & 700--900 each & 2--4w \\
+\hline
+20 & Planetary Gearbox & 2 & Maxon GP 42C $33:1$ & 900--1200 each & 2--4w \\
+\hline
+21 & Flexible Couplings & 2 & Oldham or jaw type & 160--200 each & 1--2w \\
+\hline
+22 & Motor Driver & 1 & Pololu VNH5019 dual & 220--300 & 1--3w \\
+\hline
+23 & Drive Wheels & 2 & $180$ mm solid rubber & 60--120 each & 1--2w \\
+\hline
+24 & Caster Wheels & 2 & ROUE PIVOTANTE FREIN LISS 80 AVO & 26 each & 1--2w \\
+\hline
+\hline
+\multicolumn{3}{|l|}{\textbf{TOTAL}} & & \multicolumn{2}{|c|}{\textbf{11200--18000 TND}} \\
+\hline
+
+\end{longtable}
+\newpage
+\subsubsection{Cost Summary by Subsystem}
+
+\begin{longtable}{|p{3.5cm}|p{4cm}|p{3cm}|}
+\hline
+\textbf{Category} & \textbf{Component Range} & \textbf{Cost (TND)} \\
+\hline
+\multicolumn{3}{|c|}{\textbf{ELECTRICAL SUBSYSTEMS}} \\
+\hline
+Computing Unit & Jetson + STM32 + storage & 1700--2200 \\
+\hline
+Sensors & LiDAR, cameras, IMU, ultrasonic & 5000--6900 \\
+\hline
+Safety System & E-stop, relay, beacon & 700--1000 \\
+\hline
+Power System & Battery (upgraded to 20Ah) + distribution + regulators & 2500--3200 \\
+\hline
+\multicolumn{3}{|c|}{\textbf{MOTION SUBSYSTEM (UPGRADED)}} \\
+\hline
+Drive Motors (Maxon EC45 pair) & Motor + gearbox + couplings & 1400--1700 \\
+\hline
+Motor Driver & Pololu VNH5019 dual & 220--300 \\
+\hline
+Drive Wheels & $180$ mm rubber (pair) & 120--240 \\
+\hline
+Caster Wheels & $100$ mm swivel (pair, AVO) & 52 \\
+\hline
+\hline
+\multicolumn{2}{|l|}{\textbf{TOTAL (THIS PHASE)}} & \textbf{11,200--18,000 TND} \\
+\hline
+\end{longtable}
+
+\end{document}
