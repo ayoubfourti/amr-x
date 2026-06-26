@@ -1,0 +1,300 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- packages ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- colours ----------
+\definecolor{navy}{HTML}{000000}
+\definecolor{accent}{HTML}{000000}
+\definecolor{lightblue}{HTML}{F2F2F2}
+\definecolor{lightgreen}{HTML}{E8E8E8}
+\definecolor{amber}{HTML}{ECECEC}
+\definecolor{greyln}{HTML}{808080}
+
+% ---------- section styling ----------
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection.}{0.6em}{}[{\color{accent}\titlerule[1pt]}]
+\titleformat{\subsection}{\large\bfseries\color{black!80}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+
+% ---------- header / footer ----------
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\lhead{\small\color{navy}AMR-X Prototype V1}
+\rhead{\small\color{navy}Drive-Wheel Suspension Study}
+\cfoot{\small\color{black!55}Page \thepage}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\prio}[1]{\colorbox{amber}{\parbox{\dimexpr\linewidth-2\fboxsep}{#1}}}
+
+\setlist[itemize]{leftmargin=1.3em,itemsep=2pt,topsep=3pt}
+
+% ---------- title ----------
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{2.2cm}
+\noindent\rule{\linewidth}{1.2pt}\\[10pt]
+{\small\bfseries\color{black} AMR-X PROTOTYPE V1 \quad$\cdot$\quad MECHANICAL ENGINEERING}\\[14pt]
+{\color{black}\Huge\bfseries Drive-Wheel Suspension}\\[8pt]
+{\color{black}\Large Options, Trade-offs, Recommendation and Procurement}\\[12pt]
+\noindent\rule{\linewidth}{0.5pt}\\[10pt]
+{\normalsize 2-drive / 4-caster differential AMR \quad$\cdot$\quad 130\,kg design load \quad$\cdot$\quad 24\,V \quad$\cdot$\quad 0.8--1.5\,m/s}
+\vfill
+\noindent\rule{\linewidth}{0.5pt}\\[4pt]
+{\footnotesize Engineering design report \hfill Revision 1}
+\end{titlepage}
+
+% =====================================================================
+\section*{List of Abbreviations}
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{2.3cm}Y@{}}
+\toprule
+\textbf{Abbreviation} & \textbf{Meaning} \\
+\midrule
+AMR & Autonomous Mobile Robot \\
+AMR-X & Designation of this prototype platform (the robot studied in this report) \\
+AGV & Automated Guided Vehicle \\
+\rowcolor{lightblue} PU & Polyurethane (caster/wheel tyre material) \\
+RFQ & Request for Quotation \\
+\rowcolor{lightblue} SIL & Safety Integrity Level (functional-safety classification, IEC\,61508) \\
+PLd & Performance Level d (functional-safety rating, ISO\,13849) \\
+\rowcolor{lightblue} CoG & Centre of Gravity \\
+EC & Electronically Commutated --- brushless motor family (e.g.\ Maxon EC\,45) \\
+\rowcolor{lightblue} GP & Gearhead, Planetary --- gearbox family (e.g.\ Maxon GP\,42C) \\
+USPTO & United States Patent and Trademark Office \\
+\rowcolor{lightblue} IEEE & Institute of Electrical and Electronics Engineers \\
+IROS & International Conference on Intelligent Robots and Systems \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Units}} \\
+V & Volt \\
+\rowcolor{lightblue} W & Watt \\
+N & Newton \\
+\rowcolor{lightblue} Nm / mNm & Newton-metre / milli-newton-metre \\
+kg & Kilogram \\
+\rowcolor{lightblue} mm & Millimetre \\
+m/s & Metres per second \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\section{Why this question exists}
+The layout uses \textbf{six ground contacts}: two central drive wheels plus four corner casters.
+On a rigid frame that is one contact too many. Any three points define a plane, so a rigid
+six-contact base behaves like a four-legged table on an uneven floor: it rocks, and whichever
+contacts lift stop carrying load.
+
+For a differential drive this is not cosmetic. Steering depends on \emph{both} drive wheels being
+firmly pressed to the floor. If one unloads on an expansion-joint seam or a dock-plate lip, the wheel
+slips, the robot yaws unpredictably, odometry drifts, and — with our payload centre of gravity up at
+$\approx$398\,mm — the rocking is amplified. The real question is therefore not ``do we want a fancy
+suspension'' but \textbf{how do we guarantee all six contacts stay loaded on a real warehouse floor.}
+
+\textbf{Design target.} Production AMRs in this class (e.g.\ MiR) publish a traversable floor-gap
+tolerance of $\approx$30\,mm at $\approx$27\,mm ground clearance~\cite{mir}. That confirms the target:
+small, repeated unevenness (joints, ramps, thresholds), \emph{not} rough terrain.
+
+% =====================================================================
+\section{Candidate mechanisms}
+Six approaches span the spectrum from doing nothing to full rover suspension.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{3.3cm}Y c c c@{}}
+\toprule
+\textbf{Option} & \textbf{How it works} & \textbf{Traction} & \textbf{Complexity} & \textbf{Fit} \\
+\midrule
+A. Rigid & all wheels bolted hard to frame & Poor & Lowest & Flat floor only \\
+B. Sprung casters & springs on the corner casters & Fair & Low & Light robots \\
+\rowcolor{lightgreen} C. Sprung drive units & each drive wheel on a pre-loaded spring/slide ($\sim$15--25\,mm travel) & Good & Low--Med & \textbf{Our case} \\
+\rowcolor{lightgreen} D. Transverse rocker & both drive units on one central pivot beam (see-saw) & Good & Low & \textbf{Our case} \\
+E. Independent arms & each drive wheel on its own sprung swing-arm & Very good & Med--High & Uneven floors \\
+F. Rocker-bogie & linked rockers + body differential (Mars rover) & Excellent & High & Rough terrain (overkill) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent\textbf{The two that fit us are C and D.}
+\textbf{C} (sprung drive units) directly guarantees a constant downward force on each drive wheel, so
+traction is maintained over seams and ramps and the payload is isolated from jolts. \textbf{D}
+(transverse rocker) is the simplest passive way to keep \emph{both} drive wheels loaded: when one
+rises, the beam rocks and the other is pushed down by the same amount. In practice the two are often
+combined --- a sprung drive pod mounted on a rocker.
+
+% =====================================================================
+\section{Real-robot precedents}
+\textbf{Option C --- sprung drive wheels.}
+The \textbf{iRobot Roomba} is the textbook case: each differential drive wheel is a self-contained
+spring-loaded module (motor + gearbox + spring) that compresses and extends independently to keep
+floor contact; the design rationale is exactly ours --- losing drive-wheel contact loses steering
+accuracy~\cite{ifixit,sevarg}. At our scale, AMR patent \textbf{US~12,128,554} places the drive units
+on coil springs and linear bearings with a $\approx$25\,mm stroke and couples both wheels (``parallel''
+suspension) to keep the track width constant and stay narrow-aisle compact~\cite{patentC}.
+\textbf{MiR} AMRs use a central differential drive whose published gap/clearance figures only make
+sense with loaded/sprung drive wheels~\cite{mir}.
+
+\textbf{Option D --- rocker / equalizer.}
+The Mars-rover rocker-bogie is the most-illustrated example of the pivot principle: if one wheel goes
+up, the linked wheel is forced down by the same amount~\cite{planetary}. AMR driving-module patents use
+the same single-pivot ``rocker'' idea in a compact drive unit~\cite{patentD}. We need only the
+\emph{single central rocker}, not the full bogie.
+
+% =====================================================================
+\section{Recommendation: Solution C (sprung drive units)}
+\textbf{We recommend Solution~C} --- placing each drive wheel on its own pre-loaded spring suspension.
+It is the mechanism the field converges on for indoor differential AMRs because it attacks our exact
+failure mode (a drive wheel unloading) at the source, isolates the electronics and payload from floor
+shock, and --- unlike a bare rocker --- gives a known, repeatable wheel load that can be tuned to our
+65\,kg-per-wheel share. It is also the only one of the two available as a \emph{finished, bolt-on
+product} (Section~6), which de-risks and accelerates a prototype.
+
+\subsection{The trade-off you must accept}
+\prio{\textbf{Buying Solution C as a ready module means replacing the Maxon EC\,45 flat + GP\,42C.}
+The off-the-shelf ``AGV suspension drive wheel'' is sold as a sealed assembly --- wheel + gearbox +
+\emph{motor} + encoder + spring (sometimes brake and controller) --- all dimensioned around \emph{its own}
+motor. There is no slot to insert the EC\,45. So adopting a ready C-module retires our discrete
+motor/gearbox selection. The upside: these modules use 400\,W-class motors, which \emph{exceed} the
+2$\times$70\,W Maxon set-up --- so torque and power go \emph{up}, not down (see Section~5--6).}
+
+\medskip
+\noindent If keeping the EC\,45 + GP\,42C is mandatory, Solution~C must instead be \emph{fabricated}
+(a sprung vertical linear slide per drive unit, built from catalogue linear guides + springs), or
+Solution~D (a fabricated rocker) is used --- both keep the Maxon and all dimensions, but neither is a
+single purchasable kit.
+
+% =====================================================================
+\section{Specifications to preserve or improve}
+Any replacement module must \textbf{meet or beat} the current drivetrain. Targets derived from the
+sizing study:
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{5.2cm}p{4.3cm}Y@{}}
+\toprule
+\textbf{Parameter} & \textbf{Current (EC\,45 + GP\,42C)} & \textbf{Requirement for a kit} \\
+\midrule
+Supply voltage & 24\,V & 24\,V (match battery) \\
+Max speed & 1.5\,m/s (33:1 gives 2.85 top) & $\geq$1.5\,m/s \\
+Continuous tractive force (pair) & $\approx$69\,N & $\geq$69\,N; $\geq$100\,N desired for ramps \\
+Continuous torque (per motor) & 130\,mNm~\cite{maxon} & meet/exceed at the wheel \\
+Wheel diameter & \O180\,mm & \O180\,mm to preserve geometry \\
+Per-wheel load (spring tuning) & $\approx$65\,kg & spring rated/tuned for $\sim$65\,kg/wheel \\
+Encoder & yes (Hall / E6B2) & integrated encoder \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent A 400\,W-class integrated drive wheel clears the speed, torque and power targets with margin
+(``better''); the two items that need active confirmation are \textbf{24\,V} availability and a
+\textbf{spring rate tuned to our light 65\,kg/wheel} (most modules are built for far heavier robots, so
+an untuned spring can be too stiff to deflect).
+
+% =====================================================================
+\section{Ready-to-buy kits (Solution C) suited to our use case}
+The following provide drive + suspension in one unit and are appropriate (with the noted configuration)
+for a 130\,kg indoor AMR. All are customisable with low minimum order quantity.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}p{3.0cm}Y p{2.6cm}@{}}
+\toprule
+\textbf{Product} & \textbf{Why it fits us / what to configure} & \textbf{Suspension} \\
+\midrule
+\rowcolor{lightblue}
+ZHLUN Robotic Drive Unit (electric differential wheel)~\cite{zhlun} &
+Bundles motor, encoder, reducer, controller and PU wheel; two-stage damping (coil spring + PU block).
+Request 24\,V, \O180 wheel, $\geq$1.5\,m/s, spring tuned to 65\,kg/wheel. & Spring + PU block (built in) \\
+TZBOT AGV Suspension Drive Wheel~\cite{tzbot} &
+Dedicated suspension differential unit; select the \emph{smallest} model (the TZCS heavy-load variants
+are 4-tonne class --- avoid). Confirm 24\,V and wheel \O. & Spring suspension (built in) \\
+\rowcolor{lightblue}
+BeUDMKE Shock-Absorbing Drive Wheel~\cite{dmk} &
+One-stop wheel + motor + driver + gearbox with shock absorption; customisable voltage, wheel \O\ and
+ratio. & Shock-absorbing (built in) \\
+ez-Wheel SWD\,125~\cite{ezwheel} &
+24\,V integrated \emph{safety} wheel drive purpose-built for AMRs (SIL2/PLd), encoder included ---
+strong on functional safety. Note: \O125 wheel (changes ride height) and confirm whether compliance is
+built in or added. & Integrated drive (verify) \\
+Bosch Rexroth ROKIT Motor~\cite{rokit} &
+Premium plug-and-drive wheel (wheel, gearbox, brake, motor, encoder, controller). Pallet-scale ---
+likely oversized; rigid, so pair with compliance. Reference-grade fallback. & Rigid (add compliance) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent\textbf{Primary picks for us:} the \textbf{ZHLUN} and \textbf{BeUDMKE} suspension drive wheels,
+because they explicitly include the spring/PU compliance (true Solution~C), are customisable to 24\,V /
+\O180 / $\geq$1.5\,m/s, and carry far more than 65\,kg so the motor specs land \emph{above} ours. The
+single open point on both is spring tuning for our light per-wheel load --- specify it in the RFQ.
+
+% =====================================================================
+\section{Priority of this modification}
+\prio{\textbf{Priority: MEDIUM now, rising to HIGH before any real-floor deployment.}}
+
+\begin{itemize}
+\item \textbf{Not a bring-up blocker.} On a flat lab/test floor a rigid mount runs; the robot can be
+powered up, driven and have its electronics, navigation and safety chain validated \emph{before} the
+suspension is fitted. So it does not gate first motion.
+\item \textbf{Becomes critical for deployment.} On any production floor with expansion joints,
+dock-plates or ramps, the over-constrained six-contact base \emph{will} rock and intermittently unload a
+drive wheel --- degrading traction, odometry and stability (worsened by the high CoG). Before field
+trials this must be resolved.
+\item \textbf{Ranking against other open items.} It sits \emph{below} the two hard geometric conflicts
+that decide whether the chassis can be built at all --- the battery pack aspect ratio vs.\ the motors,
+and the caster mount height vs.\ the 40\,mm ground clearance --- and below freezing the drivetrain
+torque (the 33:1 $\rightarrow$ 51:1 ratio question). Resolve those first; schedule the suspension
+decision immediately after, because choosing a ready C-module \emph{is} the drivetrain decision (it
+replaces the motor) and therefore should not be left late.
+\end{itemize}
+
+\noindent\textbf{Recommended action:} issue an RFQ to ZHLUN and BeUDMKE for their smallest 24\,V
+suspension differential drive wheel (\O180, $\geq$1.5\,m/s, encoder, spring tuned to $\sim$65\,kg/wheel),
+and in parallel keep the fabricated rocker (Solution~D around the existing Maxon) as the fallback that
+changes no specification and no dimension.
+
+% =====================================================================
+\begin{thebibliography}{99}
+\small
+\bibitem{maxon} maxon group. \textit{EC\,45 flat \O45\,mm brushless, 70\,W} — product/datasheet
+(max.\ continuous torque 130\,mNm, up to 85\% efficiency, 24\,V winding).
+\url{https://www.maxongroup.com/}
+\bibitem{ifixit} iFixit. \textit{Roomba 650 Wheel Module Disassembly} (identifies the suspension pivot
+pin). \url{https://www.ifixit.com/Guide/Roomba+650+wheel+module+Disassembly/97733}
+\bibitem{sevarg} Sevarg. \textit{Roomba i7 Teardown} (drive module = motor + geartrain + suspension
+spring, with large travel). \url{https://www.sevarg.net/2018/12/30/roomba-i7-teardown-with-the-waving-cat/}
+\bibitem{patentC} USPTO. \textit{Autonomous mobile robot with a single modular platform},
+US~12,128,554 (coil-spring drive units on linear bearings, $\approx$25\,mm stroke, parallel suspension).
+\bibitem{patentD} USPTO. \textit{Driving module of autonomous mobile robot}, US~12,194,800
+(single-pivot rocker drive unit). 
+\bibitem{planetary} The Planetary Society. \textit{How the Mars rover rocker-bogie suspension works}
+(``if the left front wheel goes up, the right front wheel is forced down by the same amount'').
+\url{https://www.planetary.org/}
+\bibitem{mir} Mobile Industrial Robots. \textit{MiR600 specifications} (ground clearance $\approx$27\,mm;
+traversable floor gap up to $\approx$30\,mm). \url{https://www.mobile-industrial-robots.com/}
+\bibitem{zhlun} ZHLUN / Guangzhou Wisdom Wheel. \textit{Robotic Drive Units — Electric Differential
+Wheel} (two-stage spring + PU damping). \url{https://www.agv-wheel.com/}
+\bibitem{tzbot} TZBOT. \textit{AGV Drive Wheel — Suspension (differential)}.
+\url{https://www.tzbotautomation.com/agv-drive-wheels/differential-drive-wheel/agv-drive-wheel-suspension.html}
+\bibitem{dmk} BeUDMKE (dmkmotor). \textit{AGV Drive Wheel — shock-absorbing drive wheel}.
+\url{https://www.dmkmotor.com/agv-drive-wheel/}
+\bibitem{ezwheel} ez-Wheel. \textit{SWD\,125 Safety Wheel Drive} (24\,V, SIL2/PLd, for AGV/AMR), via
+RobotShop. \url{https://www.robotshop.com/products/swd-125-safety-wheel-drive-agv-amr}
+\bibitem{rokit} Bosch Rexroth. \textit{ROKIT Motor — all-in-one wheel drive for AMRs}.
+\url{https://www.boschrexroth.com/}
+\bibitem{ieee} IEEE/IROS. \textit{Flexible (multilayered) suspension mechanism for a differential-drive
+mobile robot} (passive spring+damper, self-levelling; for tall, tip-prone robots).
+\end{thebibliography}
+
+\end{document}
