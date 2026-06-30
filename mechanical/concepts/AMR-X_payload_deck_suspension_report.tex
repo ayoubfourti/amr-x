@@ -1,0 +1,348 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- packages ----------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage[table]{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{graphicx}
+\usepackage[hidelinks]{hyperref}
+
+% ---------- colours ----------
+\definecolor{navy}{HTML}{000000}
+\definecolor{accent}{HTML}{000000}
+\definecolor{lightblue}{HTML}{F2F2F2}
+\definecolor{lightgreen}{HTML}{E8E8E8}
+\definecolor{amber}{HTML}{ECECEC}
+\definecolor{greyln}{HTML}{808080}
+
+% ---------- section styling ----------
+\titleformat{\section}{\Large\bfseries\color{navy}}{\thesection.}{0.6em}{}[{\color{accent}\titlerule[1pt]}]
+\titleformat{\subsection}{\large\bfseries\color{black!80}}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{14pt}{6pt}
+
+% ---------- header / footer ----------
+\pagestyle{fancy}\fancyhf{}
+\renewcommand{\headrulewidth}{0.3pt}
+\lhead{\small\color{navy}AMR-X Prototype V1}
+\rhead{\small\color{navy}Payload-Deck Suspension Study}
+\cfoot{\small\color{black!55}Page \thepage}
+
+\newcolumntype{Y}{>{\raggedright\arraybackslash}X}
+\newcommand{\prio}[1]{\colorbox{amber}{\parbox{\dimexpr\linewidth-2\fboxsep}{#1}}}
+
+\setlist[itemize]{leftmargin=1.3em,itemsep=2pt,topsep=3pt}
+
+% ---------- title ----------
+\begin{document}
+\begin{titlepage}
+\thispagestyle{empty}
+\vspace*{2.2cm}
+\noindent\rule{\linewidth}{1.2pt}\\[10pt]
+{\small\bfseries\color{black} AMR-X PROTOTYPE V1 \quad$\cdot$\quad MECHANICAL ENGINEERING}\\[14pt]
+{\color{black}\Huge\bfseries Payload-Deck Suspension}\\[8pt]
+{\color{black}\Large Shock Isolation for the Payload Plate: Options, Trade-offs, Recommendation and Procurement}\\[12pt]
+\noindent\rule{\linewidth}{0.5pt}\\[10pt]
+{\normalsize 100\,kg payload \quad$\cdot$\quad 600--800\,mm deck plate \quad$\cdot$\quad impact-dominated duty \quad$\cdot$\quad vibration + curb-drop secondary}
+\vfill
+\noindent\rule{\linewidth}{0.5pt}\\[4pt]
+{\footnotesize Engineering design report \hfill Revision 1}
+\end{titlepage}
+
+% =====================================================================
+\section*{List of Abbreviations}
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{2.3cm}Y@{}}
+\toprule
+\textbf{Abbreviation} & \textbf{Meaning} \\
+\midrule
+AMR & Autonomous Mobile Robot \\
+AMR-X & Designation of this prototype platform (the robot studied in this report) \\
+AGV & Automated Guided Vehicle \\
+\rowcolor{lightblue} WRI & Wire Rope Isolator (looped stranded-cable shock/vibration mount) \\
+PU & Polyurethane (elastomer / wheel material) \\
+\rowcolor{lightblue} CoG & Centre of Gravity \\
+RFQ & Request for Quotation \\
+\rowcolor{lightblue} MOQ & Minimum Order Quantity \\
+NVH & Noise, Vibration and Harshness \\
+\rowcolor{lightblue} USPTO & United States Patent and Trademark Office \\
+MIL-STD & United States Military Standard (e.g.\ MIL-STD-810 environmental) \\
+\midrule
+\multicolumn{2}{@{}l}{\textit{Units}} \\
+N / kN & Newton / kilonewton (force) \\
+\rowcolor{lightblue} J & Joule (energy) \\
+kg & Kilogram \\
+\rowcolor{lightblue} mm & Millimetre \\
+Hz & Hertz (natural frequency) \\
+\rowcolor{lightblue} g & Acceleration relative to gravity ($\approx$9.81\,m/s$^2$) \\
+m/s & Metres per second \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+% =====================================================================
+\section{Why this question exists}
+The payload deck currently bolts \textbf{rigidly} to the lift/frame. That is fine until the moment a
+$\approx$100\,kg payload is \emph{set down} on it. The kinetic energy of that placement has to go
+somewhere, and on a rigid deck it goes straight into the frame, the fasteners and the lift mechanism as
+a sharp force spike.
+
+The governing relation is simple and unforgiving:
+\[
+\textbf{peak force into the frame} \;\approx\; \frac{\text{impact energy}}{\text{stroke}}.
+\]
+A feel for the numbers: 100\,kg arriving with even $\approx$25\,mm of drop is $\approx$25\,J. Absorbed
+over 25\,mm of suspension travel that averages $\approx$1\,kN ($\approx$100\,kgf). Absorbed over the
+1--2\,mm of ``give'' a rigid bolted deck has, the same 25\,J becomes \textbf{12--25\,kN} slammed into the
+structure. Interposing controlled travel buys an order-of-magnitude ($\approx$10$\times$) reduction in
+peak force. \textbf{That force reduction --- not ride comfort --- is the whole point of this mechanism.}
+
+\textbf{The duty, in priority order.}
+\begin{itemize}
+\item \textbf{Primary: placement shock.} Protect the robot when the payload lands on the deck.
+\item \textbf{Secondary: floor vibration and curb drops} transmitted up through the chassis while driving.
+\end{itemize}
+
+\textbf{The catch a spring alone cannot solve.} A pure spring (rubber, coil or air) \emph{stores} the
+placement energy and throws it straight back --- the payload bounces and you get repeated impacts. For
+placement shock the mechanism must \textbf{dissipate} energy, not just deflect. This single fact drives
+the entire ranking that follows.
+
+\textbf{Design target.} Impact-dominated, with the payload varying $0\rightarrow100$\,kg every cycle, on
+an indoor warehouse floor (small repeated unevenness --- joints, ramps, dock-plate lips --- not rough
+terrain). Crucially the deck must still present a \emph{repeatable height} for docking and pick/place;
+production AMRs in this class hold $\approx\pm5$\,mm positioning, and AGV practice warns that an
+unconstrained compliant deck ``floats'' its height and breaks dock/sensor alignment~\cite{abb,casterhq}.
+The real question is therefore: \textbf{how do we put controlled, damped travel between deck and frame
+without losing deck-height repeatability.}
+
+% =====================================================================
+\section{Candidate mechanisms}
+Six approaches span the spectrum from doing nothing to a fully guided, damped platform.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{3.5cm}Y c c c@{}}
+\toprule
+\textbf{Option} & \textbf{How it works} & \textbf{Energy handling} & \textbf{Complexity} & \textbf{Fit} \\
+\midrule
+A. Rigid deck & plate bolted hard to frame & Poor (no stroke) & Lowest & Gentle hand-loading only \\
+B. Elastomeric mounts & rubber sandwich/cone pads & Fair; rebounds & Low & Vibration, light shock \\
+C. Coil-spring isolators & steel springs in housings & Fair; stores \& rebounds & Low & Low-freq vibration \\
+D. Air springs / pneumatic & rubber bellows on air & Good vibration; needs air & Med & Vibration isolation \\
+\rowcolor{lightgreen} E. Wire rope isolators & looped cable, high internal (hysteretic) damping & Good; damps, low rebound & Low & \textbf{Our case} \\
+\rowcolor{lightgreen} F. Guided deck + hydraulic damper & plate on linear guides + shock absorbers & Excellent; near-zero rebound & Med--High & \textbf{Our case (worst drops)} \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent\textbf{The two that fit us are E and F.}
+\textbf{E} (wire rope isolators) puts high energy absorption per millimetre of travel into a single
+bolt-on metal part: the cable strands rub and dissipate the impact instead of springing it back, and the
+same part also covers the secondary vibration and curb-drop duty in all three axes. \textbf{F} (a plate
+on linear guides with hydraulic shock absorbers) gives the cleanest possible \emph{no-rebound} stop for
+genuine drops, because a hydraulic damper converts the impact almost entirely to heat at a near-constant
+low force. In practice the two combine well --- wire rope isolators as the primary mounts, with a rubber
+end-stop, or the guided-deck variant when loads are dropped rather than placed.
+
+Options B, C and D are kept as the \emph{vibration} layer, not the impact layer: a single-rate rubber,
+coil or air spring sized to catch a 100\,kg drop is far too stiff when the deck is empty, and rubber can
+take a set or tear under repeated heavy impacts.
+
+% =====================================================================
+\section{Real-product precedents}
+\textbf{Option E --- wire rope isolators.}
+These are the defence- and aerospace-standard answer to \emph{repeated} shock precisely because they
+damp in all three axes, are unaffected by oil, temperature and ageing, and are maintenance-free; the
+standard catalogue lines are qualified to environmental standards such as MIL-STD-810~\cite{enidine}.
+The recurring design rule is to mount them at $\approx 45^{\circ}$ to the load, which equalises the
+stiffness across all three axes so one part handles the vertical placement shock \emph{and} the
+horizontal curb/stop loads~\cite{uspto45a,uspto45b}. The category is already used in automated-warehouse
+equipment~\cite{enidine}.
+
+\textbf{Option F --- guided deck with hydraulic shock absorbers.}
+Industrial self-compensating shock absorbers convert impact to heat and do not rebound. The decisive
+feature for us is that the payload energy changes every cycle as the load varies $0\rightarrow100$\,kg,
+and self-compensating units ``react to changing energy conditions without adjustment'', covering
+effective weights from $\approx$1\,kg to 1{,}550\,kg with a side-load adapter for impact angles up to
+$25^{\circ}$~\cite{acesc,aceheavy}. Mounted under a linearly-guided plate with light return springs,
+they form the no-bounce drop-catcher of Solution~F.
+
+\textbf{Why not a bare spring.}
+Coil, rubber and air mounts are excellent \emph{vibration} isolators --- air springs in particular reach
+very low natural frequencies~\cite{firestone,mason} --- but used alone for placement shock they store the
+energy and bounce the load. And on an AGV/AMR specifically, soft unconstrained compliance under the deck
+varies the deck height and ``breaks sensor and dock-plate alignment'', which is why such compliance is
+normally reserved for manual carts unless its travel is constrained~\cite{casterhq}.
+
+% =====================================================================
+\section{Recommendation: Solution E (wire rope isolators)}
+\textbf{We recommend Solution~E} --- mounting the deck plate on wire rope isolators at the four corners.
+It attacks our exact failure mode (placement energy spiking into the frame) at the source, it damps
+rather than rebounds, and it delivers the primary \emph{and} both secondary duties in one
+maintenance-free, bolt-on metal part with no air supply or power. It is also the only one of the two
+fitting options available as a \emph{finished, purchasable component}, which de-risks and accelerates the
+prototype.
+
+\subsection{The trade-off you must accept}
+\prio{\textbf{A compliant deck trades structural protection against deck-height repeatability.}
+The same travel that protects the frame also lets the deck move under load, so dock/pick height can drift
+and the payload can sway in turns. Accept this by \textbf{constraining the travel}: hard limit stops plus
+a rubber end-stop, modest stroke ($\sim$15--25\,mm), and isolators placed symmetrically about the payload
+CoG so each corner carries an equal $\approx$25\,kg share. If a \emph{precise} docking height is required,
+decouple the two needs in time --- soft-isolate while driving, then mechanically lock or clamp the deck
+during pick/place and docking.}
+
+\medskip
+\noindent If loads can be genuinely \emph{dropped} (not gently lowered), step up to Solution~F: a guided
+deck on linear bearings with hydraulic self-compensating absorbers and light return springs. It gives the
+cleanest no-rebound stop, but --- like a fabricated rocker in the drivetrain study --- it is an
+\emph{assembly}, not a single purchasable kit.
+
+% =====================================================================
+\section{Specifications to preserve or improve}
+Any deck-suspension solution must \textbf{meet or beat} the rigid baseline on the points below. Targets
+derived from the impact and packaging study:
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\linewidth}{@{}p{5.0cm}p{4.0cm}Y@{}}
+\toprule
+\textbf{Parameter} & \textbf{Current (rigid deck)} & \textbf{Requirement} \\
+\midrule
+Static payload & 100\,kg & support 100\,kg + dynamic margin \\
+Per-corner static load & $\approx$25\,kg (4 mounts) & isolator at $\sim$50\% of rating (shock headroom) \\
+Vertical travel & $\approx$0 (rigid) & $\sim$15--25\,mm \emph{controlled}, with hard stops \\
+Peak force into frame & 12--25\,kN on a drop & cut $\approx$10$\times$ by adding stroke \\
+Rebound after placement & n/a & damped, no bounce (dissipative) \\
+Load variability & n/a & cope $0\rightarrow100$\,kg per cycle \\
+Deck-height repeatability & fixed by bolt-up & maintain for docking (limit stops / lock) \\
+Environment & indoor warehouse & oil/temp/age-stable, maintenance-free \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent A 4-corner wire rope set clears these with margin; the items needing active confirmation in the
+RFQ are the \textbf{drop height / placement velocity} (which fixes the energy and therefore the isolator
+size and count) and the \textbf{travel-limit / end-stop} scheme that protects deck-height repeatability.
+
+% =====================================================================
+\section{Ready-to-buy products suited to our use case}
+The following are appropriate for a 100\,kg payload deck (with the noted configuration). All are
+catalogue parts with low MOQ.
+
+\begin{center}\small
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\linewidth}{@{}p{3.2cm}Y p{2.5cm}@{}}
+\toprule
+\textbf{Product} & \textbf{Why it fits us / what to configure} & \textbf{Type} \\
+\midrule
+\rowcolor{lightblue}
+Enidine WR6-700-10~\cite{wr6} &
+$\approx$50.8\,kg/unit, $\approx$43\,mm tall. Four corners at $45^{\circ}$; at 25\,kg/corner it sits at
+$\sim$50\% rating, leaving compression travel for the impact. \textbf{Primary pick.} & Wire rope isolator \\
+Enidine WR8-400-08~\cite{wr8} &
+$\approx$68.9\,kg/unit, $\approx$54\,mm tall. Step up to this (or run six WR6) if placement drops are
+harsh. & Wire rope isolator \\
+\rowcolor{lightblue}
+ACE SC$^2$ self-compensating absorbers~\cite{acesc} &
+Effective weight 1--1{,}550\,kg, side-load adapter to $25^{\circ}$, self-compensates as load varies
+$0\rightarrow100$\,kg. The energy dump for Solution~F. & Hydraulic damper \\
+Parker LORD Flex-Bolt sandwich (small group)~\cite{lord} &
+$\approx$3--66\,kg/mount; cheap, simple vibration layer to add beneath/alongside the primary mounts. &
+Elastomeric mount \\
+ACE PAL-3~\cite{acepal} &
+Auto-levelling air spring, $\leq$385\,kg/spring; adds constant deck level + isolation if levelling is
+needed (requires air). & Pneumatic levelling \\
+\rowcolor{lightblue}
+PGFUN 10-loop WRI~\cite{pgfun} &
+Low-cost 10-loop stainless isolators to validate geometry before committing to engineered units. \emph{Prototype only.} & Wire rope (proto) \\
+\bottomrule
+\end{tabularx}
+\end{center}
+
+\noindent\textbf{Primary picks for us:} \textbf{4$\times$ Enidine WR6-700-10} (or six, or step to WR8 for
+harsh drops), mounted at $45^{\circ}$ with a rubber end-stop, because they damp the placement impact,
+cover vibration and curb drops in the same part, need no air or power, and are maintenance-free. The
+single open point is the \textbf{exact size/count}, which the supplier sizing tool fixes once the drop
+height is known. Hold \textbf{Solution~F (guided deck + ACE SC$^2$)} as the upgrade for true drop loading.
+
+% =====================================================================
+\section{Priority of this modification}
+\prio{\textbf{Priority: MEDIUM now, rising to HIGH before any payload-handling trials.}}
+
+\begin{itemize}
+\item \textbf{Not a bring-up blocker.} An empty or gently hand-loaded deck on a rigid mount is fine for
+powering up the robot and validating electronics, navigation and the safety chain. It does not gate first
+motion.
+\item \textbf{Becomes critical for payload operations.} Once the robot does automated or repeated payload
+placement --- and once it drives a real floor with joints, dock-plates and curb lips --- the rigid deck
+funnels every placement and curb impact straight into the frame, fasteners and lift mechanism, where
+repeated multi-kN spikes drive fatigue and shock the electronics. This must be resolved before field
+trials.
+\item \textbf{Ranking against other open items.} It sits \emph{below} the chassis-geometry and drivetrain
+decisions that determine whether the platform can be built at all, but it \emph{interacts with the lift
+mechanism} the deck mounts to --- so the suspension interface must be fixed together with the lift, not
+bolted on afterwards.
+\end{itemize}
+
+\noindent\textbf{Recommended action:} issue an RFQ / order for 4--8$\times$ Enidine WR6-700-10 (confirm
+exact part and count via the supplier sizing tool once drop height/velocity is measured), mount them at
+$45^{\circ}$ with hard limit stops and a rubber end-stop, and keep the guided-deck + ACE SC$^2$ assembly
+(Solution~F) as the fallback for genuine drop loading.
+
+% =====================================================================
+\begin{thebibliography}{99}
+\small
+\bibitem{abb} ABB. \textit{AMR P603V Product Specification} (3HKA00000226401) --- lift-type AMR; deck
+raised on ball-screw lifters; positioning to $\approx\pm5$\,mm; on-deck load-measurement sensors.
+\bibitem{enidine} Enidine (ITT). \textit{Wire Rope Isolators} --- stainless cable, RoHS aluminium bars;
+qualified to MIL-STD-810, BV43-44, MIL-STD-167 and similar; used in automated-warehouse equipment.
+\url{https://www.enidine.com/en-us/products/wire-rope-isolators}
+\bibitem{uspto45a} USPTO. \textit{Multi-axis shock and vibration isolation system}, US~6,530,563
+(wire rope isolators at $\approx 45^{\circ}$ to the suspended mass for balanced three-axis stiffness).
+\url{https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/6530563}
+\bibitem{uspto45b} USPTO. \textit{Shock resistant device}, US~7,260,476 (mounting wire rope isolators at
+$\approx 45^{\circ}$ equalises compression/shear/roll stiffness and extends life).
+\url{https://image-ppubs.uspto.gov/dirsearch-public/print/downloadPdf/7260476}
+\bibitem{acesc} ACE Controls. \textit{SC$^2$ Self-Compensating Industrial Shock Absorbers} --- effective
+weight 1--1{,}550\,kg, integrated positive stop, side-load adapter to $25^{\circ}$, react to changing
+energy without adjustment. \url{https://www.acecontrols.com/us/}
+\bibitem{aceheavy} ACE Controls / Valin. \textit{Heavy / self-compensating industrial shock absorbers}
+(self-compensating units react to changing energy conditions without adjustment).
+\url{https://www.valin.com/motion-control-and-automation/products/heavy-industrial-shock-absorbers-ace-controls-inc}
+\bibitem{wr6} Enidine. \textit{WR6-700-10 wire rope isolator datasheet} (load capacity $\approx$50.8\,kg
+/ 112\,lb; thickness $\approx$43\,mm).
+\url{https://datasheets.globalspec.com/ds/itt-inc/wr6-700-10/36ff8e41-4c53-43df-81f6-df1d272cb7a7}
+\bibitem{wr8} Enidine. \textit{WR8-400-08 wire rope isolator datasheet} (load capacity $\approx$68.9\,kg
+/ 152\,lb; thickness $\approx$54\,mm).
+\url{https://datasheets.globalspec.com/ds/itt-inc/wr8-400-08/07d5da4c-76cb-48fa-be8d-d096f6d5a05b}
+\bibitem{lord} Parker LORD. \textit{Flex-Bolt Sandwich Mounts} (small group $\approx$31--645\,N
+$\approx$3--66\,kg per mount; metric thread).
+\url{https://www.modusadvanced.com/parker-lord-vibration-isolation-mounts}
+\bibitem{firestone} Firestone Industrial. \textit{Airstroke / Airmount Engineering Manual \& Design Guide}
+(air-spring isolators; highest isolation of any type; no spring chatter).
+\url{https://www.firestoneairide.com/content/dam/fsip/pdfs/airstroke/Actuators-and-Isolators-Metric-Design-Guide.pdf}
+\bibitem{acepal} ACE Controls. \textit{PAL-3 to PAL-9 low-frequency pneumatic levelling mounts}
+(automatic level control; up to 385\,kg per air spring; natural frequency to $\sim$1.7\,Hz).
+\url{https://www.acecontrols.com/us/products/vibration-control/low-freq-pneumatic-levelling-mounts.html}
+\bibitem{mason} Mason Industries. \textit{Spring Isolators / housed spring mounts} (steel-coil low-frequency
+vibration mounts; horizontal stiffness drops with deflection --- add limit stops).
+\url{https://mason-ind.com/spring-isolators/}
+\bibitem{casterhq} CasterHQ. \textit{Spring-loaded casters --- AGV guidance} (sprung compliance under a
+deck introduces variable deck height that breaks sensor / dock-plate alignment unless travel is constrained).
+\url{https://casterhq.com/collections/casters-spring-loaded}
+\bibitem{pgfun} PGFUN. \textit{10-loop 304 stainless wire rope isolator} (low-cost prototype isolators;
+more loops give better cushioning).
+\url{https://www.amazon.com/PGFUN-Isolator-Stainless-Anti-Vibration-Absorber/dp/B09W695DJ6}
+\end{thebibliography}
+
+\end{document}
