@@ -1,0 +1,22 @@
+Category,Parameter,Value,Source Team,Status,Notes
+Dimensions,Length,800 mm,Mechanical,Confirmed,
+Dimensions,Width,600 mm,Mechanical,Confirmed,
+Dimensions,Height,420 mm,Mechanical,Confirmed,
+Mobility,Drive Type,Differential,Mechanical,Confirmed,
+Mobility,Caster Wheels,4,Mechanical,Confirmed,Changed from 2 to 4 for stability and load distribution
+Sensors,LiDAR Count,2 (front + rear),Mechanical,Needs ROS validation,Navigation/ROS team has not confirmed this matches their Nav2 assumptions
+Sensors,LiDAR Coverage,360 degrees combined,Mechanical,Proposed,
+Interface,Module Zone,500 x 400 mm,Module Team,Confirmed,Centered over wheelbase to keep center of gravity stable
+Interface,Connector Type,HARTING Han-Modular,Module Team,Confirmed,Carries 24V power CAN bus and Ethernet
+Interface,Docking Alignment,Alignment pins + quarter-turn M8 locks,Module Team,Confirmed,
+Interface,Docking Detection,2 inductive sensors,Module Team,Confirmed,Publishes to ROS topics /module_docked and /module_id
+Interface,Clearance Zones,Defined around front LiDAR emergency stop and operator panel,Module Team,Confirmed,Modules cannot block these zones
+Software,ROS Version,ROS 2 Jazzy,ROS/Sim Team,Confirmed,
+Software,URDF Status,Placeholder base model only,ROS/Sim Team,In Progress,Waiting on final Mechanical CAD to replace placeholder
+Software,Simulation Environment,Basic warehouse in Gazebo,ROS/Sim Team,Confirmed,Built before real robot model was ready
+Navigation,Footprint,TBD,Navigation Team,Blocked,Cannot finalize until Mechanical dimensions and caster layout are locked
+Navigation,Nav2 Configuration,Configured with placeholder footprint,Navigation Team,In Progress,
+Navigation,Localization,SLAM + AMCL configured,Navigation Team,Confirmed,Tested with placeholder robot model only
+Power,Battery,TBD,Electrical Team,Blocked,Mechanical internal layout is waiting on this decision too
+Power,Main Computer / Controller,TBD,Electrical Team,Blocked,
+Electronics,Motor Drivers,TBD,Electrical Team,Blocked,
