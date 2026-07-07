@@ -1,137 +1,65 @@
-# AMR-X Robot Simulation — Launch & Spawn Guide
+# robot_description
 
-## Prerequisites
+Robot model package for AMR-X.
 
-Make sure you have ROS 2 Humble and Ignition Gazebo (Fortress) installed.
+## Environment
+
+Default environment:
+
+- Ubuntu 24.04
+- ROS 2 Jazzy
+- Gazebo Harmonic
+
+Allowed compatibility environment:
+
+- Ubuntu 22.04
+- ROS 2 Humble
+- Gazebo Fortress
+
+See `../ENVIRONMENT.md` for the full environment policy. New work targets the
+default environment first; compatibility fixes must stay isolated to small
+version-specific files.
+
+## Build
+
+From the repository root:
 
 ```bash
-source /opt/ros/humble/setup.bash
-```
-
----
-
-## Build the Workspace
-
-```bash
-cd ~/amr-x
-colcon build
+cd robotics
+source /opt/ros/jazzy/setup.bash
+colcon build --symlink-install
 source install/setup.bash
 ```
 
----
-
-## Launch the Warehouse Simulation
-
-Open a terminal and run:
+## View the Robot Model
 
 ```bash
-source ~/amr-x/install/setup.bash
-ros2 launch simulation warehouse.launch.py
+ros2 launch robot_description display.launch.py
 ```
 
-Wait until Gazebo is fully open before proceeding.
+## Run the Full Simulation
 
----
-
-## Spawn the Robot
-
-Open a **new terminal** and run:
+The robot is spawned by the top-level bringup launch file:
 
 ```bash
-source ~/amr-x/install/setup.bash
-ros2 run ros_gz_sim create \
-  -string "$(cat ~/amr-x/robotics/robot_description/urdf/amr0_urdf.urdf)" \
-  -name amr_robot \
-  -x 0 -y 0 -z 0.1
+ros2 launch bringup simulation.launch.py
 ```
 
-The robot will appear in the Gazebo warehouse environment.
-
----
-
-## Publish Robot State (Optional — for RViz)
-
-Open a **new terminal** and run:
+Fortress compatibility path:
 
 ```bash
-cat > /tmp/rsp.launch.py << 'EOF2'
-from launch import LaunchDescription
-from launch_ros.actions import Node
-import os
-
-def generate_launch_description():
-    urdf_path = os.path.expanduser(
-        '~/amr-x/robotics/robot_description/urdf/amr0_urdf.urdf'
-    )
-    with open(urdf_path, 'r') as f:
-        robot_desc = f.read()
-
-    return LaunchDescription([
-        Node(
-            package='robot_state_publisher',
-            executable='robot_state_publisher',
-            parameters=[{'robot_description': robot_desc}],
-            output='screen'
-        )
-    ])
-EOF2
-
-source ~/amr-x/install/setup.bash
-ros2 launch /tmp/rsp.launch.py
+ros2 launch bringup simulation.launch.py simulator_variant:=fortress
 ```
 
----
+## Package Contents
 
-## Terminal Summary
+- `urdf/amr.urdf.xacro` - top-level Xacro model.
+- `urdf/amr_base.xacro` - mobile base, wheels, and casters.
+- `urdf/amr_sensors.xacro` - LiDAR and IMU links.
+- `urdf/amr_gazebo.xacro` - Gazebo integration with Harmonic/Fortress variants.
+- `config/robot_params.yaml` - robot model parameters.
+- `launch/display.launch.py` - RViz-only model display.
+- `meshes/` - optional mesh assets.
 
-| Terminal | Command | Role |
-|----------|---------|------|
-| 1 | `ros2 launch simulation warehouse.launch.py` | Launch Gazebo warehouse |
-| 2 | `ros2 run ros_gz_sim create -string ...` | Spawn the robot |
-| 3 | `ros2 launch /tmp/rsp.launch.py` | Publish robot state |
-
----
-
-## Robot Description
-
-The robot `amr0_urdf` was designed in **SolidWorks** and exported using the SolidWorks to URDF Exporter plugin. It includes:
-
-- `base_link` — main robot body
-- `left_wheel_Link` — left drive wheel
-- `right_wheel_Link` — right drive wheel
-- `caster_left_wheel_Link` — left caster wheel
-- `caster_right_wheel_Link` — right caster wheel
-
-### File Structure
-
-```
-robotics/
-└── robot_description/
-    ├── meshes/
-    │   ├── base_link.STL
-    │   ├── left_wheel_Link.STL
-    │   ├── right_wheel_Link.STL
-    │   ├── caster_left_wheel_Link.STL
-    │   └── caster_right_wheel_Link.STL
-    └── urdf/
-        └── amr0_urdf.urdf
-```
-
----
-
-## Troubleshooting
-
-**Package not found error:**
-```bash
-source ~/amr-x/install/setup.bash
-```
-
-**Robot not appearing in Gazebo:**
-Make sure Gazebo is fully loaded before running the spawn command.
-
-**Rebuild after URDF changes:**
-```bash
-cd ~/amr-x
-colcon build
-source install/setup.bash
-```
+The legacy `urdf/amr0_urdf.urdf` is a SolidWorks export kept as a reference.
+The active simulation uses `urdf/amr.urdf.xacro`.

@@ -4,7 +4,7 @@
 # =============================================================================
 # Brings up the complete simulation in one command:
 #   1. robot_state_publisher  (URDF -> /robot_description + static TF)
-#   2. Gazebo Fortress        (warehouse world)
+#   2. Gazebo                 (warehouse world)
 #   3. spawn the AMR-X robot   (from the /robot_description topic)
 #   4. ros_gz_bridge          (cmd_vel, odom, scan, imu, joint_states, clock, tf)
 #   5. RViz                    (visualisation)
@@ -19,7 +19,7 @@ import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
 from launch.actions import (DeclareLaunchArgument, IncludeLaunchDescription,
-                            TimerAction)
+                            SetEnvironmentVariable, TimerAction)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import (Command, LaunchConfiguration,
@@ -39,16 +39,29 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration("rviz")
     gui = LaunchConfiguration("gui")
     world = LaunchConfiguration("world")
+    simulator_variant = LaunchConfiguration("simulator_variant")
 
-    default_world = os.path.join(pkg_gazebo, "worlds", "warehouse.sdf")
-    bridge_config = os.path.join(pkg_gazebo, "config", "bridge.yaml")
+    default_world = PythonExpression([
+        "'",
+        os.path.join(pkg_gazebo, "worlds", "warehouse.sdf"),
+        "' if '", simulator_variant, "' == 'harmonic' else '",
+        os.path.join(pkg_gazebo, "worlds", "warehouse_fortress.sdf"),
+        "'"
+    ])
+    gazebo_resource_path = os.pathsep.join([
+        pkg_gazebo,
+        os.path.join(pkg_gazebo, "models"),
+    ])
     rviz_config = os.path.join(pkg_bringup, "rviz", "simulation.rviz")
     xacro_file = PathJoinSubstitution(
         [FindPackageShare("robot_description"), "urdf", "amr.urdf.xacro"])
 
     # ---- robot description (with Gazebo plugins) ----------------------------
     robot_description = ParameterValue(
-        Command(["xacro ", xacro_file, " use_gazebo:=true"]),
+        Command([
+            "xacro ", xacro_file, " use_gazebo:=true",
+            " simulator_variant:=", simulator_variant,
+        ]),
         value_type=str,
     )
 
@@ -63,7 +76,15 @@ def generate_launch_description():
         }],
     )
 
-    # ---- Gazebo (Fortress) with the warehouse world -------------------------
+    bridge_config = PythonExpression([
+        "'",
+        os.path.join(pkg_gazebo, "config", "bridge_harmonic.yaml"),
+        "' if '", simulator_variant, "' == 'harmonic' else '",
+        os.path.join(pkg_gazebo, "config", "bridge_fortress.yaml"),
+        "'"
+    ])
+
+    # ---- Gazebo with the warehouse world -----------------------------------
     gz_args = PythonExpression([
         "'", world, " -r' if '", gui, "' == 'true' else '", world, " -r -s'"
     ])
@@ -118,12 +139,19 @@ def generate_launch_description():
     delayed_bridge = TimerAction(period=2.0, actions=[bridge])
 
     return LaunchDescription([
+        SetEnvironmentVariable("GZ_SIM_RESOURCE_PATH", gazebo_resource_path),
+        SetEnvironmentVariable("IGN_GAZEBO_RESOURCE_PATH", gazebo_resource_path),
+
         DeclareLaunchArgument("use_sim_time", default_value="true",
                               description="Use the /clock published by Gazebo."),
         DeclareLaunchArgument("rviz", default_value="true",
                               description="Open RViz."),
         DeclareLaunchArgument("gui", default_value="true",
                               description="Gazebo GUI (false = headless server)."),
+        DeclareLaunchArgument(
+            "simulator_variant", default_value="harmonic",
+            description="Gazebo integration variant: harmonic (default) or fortress."
+        ),
         DeclareLaunchArgument("world", default_value=default_world,
                               description="Absolute path to the .sdf world."),
 

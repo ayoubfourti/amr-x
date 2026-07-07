@@ -3,7 +3,7 @@
 The five ROS 2 packages live directly here (keeping the original folder names):
 
 - `robot_description/` - the robot model (URDF/Xacro)
-- `simulation/`        - Gazebo Fortress world + bridge
+- `simulation/`        - Gazebo world + bridge (Harmonic default, Fortress compatibility)
 - `control/`           - ros2_control / diff_drive config
 - `navigation/`        - Nav2 config (integration point)
 - `bringup/`           - top-level launch files (start here)
