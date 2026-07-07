@@ -44,7 +44,7 @@ def generate_launch_description():
     bridge_config = os.path.join(pkg_gazebo, "config", "bridge.yaml")
     rviz_config = os.path.join(pkg_bringup, "rviz", "simulation.rviz")
     xacro_file = PathJoinSubstitution(
-        [FindPackageShare("robot_description"), "urdf", "amr.urdf.xacro"])
+        [FindPackageShare("robot_description"), "urdf", "amr_real.urdf.xacro"])
 
     # ---- robot description (with Gazebo plugins) ----------------------------
     robot_description = ParameterValue(
