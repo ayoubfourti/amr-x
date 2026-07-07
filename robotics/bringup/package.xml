@@ -5,8 +5,9 @@
   <version>1.0.0</version>
   <description>
     AMR-X bring-up: top-level launch files that start the robot description,
-    Gazebo Fortress simulation, the ROS-Gazebo bridge, teleoperation, and RViz
-    together. This is the package most users launch from.
+    Gazebo simulation, the ROS-Gazebo bridge, teleoperation, and RViz together.
+    Defaults to Jazzy/Harmonic and keeps Humble/Fortress as a compatibility
+    mode. This is the package most users launch from.
   </description>
   <maintainer email="zeyneb@amr-x.local">ZEYNEB</maintainer>
   <author>ZEYNEB (ROS 2 Integration Lead)</author>

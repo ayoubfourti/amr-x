@@ -19,6 +19,7 @@ Orchestrates the other packages into single commands.
 ros2 launch bringup simulation.launch.py          # everything
 ros2 launch bringup simulation.launch.py rviz:=false
 ros2 launch bringup simulation.launch.py gui:=false
+ros2 launch bringup simulation.launch.py simulator_variant:=fortress
 ```
 
 This package has no predecessor in the original planning structure - it is the

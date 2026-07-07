@@ -10,6 +10,24 @@ This repository is structured for internship team work through GitHub issues, co
 - `reports/v1_product_definition/` - Final V1 Product Definition Dossier in LaTeX.
 - `reports/system_requirements_v1/` - Submitted SRD documents migrated as a standalone LaTeX report.
 
+## Robotics Environment
+
+The default robotics environment for this repository is:
+
+- `Ubuntu 24.04`
+- `ROS 2 Jazzy`
+- `Gazebo Harmonic`
+
+`Ubuntu 22.04 + ROS 2 Humble + Gazebo Fortress` is still allowed as a
+compatibility path for teams that need to continue on the older setup.
+
+Both teams must report any crash, launch failure, bridge mismatch, dependency
+issue, or environment-specific problem immediately so the code and
+documentation can be corrected quickly.
+
+The default stack is the only acceptance target for new robotics work. The
+older stack is a compatibility path, not a second implementation track.
+
 Generated PDFs belong under `build/<report_name>/` and are not committed.
 
 ## Source of Truth

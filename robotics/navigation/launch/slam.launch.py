@@ -15,7 +15,7 @@
 # When the map looks complete in RViz, SAVE it (keep this naming so nav2.launch
 # finds it by default):
 #     ros2 run nav2_map_server map_saver_cli -f \
-#         ~/amr-x/robotics/navigation/maps/amr_warehouse_map
+#         navigation/maps/amr_warehouse_map
 #
 # That writes amr_warehouse_map.pgm + amr_warehouse_map.yaml into maps/.
 # =============================================================================

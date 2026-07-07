@@ -6,8 +6,9 @@
   <description>
     AMR-X simulation assets: the indoor warehouse world (floors, walls, aisles,
     racks, obstacles, loading/delivery/docking zones), a parametric world
-    generator, and the ROS-Gazebo bridge configuration. Targets Gazebo Fortress
-    with ROS 2 Humble via ros_gz.
+    generator, and the ROS-Gazebo bridge configuration. Defaults to Gazebo
+    Harmonic with ROS 2 Jazzy and keeps Gazebo Fortress with ROS 2 Humble as a
+    compatibility path via ros_gz.
   </description>
   <maintainer email="zeyneb@amr-x.local">ZEYNEB</maintainer>
   <author>ZEYNEB (ROS 2 Integration Lead)</author>
