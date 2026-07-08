@@ -28,6 +28,8 @@ from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
+is_wsl = "microsoft" in open("/proc/version").read().lower() if os.path.exists("/proc/version") else False
+default_render_engine = "ogre" if is_wsl else "ogre2"
 
 def generate_launch_description():
     pkg_gazebo = get_package_share_directory("simulation")
@@ -40,7 +42,11 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration("rviz")
     gui = LaunchConfiguration("gui")
     world = LaunchConfiguration("world")
+
     simulator_variant = LaunchConfiguration("simulator_variant")
+
+    render_engine = LaunchConfiguration("render_engine")
+
 
     default_world = PythonExpression([
         "'",
@@ -88,7 +94,8 @@ def generate_launch_description():
 
     # ---- Gazebo with the warehouse world -----------------------------------
     gz_args = PythonExpression([
-        "'", world, " -r' if '", gui, "' == 'true' else '", world, " -r -s'"
+        "'", world, " -r --render-engine ", render_engine,
+        "' if '", gui, "' == 'true' else '", world, " -r -s'"
     ])
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -156,6 +163,8 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument("world", default_value=default_world,
                               description="Absolute path to the .sdf world."),
+        DeclareLaunchArgument("render_engine", default_value=default_render_engine,
+                              description="Gazebo render engine ('ogre' or 'ogre2')."),
 
         robot_state_publisher,
         gazebo,
