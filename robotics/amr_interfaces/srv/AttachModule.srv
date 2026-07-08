@@ -1,0 +1,6 @@
+# Attach or detach a module at runtime. TODO(team): refine.
+string module_name
+bool attach
+---
+bool success
+string message

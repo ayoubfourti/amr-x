@@ -1,0 +1,5 @@
+# TODO(team): ros2_control config for the arm.
+# controller_manager + joint_trajectory_controller (per arm) + joint_state_broadcaster.
+controller_manager:
+  ros__parameters:
+    update_rate: 100

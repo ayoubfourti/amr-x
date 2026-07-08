@@ -1,0 +1,4 @@
+# TODO(team): dual-arm parameters (single source of truth), mirroring
+# robot_description/config/robot_params.yaml. Fill link lengths, joint limits,
+# masses, and the mount offset from the base 'module_mount_top' frame.
+arm: {}

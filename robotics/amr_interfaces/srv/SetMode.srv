@@ -1,0 +1,5 @@
+# Request a mode transition. TODO(team): refine.
+string mode
+---
+bool success
+string message
