@@ -1,0 +1,12 @@
+# Registry of known modules and their mount points.
+# Fields align with modules/common_interface/ (mechanical + electrical docs).
+# TODO(team): confirm mount_type / hot_swappable with the mechanical side.
+modules:
+  dual_arm:
+    mount_point: module_mount_top
+    mount_type: kinematic
+    hot_swappable: false
+    data_bus: can
+    power_connector: m12
+    description_package: arm_description
+    controllers_package: arm_control

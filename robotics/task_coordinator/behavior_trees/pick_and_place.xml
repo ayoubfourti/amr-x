@@ -1,0 +1,6 @@
+<!-- TODO(team): BehaviorTree.CPP tree: navigate -> position -> grasp -> place -->
+<root BTCPP_format="4">
+  <BehaviorTree ID="PickAndPlace">
+    <Sequence/>
+  </BehaviorTree>
+</root>
