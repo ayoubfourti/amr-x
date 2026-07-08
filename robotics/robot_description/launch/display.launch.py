@@ -18,7 +18,7 @@ from launch_ros.parameter_descriptions import ParameterValue
 def generate_launch_description():
     pkg = FindPackageShare("robot_description")
 
-    xacro_file = PathJoinSubstitution([pkg, "urdf", "amr.urdf.xacro"])
+    xacro_file = PathJoinSubstitution([pkg, "urdf", "amr_real.urdf.xacro"])
     rviz_config = PathJoinSubstitution([pkg, "rviz", "display.rviz"])
 
     use_gui = LaunchConfiguration("gui")
