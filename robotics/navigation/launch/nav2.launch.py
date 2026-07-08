@@ -1,27 +1,19 @@
 #!/usr/bin/env python3
 # =============================================================================
-# AMR-X  -  nav2.launch.py
+# AMR-X  -  nav2.launch.py   (SLAM-mode: navigation servers only)
 # =============================================================================
-# STEP 2 of navigation: autonomous navigation in OUR warehouse with Nav2,
-# using the map you built in step 1 (slam.launch.py) and the tuned
-# nav2_params.yaml.
+# Runs the Nav2 planner + controller + behaviors ONLY (no map_server, no AMCL),
+# so it works on top of a live slam_toolbox session without fighting over the
+# `map` frame. Use this for mapping-while-navigating (click Nav2 Goals).
 #
-# Run the simulation FIRST in another terminal:
-#     ros2 launch bringup simulation.launch.py
+# Order (each in its own sourced terminal):
+#   ros2 launch bringup simulation.launch.py
+#   ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
+#   ros2 launch navigation nav2.launch.py use_sim_time:=true \
+#        params_file:=$(ros2 pkg prefix navigation)/share/navigation/config/nav2_params.yaml
 #
-# Then run Nav2:
-#     ros2 launch navigation nav2.launch.py
-#
-# In RViz:
-#   1. Click "2D Pose Estimate" and click-drag on the robot's real location
-#      so AMCL localises (tightens the particle cloud).
-#   2. Click "Nav2 Goal" and click-drag a destination. The robot plans and
-#      drives there autonomously.
-#
-# Useful arguments:
-#   map:=/abs/path/to/your_map.yaml      # use a different map
-#   rviz:=false                          # no RViz
-#   params_file:=/abs/path/params.yaml   # different Nav2 params
+# In RViz: click "Nav2 Goal" -> robot plans, drives, and SLAM maps as it goes.
+# (No "2D Pose Estimate" needed — SLAM provides map->odom.)
 # =============================================================================
 import os
 
@@ -40,23 +32,20 @@ def generate_launch_description():
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_rviz = LaunchConfiguration("rviz")
-    map_yaml = LaunchConfiguration("map")
     params_file = LaunchConfiguration("params_file")
     autostart = LaunchConfiguration("autostart")
 
-    # Defaults: the map you save from slam.launch.py, and Ghassen's tuned params.
-    default_map = os.path.join(pkg_nav, "maps", "amr_warehouse_map.yaml")
     default_params = os.path.join(pkg_nav, "config", "nav2_params.yaml")
     default_rviz = os.path.join(pkg_nav2_bringup, "rviz", "nav2_default_view.rviz")
 
-    # Bring up the full Nav2 stack (map_server, amcl, planner, controller,
-    # bt_navigator, behaviors, lifecycle manager) via the standard launch.
+    # Navigation servers ONLY (planner, controller, bt_navigator, behaviors,
+    # velocity_smoother, lifecycle manager) — NO map_server, NO amcl.
+    # The map + map->odom transform come from slam_toolbox.
     nav2 = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_nav2_bringup, "launch", "bringup_launch.py")),
+            os.path.join(pkg_nav2_bringup, "launch", "navigation_launch.py")),
         launch_arguments={
             "use_sim_time": use_sim_time,
-            "map": map_yaml,
             "params_file": params_file,
             "autostart": autostart,
         }.items(),
@@ -77,8 +66,6 @@ def generate_launch_description():
                               description="Use Gazebo sim clock."),
         DeclareLaunchArgument("rviz", default_value="true",
                               description="Open the Nav2 RViz view."),
-        DeclareLaunchArgument("map", default_value=default_map,
-                              description="Path to the map .yaml to navigate in."),
         DeclareLaunchArgument("params_file", default_value=default_params,
                               description="Nav2 parameter file."),
         DeclareLaunchArgument("autostart", default_value="true",
