@@ -32,6 +32,7 @@ from launch_ros.substitutions import FindPackageShare
 def generate_launch_description():
     pkg_gazebo = get_package_share_directory("simulation")
     pkg_bringup = get_package_share_directory("bringup")
+    pkg_robot_description = get_package_share_directory("robot_description")
     pkg_ros_gz_sim = get_package_share_directory("ros_gz_sim")
 
     # ---- launch arguments ---------------------------------------------------
@@ -51,6 +52,7 @@ def generate_launch_description():
     gazebo_resource_path = os.pathsep.join([
         pkg_gazebo,
         os.path.join(pkg_gazebo, "models"),
+        os.path.dirname(pkg_robot_description),
     ])
     rviz_config = os.path.join(pkg_bringup, "rviz", "simulation.rviz")
     xacro_file = PathJoinSubstitution(
