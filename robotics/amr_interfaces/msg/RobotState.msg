@@ -3,3 +3,5 @@
 string mode
 ModuleStatus[] modules
 geometry_msgs/Pose base_pose
+geometry_msgs/Twist base_velocity
+
