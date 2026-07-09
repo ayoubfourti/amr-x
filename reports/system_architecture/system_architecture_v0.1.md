@@ -1,7 +1,7 @@
 # AMR-X System Architecture v0.2
 
 Maintained by: Manar Afli (Technical Project Manager / System Architect)
-Status: Draft — updated after first week of team progress reports
+Status: Draft — updated after third week of team progress reports
 
 This document is the single reference for how the mechanical, electrical,
 software, and module-interface decisions fit together. It should be updated
