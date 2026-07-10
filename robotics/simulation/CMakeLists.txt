@@ -5,8 +5,13 @@ find_package(ament_cmake REQUIRED)
 
 # Install resource directories
 install(
-  DIRECTORY worlds models launch config
+  DIRECTORY worlds models launch config fuel_models
   DESTINATION share/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY photos
+  DESTINATION share
 )
 
 # Install the world generator as an executable script
