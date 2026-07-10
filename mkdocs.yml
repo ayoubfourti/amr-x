@@ -1,0 +1,27 @@
+site_name: AMR-X Documentation
+site_description: Documentation for the AMR-X modular autonomous mobile robot project
+repo_url: https://github.com/cybermech-hub/amr-x
+repo_name: cybermech-hub/amr-x
+
+theme:
+  name: material
+  palette:
+    scheme: slate
+    primary: indigo
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - search.suggest
+    - content.code.copy
+
+nav:
+  - Home: index.md
+  - System Architecture:
+      - Overview: system_architecture/architecture.md
+      - Interface Table: system_architecture/interfaces.md
+
+markdown_extensions:
+  - tables
+  - toc:
+      permalink: true
+  - admonition
