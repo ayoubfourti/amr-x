@@ -61,6 +61,8 @@ build/
 .coverage.*
 htmlcov/
 .pytest_cache/
+.ruff_cache/
+.hypothesis/
 .tox/
 .nox/
 .mypy_cache/
@@ -81,11 +83,16 @@ poetry.lock
 
 # Node.js & JavaScript
 node_modules/
+website/node_modules/
 .npm/
 .eslintcache
 .node_repl_history
 *.tsbuildinfo
 .next/
+website/.next/
+.turbo/
+.vercel/
+coverage/
 out/
 dist/
 npm-debug.log*
@@ -105,8 +112,13 @@ devel/
 .catkin_tools/
 .colcon/
 COLCON_IGNORE
+# Generated ROS graph snapshots (source configurations belong elsewhere)
+robotics/frames_*.gv
+robotics/frames_*.pdf
 
 # LaTeX & Documents
+site/
+.mkdocs_cache/
 *.aux
 *.bbl
 *.blg

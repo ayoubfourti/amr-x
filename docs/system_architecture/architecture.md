@@ -1,7 +1,16 @@
 # AMR-X System Architecture v0.2
 
-Maintained by: Manar Afli (Technical Project Manager / System Architect)
-Status: Draft — updated after first week of team progress reports
+| Document control | Value |
+|---|---|
+| Owner | Technical Project Manager / System Architect |
+| Status | Draft |
+| Revision | `v0.2` |
+| Controlled interface data | `data/system_architecture/interfaces.csv` |
+
+!!! warning "Draft architecture"
+    Proposed values and open conflicts are not approved requirements. Treat
+    only entries explicitly marked **Confirmed** in the controlled interface
+    data as confirmed decisions.
 
 This document is the single reference for how the mechanical, electrical,
 software, and module-interface decisions fit together. It should be updated
@@ -9,7 +18,7 @@ as teams confirm or change values. Detailed values live in
 `data/system_architecture/interfaces.csv` — do not duplicate numbers here,
 reference the table.
 
-**Related document:** `robotics/ARCHITECTURE.md` (added in PR #8 by Zeyneb)
+**Related implementation document:** `robotics/ARCHITECTURE.md`
 covers the ROS 2 package-level implementation of the module software stack
 in detail. This document stays at the system level and links out to it
 rather than duplicating package contents — see Section 4.
@@ -21,6 +30,15 @@ interchangeable functional modules (inspection, secure cargo, handling,
 robotic arm) through a shared docking interface. The base handles movement,
 navigation, and power; the module handles the task-specific function. The
 dual-arm module has been confirmed as the first module to be built (V1).
+
+### Responsibility boundaries
+
+| System element | Primary responsibility |
+|---|---|
+| Mobile base | Movement, navigation, base power, and module support |
+| Functional module | Task-specific mechanical and software capability |
+| Shared docking interface | Mechanical alignment and retention, power, data, and safety boundaries |
+| Module manager | Module identification and software lifecycle coordination |
 
 ## 2. Mechanical Architecture
 
@@ -38,6 +56,21 @@ dual-arm module has been confirmed as the first module to be built (V1).
 
 Open item: internal component layout (battery, controller, wiring) is
 still waiting on the Electrical team's final part list.
+
+<div class="visual-grid">
+  <figure>
+    <img src="/docs/assets/images/amr-x-base-cad-side-view.png" alt="Current AMR-X mobile base CAD side-view capture" loading="lazy">
+    <figcaption><strong>Current base CAD capture.</strong><span>Progress image only; controlled dimensions remain in project data.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-amr-base-hai-robotics.png" alt="Third-party AMR base used as a form-factor reference" loading="lazy">
+    <figcaption><strong>Base form-factor reference.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-conveyor-top-module-amr.png" alt="Third-party AMR with a conveyor top module" loading="lazy">
+    <figcaption><strong>Top-module reference.</strong><span>External material-transfer example, not AMR-X.</span></figcaption>
+  </figure>
+</div>
 
 ## 3. Electronics Architecture
 
@@ -70,6 +103,25 @@ blocker for Mechanical's internal layout.
 - Dashboard communicates with ROS 2 over `rosbridge_server` and
   `roslibjs` via WebSocket; confirmed working for `/cmd_vel`, with
   `/odom` and `/imu` subscriptions planned next
+
+<div class="visual-grid visual-grid--two">
+  <figure>
+    <img src="/docs/assets/images/rviz-amr-x-base-model.png" alt="AMR-X base model and frames in RViz" loading="lazy">
+    <figcaption><strong>AMR-X base in RViz.</strong><span>Robot-model integration capture.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/rviz-arm-urdf-model.png" alt="Arm URDF and joint states in RViz" loading="lazy">
+    <figcaption><strong>Arm URDF in RViz.</strong><span>Manipulation-model integration capture.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/rviz-industrial-arm-model.png" alt="Alternative industrial arm model displayed in RViz" loading="lazy">
+    <figcaption><strong>Alternative arm in RViz.</strong><span>Model visualization capture.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-industrial-robot-simulation.png" alt="Industrial robot simulation environment reference" loading="lazy">
+    <figcaption><strong>Simulation presentation reference.</strong><span>External reference placeholder, not the AMR-X simulator.</span></figcaption>
+  </figure>
+</div>
 
 ## 5. Module Interface
 
@@ -105,6 +157,21 @@ blocker for Mechanical's internal layout.
 - Now that a real URDF is integrated, the footprint may be finalizable
   soon once the caster layout is locked
 
+<div class="visual-grid">
+  <figure>
+    <img src="/docs/assets/images/reference-amr-fleet-warehouse.png" alt="Fleet of third-party AMRs operating in a warehouse" loading="lazy">
+    <figcaption><strong>Fleet-operation reference.</strong><span>External multi-robot environment placeholder.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-warehouse-aisle.png" alt="Warehouse aisle used as an environment reference" loading="lazy">
+    <figcaption><strong>Warehouse environment.</strong><span>Reference placeholder for navigation context.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-high-bay-warehouse-robot.png" alt="Third-party robot operating in a high-bay warehouse" loading="lazy">
+    <figcaption><strong>High-bay operation reference.</strong><span>External storage use-case placeholder.</span></figcaption>
+  </figure>
+</div>
+
 ## 8. Power Distribution
 
 TBD — depends entirely on Electrical team's battery and controller
@@ -113,7 +180,10 @@ until this is resolved.
 
 ## 9. Known Conflicts / Open Questions
 
-This is the most important section of this document, keep it updated.
+!!! danger "Integration blockers"
+    This section identifies unresolved decisions that can invalidate work in
+    more than one subsystem. Keep it synchronized with the controlled
+    interface data.
 
 1. **[NEW, urgent — now live in main]** Module mount frame naming
    conflict: `module_interface_link` (mechanical/URDF) vs
@@ -136,7 +206,7 @@ This is the most important section of this document, keep it updated.
    package-level, from PR #8). Agreed approach: this document stays at
    the system/interface level and links to `ARCHITECTURE.md` for
    implementation detail, rather than the two documents duplicating each
-   other. Confirm this approach with Zeyneb.
+   other. Confirm this approach across the affected workstreams.
 
 ## 10. Future Modules
 
@@ -144,7 +214,7 @@ This is the most important section of this document, keep it updated.
 researching hardware options (GrabCAD models); software has scaffolded
 the arm packages (`arm_description`, `arm_control`, `arm_moveit_config`).
 
-Candidate module research (from Chaima's market research, see
+Candidate module research (from the module research source, see
 `Modules.pdf`):
 
 - **Robotic arm:** Interbotix PincherX/WidowX (ROS-ready "arm + mobile
@@ -163,10 +233,70 @@ Candidate module research (from Chaima's market research, see
 Not yet scoped: shelf-access and inspection modules remain future work
 beyond the dual-arm V1.
 
+!!! info "Concept imagery"
+    The images below are communication placeholders, not approved production
+    geometry. Third-party references do not represent AMR-X work and require
+    provenance and licensing review before external use.
+
+### Dual-arm and mobile-manipulation direction
+
+<div class="visual-grid">
+  <figure>
+    <img src="/docs/assets/images/dual-arm-module-concept-render.png" alt="Dual-arm module concept placeholder" loading="lazy">
+    <figcaption><strong>Dual-arm module direction.</strong><span>V1 concept placeholder.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-dual-arm-workcell.png" alt="Third-party dual-arm workcell reference" loading="lazy">
+    <figcaption><strong>Dual-arm workcell reference.</strong><span>External workspace placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-mobile-manipulator-render.png" alt="Third-party mobile manipulator render" loading="lazy">
+    <figcaption><strong>Manipulator packaging reference.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-mobile-manipulator-bin-picking.png" alt="Third-party mobile manipulator handling bins" loading="lazy">
+    <figcaption><strong>Bin-handling reference.</strong><span>External use-case placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-mobile-manipulator-warehouse.png" alt="Third-party mobile manipulator in a warehouse aisle" loading="lazy">
+    <figcaption><strong>Aisle-manipulation reference.</strong><span>External use-case placeholder, not AMR-X.</span></figcaption>
+  </figure>
+</div>
+
+### Secure-compartment direction
+
+<div class="visual-grid visual-grid--two">
+  <figure>
+    <img src="/docs/assets/images/secure-compartment-module-cad.png" alt="Secure compartment module concept placeholder" loading="lazy">
+    <figcaption><strong>Secure-compartment CAD.</strong><span>Future-module concept placeholder.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-secure-compartment-robot.png" alt="Third-party secure compartment robot reference" loading="lazy">
+    <figcaption><strong>Compartment robot reference.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+</div>
+
+### Shelf-access direction
+
+<div class="visual-grid">
+  <figure>
+    <img src="/docs/assets/images/reference-shelf-climbing-robot-detail.png" alt="Detail of a third-party shelf-climbing robot" loading="lazy">
+    <figcaption><strong>Rack-interface detail.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-shelf-climbing-robot.png" alt="Third-party shelf-climbing warehouse robot" loading="lazy">
+    <figcaption><strong>Vertical-access reference.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+  <figure>
+    <img src="/docs/assets/images/reference-shelf-climbing-system.png" alt="Third-party shelf-climbing robots operating on racks" loading="lazy">
+    <figcaption><strong>Rack-automation system.</strong><span>External reference placeholder, not AMR-X.</span></figcaption>
+  </figure>
+</div>
+
 ---
 *Change log*
 - v0.1 — initial draft
 - v0.2 — added dual-arm module confirmation, real URDF integration status,
   locked ROS stack decision, PR #8 module scaffold cross-reference, module
   mount frame naming conflict, precise docking hardware specs from
-  Chaima's module research, dashboard communication method
+  module research source, dashboard communication method

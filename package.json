@@ -1,0 +1,24 @@
+{
+  "name": "amr-x-local-development",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local website and documentation commands for AMR-X",
+  "engines": {
+    "node": ">=20.9.0",
+    "npm": ">=10.0.0"
+  },
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "setup:docs": "bash scripts/setup-docs.sh",
+    "setup:website": "npm install --prefix website",
+    "dev": "bash scripts/dev.sh",
+    "proxy": "node scripts/dev-proxy.mjs",
+    "docs": "bash scripts/docs.sh",
+    "website": "npm run dev --prefix website",
+    "build": "npm run build --prefix website && bash scripts/build-docs.sh",
+    "build:docs": "bash scripts/build-docs.sh",
+    "check": "npm run check --prefix website && bash scripts/build-docs.sh",
+    "check:docs": "bash scripts/build-docs.sh",
+    "clean": "bash scripts/clean.sh"
+  }
+}
