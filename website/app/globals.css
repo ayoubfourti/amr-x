@@ -472,6 +472,7 @@ html[data-theme="light"] .ctaSection:hover { box-shadow: 0 34px 90px rgba(11,143
 .missionInterfaceGrid .hmiFeature { align-content: start; gap: 26px; grid-template-columns: 1fr; min-width: 0; }
 .missionInterfaceGrid .hmiScreen { aspect-ratio: 16 / 10; }
 .missionManagementSection > .ctaSection { margin-top: 58px; }
+.missionManagementSection > .ctaSection .ctaMissionMeta { top: -48px; }
 .outlineButton { align-items: center; border: 1px solid var(--line); border-radius: 12px; display: inline-flex; font-size: 0.84rem; font-weight: 800; gap: 9px; min-height: 47px; padding: 0 18px; transition: background-color 150ms ease, border-color 150ms ease, color 150ms ease, transform 150ms ease; }
 
 .siteFooter { background: color-mix(in srgb, var(--surface) 72%, transparent); border-top: 1px solid var(--line); margin-top: 120px; }

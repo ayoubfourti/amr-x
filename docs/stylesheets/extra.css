@@ -148,24 +148,44 @@
 
 /* A compact, collapsible tree for every level of the primary navigation. */
 .md-nav--primary > .md-nav__title {
+  align-items: center;
   background: linear-gradient(
     135deg,
     var(--md-accent-fg-color--transparent),
     transparent 72%
-  );
+  ), var(--md-default-bg-color);
   border-bottom: 1px solid
     color-mix(in srgb, var(--md-accent-fg-color) 38%, transparent);
   border-inline-start: 0.16rem solid var(--md-accent-fg-color);
   color: var(--md-default-fg-color);
+  display: flex;
   font-size: 0.72rem;
   font-weight: 800;
+  gap: 0.55rem;
+  height: auto;
   letter-spacing: 0.02em;
+  line-height: 1.25;
   margin-bottom: 0.55rem;
+  min-height: 3.5rem;
   padding: 0.58rem 0.62rem;
+  white-space: normal;
 }
 
 .md-nav--primary > .md-nav__title .md-logo {
   color: var(--md-accent-fg-color);
+  flex: 0 0 2rem;
+  inset: auto;
+  margin: 0;
+  padding: 0.1rem;
+  position: static;
+}
+
+.md-nav--primary
+  > .md-nav__title
+  .md-nav__button.md-logo
+  svg {
+  height: 2rem;
+  width: 2rem;
 }
 
 /* Home and Contributing are primary destinations, not low-priority leaf links. */
@@ -917,6 +937,44 @@
   border: 1px solid var(--md-code-bg-color);
 }
 
+/*
+ * Material switches its primary navigation to an overlay below 60em. Match
+ * that breakpoint so custom documentation layouts do not remain in their
+ * wide desktop form underneath the drawer on tablets and small windows.
+ */
+@media screen and (max-width: 59.984375em) {
+  .md-content,
+  .md-content__inner,
+  .docs-intro-copy,
+  .docs-intro-visual {
+    min-width: 0;
+  }
+
+  .docs-intro-layout {
+    gap: 1.25rem;
+    grid-template-columns: minmax(0, 1fr);
+    margin-top: 1rem;
+  }
+
+  .docs-intro-visual {
+    grid-template-columns: minmax(12rem, 0.9fr) minmax(0, 1.1fr);
+    max-width: none;
+  }
+
+  .docs-intro-visual img {
+    height: 100%;
+    min-height: 12rem;
+  }
+
+  .docs-intro-visual figcaption {
+    padding: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .visual-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media screen and (max-width: 44.984375em) {
   .md-typeset .md-typeset__table table:not([class]) {
     font-size: 0.68rem;
@@ -953,6 +1011,7 @@
 
   .docs-intro-visual img {
     height: clamp(10rem, 48vw, 14rem);
+    min-height: 0;
   }
 
   .docs-intro-visual figcaption {
