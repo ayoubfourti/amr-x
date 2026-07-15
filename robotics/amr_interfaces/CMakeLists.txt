@@ -7,11 +7,26 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  # ---- messages ----
   "msg/ModuleStatus.msg"
   "msg/RobotState.msg"
-  "srv/AttachModule.srv"
-  "srv/SetMode.srv"
-  "action/PickPlace.action"
+  "msg/DockingStatus.msg"
+  "msg/MissionStep.msg"
+  "msg/MissionState.msg"
+  "msg/SafetyState.msg"
+  "msg/MotorStatus.msg"
+  "msg/FaultCode.msg"
+  # ---- services ----
+  "srv/SetRobotMode.srv"
+  "srv/ConfirmModuleState.srv"
+  "srv/SetSpeedLimit.srv"
+  "srv/ResetFault.srv"
+  "srv/ValidateMission.srv"
+  # ---- actions ----
+  "action/DockModule.action"
+  "action/UndockModule.action"
+  "action/ReturnHome.action"
+  "action/ExecuteMission.action"
   DEPENDENCIES std_msgs geometry_msgs
 )
 

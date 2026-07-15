@@ -1,0 +1,6 @@
+# OWNER: Zeyneb (transition)  -- verify a module is in the expected state
+string module_name
+bool expect_attached
+---
+bool confirmed
+string message

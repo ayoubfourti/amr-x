@@ -1,11 +1,11 @@
 # Registry of known modules and their mount points.
 # Fields align with modules/common_interface/ (mechanical + electrical docs).
-# TODO(team): confirm mount_type / hot_swappable with the mechanical side.
+# module_manager reads this to know what modules exist and how they attach.
 modules:
   dual_arm:
     mount_point: module_mount_top
-    mount_type: kinematic
-    hot_swappable: false
+    mount_type: kinematic          # bolted_flange | kinematic | quick_change
+    hot_swappable: false           # heavy + calibration-sensitive: present at launch
     data_bus: can
     power_connector: m12
     description_package: arm_description

@@ -1,6 +1,6 @@
-from setuptools import find_packages, setup
 import os
 from glob import glob
+from setuptools import find_packages, setup
 
 package_name = 'module_manager'
 
@@ -18,12 +18,12 @@ setup(
     zip_safe=True,
     maintainer='ZEYNEB',
     maintainer_email='zeyneb@amr-x.local',
-    description='Runtime module attach/detach and mode transitions.',
+    description='Transition layer: module attach/detach and mode transitions.',
     license='Apache-2.0',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'module_manager_node=module_manager.module_manager_node:main',
+            'module_manager_node = module_manager.module_manager_node:main',
         ],
     },
 )

@@ -1,6 +1,12 @@
-# Status of a single attached module (e.g. the dual-arm module).
-# TODO(team): extend fields as the module framework matures.
-string module_name
-string mount_point
+# OWNER: Zeyneb (transition/module)  -- status of ONE attached module
+uint8 STATE_ABSENT=0
+uint8 STATE_ATTACHING=1
+uint8 STATE_ATTACHED=2
+uint8 STATE_DETACHING=3
+uint8 STATE_ERROR=4
+
+string module_name        # e.g. "dual_arm"
+string mount_point        # frame it attaches to, e.g. "module_mount_top"
 bool attached
-string state
+uint8 state               # one of STATE_*
+string detail             # free-text status / error reason

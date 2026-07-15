@@ -5,8 +5,8 @@
   <version>0.1.0</version>
   <description>
     AMR-X shared interfaces: messages, services, and actions used across the
-    modular robot (module status, mode/attach control, task actions).
-    BUILD THIS FIRST - every other new package depends on it.
+    modular robot. Single source of truth for how the mission manager, navigation,
+    modules, dashboard, and embedded feedback talk to each other. BUILD FIRST.
   </description>
   <maintainer email="zeyneb@amr-x.local">ZEYNEB</maintainer>
   <license>Apache-2.0</license>
