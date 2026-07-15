@@ -1,0 +1,52 @@
+# System Interface Table
+
+This register presents confirmed and open technical decisions across teams.
+The authoritative source is `data/system_architecture/interfaces.csv` in the
+repository.
+
+!!! warning "Do not edit values in two places"
+    Update the CSV source first, then synchronize this rendered table. A value
+    marked **Proposed**, **Blocked**, **In Progress**, or **Conflict** is not a
+    confirmed requirement.
+
+Status meanings:
+
+| Status | Interpretation |
+|---|---|
+| Confirmed | Accepted cross-team decision |
+| Proposed | Candidate value requiring validation or approval |
+| In Progress | Implementation or verification is incomplete |
+| Blocked | A prerequisite decision or input is missing |
+| Conflict | Current sources or implementations disagree |
+
+
+| Category | Parameter | Value | Source Team | Status | Notes |
+|---|---|---|---|---|---|
+| Dimensions | Length | 800 mm | Mechanical | Confirmed |  |
+| Dimensions | Width | 600 mm | Mechanical | Confirmed |  |
+| Dimensions | Height | 420 mm | Mechanical | Confirmed |  |
+| Mobility | Drive Type | Differential | Mechanical | Confirmed |  |
+| Mobility | Caster Wheels | 4 | Mechanical | Confirmed | Changed from 2 to 4 for stability and load distribution |
+| Sensors | LiDAR Count | 2 (front + rear) proposed; current integrated URDF shows a single LiDAR link | Mechanical | Needs ROS validation | Current URDF integration places one LiDAR link at front-top-centre; dual-LiDAR still not explicitly confirmed by Navigation/ROS |
+| Sensors | LiDAR Coverage | 360 degrees combined if dual-LiDAR is confirmed | Mechanical | Proposed |  |
+| Interface | Module Zone | 500 x 400 mm | Module Team | Confirmed |  |
+| Interface | Connector Type | HARTING Han-Modular (24V power + CAN bus + Ethernet) | Module Team | Confirmed |  |
+| Interface | Alignment Pins | 12 mm diameter pins on a 450 x 350 mm pattern | Module Team | Confirmed | Precise dimensions added from the module research source |
+| Interface | Docking Locks | Quarter-turn M8 locks rated to 375 kg | Module Team | Confirmed | Load rating added from the module research source |
+| Interface | Docking Detection | 2 inductive sensors | Module Team | Confirmed | Publishes to ROS topics `/module_docked` and `/module_id` |
+| Interface | Clearance Zones | Defined around front LiDAR emergency stop and operator panel | Module Team | Confirmed | Modules cannot block these zones |
+| Interface | Module Mount Frame Name | CONFLICT (now live in main): `module_interface_link` (mechanical/URDF side) vs `module_mount_top` (merged PR #8 ROS package scaffold) | Module Team + ROS/Sim Team | Conflict - needs resolution | PR #8 merged into main on 8 Jul without this being reconciled; needs an issue opened and a decision before more code/CAD builds on either name |
+| Software | ROS Stack | ROS 2 Jazzy on Ubuntu 24.04 + Gazebo Harmonic (default); ROS 2 Humble + Gazebo Fortress kept as compatibility path | ROS/Sim Team | Confirmed | Locked by the approved stack update |
+| Software | URDF Status | Real CAD-exported URDF integrated and spawns correctly in Gazebo | ROS/Sim + Mechanical | In Progress | Driving and `/scan` output not yet confirmed; final sensor placement pending |
+| Software | Full Simulation Loop | Robot drives in warehouse world with working teleop and LiDAR/IMU/odometry publishing | ROS/Sim Team | Confirmed |  |
+| Software | Module Software Scaffold | 7 ROS 2 packages: `amr_interfaces`, `arm_description`, `arm_control`, `arm_moveit_config`, `module_manager`, `task_coordinator`, `dashboard_bridge` | ROS/Sim Team | Merged into main (PR #8) | Empty-but-buildable skeleton with TODOs; see `robotics/ARCHITECTURE.md`; needs sync with this document; see conflict row above |
+| Module | First Module Choice | Dual-arm robotic arm module | Module Team + ROS/Sim Team | Confirmed | Chosen collaboratively; mechanical researching arm hardware; software scaffolding arm packages |
+| Module | Arm Control Framework | MoveIt2 (not Nav2) | ROS/Sim Team | Confirmed | Focus is manipulation; not mobile navigation |
+| Module | CG Compensation for Dual-Arm | Approximately 30-50 mm rearward shift anticipated | Mechanical | Proposed | From the module research source; not yet validated in CAD |
+| Navigation | Footprint | TBD | Navigation Team | Blocked | Real URDF now integrated; so this may resolve soon once caster layout is finalized |
+| Navigation | Nav2 Configuration | Configured with placeholder footprint | Navigation Team | In Progress |  |
+| Navigation | Localization | SLAM + AMCL configured; EKF config in progress | Navigation Team | Confirmed | EKF configuration is in progress |
+| Power | Battery | TBD | Electrical Team | Blocked | Active research in progress |
+| Power | Main Computer / Controller | TBD | Electrical Team | Blocked |  |
+| Electronics | Motor Drivers | TBD | Electrical Team | Blocked |  |
+| Dashboard | Communication Method | `rosbridge_server` + `roslibjs` over WebSocket bridging ROS 2 topics to the browser frontend | Dashboard Team | Confirmed - tested working | Publishes `/cmd_vel` while a directional button is held; next is subscribing to `/odom` and `/imu` |

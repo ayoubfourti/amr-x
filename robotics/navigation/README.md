@@ -19,9 +19,12 @@ here once the simulation is validated and a map of the warehouse is produced.
 # 1. Build a map of the warehouse (after launching the simulation)
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
 
-# 2. (future) Bring up Nav2 with this config
+# 2. Bring up Nav2 with this config (for SLAM Mapping)
 ros2 launch navigation nav2.launch.py use_sim_time:=true \
      params_file:=$(ros2 pkg prefix navigation)/share/navigation/config/nav2_params.yaml
+
+# 3. Launch AMCL localization on the saved map 
+ros2 launch navigation localization.launch.py 
 ```
 
 The robot publishes `/scan`, `/odom`, and the `odom -> base_footprint` TF from the
