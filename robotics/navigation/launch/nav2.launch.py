@@ -43,11 +43,57 @@ def generate_launch_description():
     map_yaml = LaunchConfiguration("map")
     params_file = LaunchConfiguration("params_file")
     autostart = LaunchConfiguration("autostart")
+    self_hit_range = LaunchConfiguration("self_hit_range")
+    scan_pipeline = LaunchConfiguration("scan_pipeline")
+
 
     # Defaults: the map you save from slam.launch.py, and Ghassen's tuned params.
     default_map = os.path.join(pkg_nav, "maps", "amr_warehouse_map.yaml")
     default_params = os.path.join(pkg_nav, "config", "nav2_params.yaml")
     default_rviz = os.path.join(pkg_nav2_bringup, "rviz", "nav2_default_view.rviz")
+
+
+     
+    # ------------------------------------------------------------------
+    # Scan pipeline: two self-hit filters + merger -> /scan_merged
+    # (installed executables, run via ros2 run navigation ...)
+    # ------------------------------------------------------------------
+    filter1 = Node(
+        package="navigation", executable="scan_filter_node.py",
+        name="scan_filter_1", output="screen",
+        condition=IfCondition(scan_pipeline),
+        parameters=[{
+            "use_sim_time": use_sim_time,
+            "min_range": self_hit_range,
+            "input_topic": "/scan",
+            "output_topic": "/scan_clean",
+        }],
+    )
+    filter2 = Node(
+        package="navigation", executable="scan_filter_node.py",
+        name="scan_filter_2", output="screen",
+        condition=IfCondition(scan_pipeline),
+        parameters=[{
+            "use_sim_time": use_sim_time,
+            "min_range": self_hit_range,
+            "input_topic": "/scan_2",
+            "output_topic": "/scan_2_clean",
+        }],
+    )
+    merger = Node(
+        package="navigation", executable="scan_merger_node.py",
+        name="scan_merger", output="screen",
+        condition=IfCondition(scan_pipeline),
+        parameters=[{
+            "use_sim_time": use_sim_time,
+            "target_frame": "base_link",
+            "output_topic": "/scan_merged",
+            "scan1_topic": "/scan_clean",
+            "scan2_topic": "/scan_2_clean",
+        }],
+    )
+ 
+
 
     # Bring up the full Nav2 stack (map_server, amcl, planner, controller,
     # bt_navigator, behaviors, lifecycle manager) via the standard launch.
@@ -61,6 +107,7 @@ def generate_launch_description():
             "autostart": autostart,
         }.items(),
     )
+
 
     rviz = Node(
         package="rviz2",
@@ -83,6 +130,14 @@ def generate_launch_description():
                               description="Nav2 parameter file."),
         DeclareLaunchArgument("autostart", default_value="true",
                               description="Auto-activate the Nav2 lifecycle nodes."),
+        DeclareLaunchArgument("self_hit_range", default_value="0.9",
+                              description="Range (m) below which scans are the robot's own body."),
+        DeclareLaunchArgument("scan_pipeline", default_value="true",
+                              description="Start the two filters + merger. Set false if run elsewhere."),
+        # scan pipeline first, then Nav2
+        filter1,
+        filter2,
+        merger,
         nav2,
         rviz,
     ])

@@ -104,13 +104,13 @@ controller_server:
       ay_max: 3.0
       ay_min: -3.0
       az_max: 3.5
-      vx_std: 0.2
+      vx_std: 0.5
       vy_std: 0.2
-      wz_std: 0.4
-      vx_max: 1.2
+      wz_std: 0.5
+      vx_max: 1.0
       vx_min: -0.35
       vy_max: 0.5
-      wz_max: 1.5
+      wz_max: 0.5
       iteration_count: 1
       prune_distance: 1.7
       transform_tolerance: 0.1
@@ -201,7 +201,7 @@ local_costmap:
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.70
+        inflation_radius: 1.0
       voxel_layer:
         plugin: "nav2_costmap_2d::VoxelLayer"
         enabled: True
@@ -213,7 +213,7 @@ local_costmap:
         mark_threshold: 0
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_merged
           max_obstacle_height: 2.0
           clearing: True
           marking: True
@@ -234,31 +234,31 @@ global_costmap:
       publish_frequency: 1.0
       global_frame: map
       robot_base_frame: base_link
-      footprint: "[ [0.42, 0.32], [0.42, -0.32], [-0.42, -0.32], [-0.42, 0.32] ]"
+      rolling_window: true
+      width: 50
+      height: 50
       resolution: 0.05
-      track_unknown_space: true
-      plugins: ["static_layer", "obstacle_layer", "inflation_layer"]
+      footprint: "[ [0.42, 0.32], [0.42, -0.32], [-0.42, -0.32], [-0.42, 0.32] ]"
+      track_unknown_space: false
+      plugins: ["obstacle_layer", "inflation_layer"]
       obstacle_layer:
         plugin: "nav2_costmap_2d::ObstacleLayer"
         enabled: True
         observation_sources: scan
         scan:
-          topic: /scan
+          topic: /scan_merged
           max_obstacle_height: 2.0
           clearing: True
           marking: True
           data_type: "LaserScan"
-          raytrace_max_range: 3.0
+          raytrace_max_range: 8.0
           raytrace_min_range: 0.0
-          obstacle_max_range: 2.5
+          obstacle_max_range: 6.0
           obstacle_min_range: 0.0
-      static_layer:
-        plugin: "nav2_costmap_2d::StaticLayer"
-        map_subscribe_transient_local: True
       inflation_layer:
         plugin: "nav2_costmap_2d::InflationLayer"
         cost_scaling_factor: 3.0
-        inflation_radius: 0.7
+        inflation_radius: 1.0
       always_send_full_costmap: True
 
 # The yaml_filename does not need to be specified since it going to be set by defaults in launch.
@@ -362,7 +362,7 @@ velocity_smoother:
     stamp_smoothed_velocity_with_smoothing_time: False
     scale_velocities: False
     feedback: "OPEN_LOOP"
-    max_velocity: [1.2, 0.0, 1.5]
+    max_velocity: [0.3, 0.0, 0.5]
     min_velocity: [-1.2, 0.0, -1.5]
     max_accel: [2.5, 0.0, 3.2]
     max_decel: [-2.5, 0.0, -3.2]
@@ -397,7 +397,7 @@ collision_monitor:
     observation_sources: ["scan"]
     scan:
       type: "scan"
-      topic: "scan"
+      topic: "scan_merged"
       min_height: 0.15
       max_height: 2.0
       enabled: True
