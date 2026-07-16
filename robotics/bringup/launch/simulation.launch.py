@@ -14,6 +14,14 @@
 #   ros2 launch bringup simulation.launch.py gui:=false        # headless gz
 #   ros2 launch bringup simulation.launch.py world:=/abs/x.sdf
 #   ros2 launch bringup simulation.launch.py environment:=hospital
+#
+# Mapping workflow (run each command in a sourced terminal):
+#   ros2 launch bringup simulation.launch.py rviz:=false
+#   ros2 launch navigation slam.launch.py
+#   ros2 run teleop_twist_keyboard teleop_twist_keyboard
+#
+# Built-in environments are "warehouse" (default) and "hospital". The
+# environment argument also selects a verified robot spawn position.
 # =============================================================================
 import os
 

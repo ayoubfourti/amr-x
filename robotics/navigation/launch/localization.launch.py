@@ -6,8 +6,11 @@
 # you built in step 1 (slam.launch.py) and the tuned nav2_params.yaml.
 #
 # Order (each in its own sourced terminal):
-#   ros2 launch bringup simulation.launch.py
+#   ros2 launch bringup simulation.launch.py rviz:=false
 #   ros2 launch navigation localization.launch.py
+#
+# Stop SLAM before running this launch. This file starts map_server, AMCL,
+# Nav2, and its own RViz window for navigation on a saved map.
 #
 # In RViz:
 #   1. Click "2D Pose Estimate" and click-drag on the robot's real location

@@ -30,6 +30,47 @@ older stack is a compatibility path, not a second implementation track.
 
 Generated PDFs belong under `build/<report_name>/` and are not committed.
 
+## Robotics Quick Start
+
+The supported robotics stack is Ubuntu 24.04, ROS 2 Jazzy, and Gazebo
+Harmonic. Build from the repository root:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+rosdep install --from-paths robotics --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Launch the default warehouse simulation:
+
+```bash
+ros2 launch bringup simulation.launch.py
+```
+
+Launch the hospital instead:
+
+```bash
+ros2 launch bringup simulation.launch.py environment:=hospital
+```
+
+For SLAM, use separate sourced terminals:
+
+```bash
+# Terminal 1
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# Terminal 2
+ros2 launch navigation slam.launch.py
+
+# Terminal 3
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+See the [complete robotics launch guide](robotics/LAUNCHING.md) for all worlds,
+RViz, teleoperation, SLAM, map saving, live navigation, saved-map localization,
+Fortress compatibility, topic checks, and troubleshooting.
+
 ## Source of Truth
 
 - `config/project_specs.json` - Global project specifications.

@@ -7,12 +7,12 @@
 # `map` frame. Use this for mapping-while-navigating (click Nav2 Goals).
 #
 # Order (each in its own sourced terminal):
-#   ros2 launch bringup simulation.launch.py
-#   ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
-#   ros2 launch navigation nav2.launch.py use_sim_time:=true \
-#        params_file:=$(ros2 pkg prefix navigation)/share/navigation/config/nav2_params.yaml
+#   ros2 launch bringup simulation.launch.py rviz:=false
+#   ros2 launch navigation slam.launch.py
+#   ros2 launch navigation nav2.launch.py rviz:=false
 #
-# In RViz: click "Nav2 Goal" -> robot plans, drives, and SLAM maps as it goes.
+# In the SLAM RViz window, click "Nav2 Goal". The robot plans, drives, and
+# continues mapping. Keep SLAM running; do not start AMCL or map_server.
 # (No "2D Pose Estimate" needed — SLAM provides map->odom.)
 # =============================================================================
 import os
