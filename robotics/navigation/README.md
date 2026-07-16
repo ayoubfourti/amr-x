@@ -21,6 +21,27 @@ mapping.
   single 360-degree scan.
 - `maps/` - saved warehouse maps (`.pgm` + `.yaml`).
 
+## Dependencies
+
+Standard ROS 2 Jazzy + Nav2 + SLAM Toolbox packages, plus the following that are
+NOT bundled in this repo:
+
+- **`m-explore-ros2`** (autonomous exploration). It is not committed here; clone
+  and build it once into the workspace:
+
+  ```bash
+  cd ~/amr-x/robotics
+  git clone https://github.com/robo-friends/m-explore-ros2.git
+  colcon build --symlink-install
+  source install/setup.bash
+  ```
+
+- **`teleop_twist_keyboard`** (manual driving), if not already installed:
+
+  ```bash
+  sudo apt install ros-jazzy-teleop-twist-keyboard
+  ```
+
 ## Robot / topic assumptions
 
 The simulation publishes `/scan` (front LiDAR), `/scan_2` (second LiDAR),
