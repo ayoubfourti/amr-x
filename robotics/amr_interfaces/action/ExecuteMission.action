@@ -1,0 +1,8 @@
+# OWNER: Iyed (mission manager)  -- run a full mission end to end
+string mission_id
+---
+bool success
+string message
+MissionState final_state
+---
+MissionState state        # streamed progress

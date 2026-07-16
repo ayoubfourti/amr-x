@@ -4,6 +4,23 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="AMR-X_robot">
+  <!-- Product finishes shared by the existing CAD parts. These materials
+       change appearance only; no geometry or physical properties are added. -->
+  <material name="amrx_metallic_medium_grey">
+    <color rgba="0.38 0.41 0.43 1" />
+  </material>
+  <material name="amrx_brushed_silver">
+    <color rgba="0.24 0.27 0.30 1" />
+  </material>
+  <material name="amrx_graphite_hardware">
+    <color rgba="0.12 0.14 0.16 1" />
+  </material>
+  <material name="amrx_rubber_black">
+    <color rgba="0.025 0.03 0.035 1" />
+  </material>
+  <material name="amrx_sensor_graphite">
+    <color rgba="0.035 0.045 0.055 1" />
+  </material>
   <link
     name="base_link">
     <inertial>
@@ -20,27 +37,36 @@
         iyz="-0.00016813"
         izz="1.4441" />
     </inertial>
-    <visual>
+    <visual name="body_finish">
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://robot_description/meshes/base_link.STL" />
+          filename="package://robot_description/meshes/base_body_visual.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.89412 0.89412 0.89412 1" />
-      </material>
+      <material name="amrx_metallic_medium_grey" />
+    </visual>
+    <visual name="deck_finish">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_description/meshes/base_deck_visual.STL" />
+      </geometry>
+      <material name="amrx_brushed_silver" />
+    </visual>
+    <visual name="cad_lidar_finish">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_description/meshes/base_lidar_visual.STL" />
+      </geometry>
+      <material name="amrx_sensor_graphite" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <!-- Keep the detailed CAD mesh for rendering, but use a primitive for
+           stable and inexpensive dynamic contact in Gazebo. -->
+      <origin xyz="0 0 -0.185" rpy="0 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/base_link.STL" />
+        <box size="0.8 0.6 0.37" />
       </geometry>
     </collision>
   </link>
@@ -68,11 +94,7 @@
         <mesh
           filename="package://robot_description/meshes/FR_Body_Caster_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.78431 0.78431 0.79216 1" />
-      </material>
+      <material name="amrx_graphite_hardware" />
     </visual>
     <collision>
       <origin
@@ -96,6 +118,7 @@
       link="FR_Body_Caster_Link" />
     <axis
       xyz="0 0 1" />
+    <dynamics damping="0.02" friction="0.0" />
   </joint>
   <link
     name="FR_Caster_Wheel_Link">
@@ -121,19 +144,14 @@
         <mesh
           filename="package://robot_description/meshes/FR_Caster_Wheel_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.50196 0.50196 0.50196 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/FR_Caster_Wheel_Link.STL" />
+        <!-- Match the 50 mm CAD wheel so all four casters can carry load,
+             swivel, and roll instead of hovering above the floor. -->
+        <cylinder radius="0.05" length="0.044" />
       </geometry>
     </collision>
   </link>
@@ -149,6 +167,7 @@
       link="FR_Caster_Wheel_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.01" friction="0.0" />
   </joint>
   <link
     name="FL_Body_Caster_Link">
@@ -174,11 +193,7 @@
         <mesh
           filename="package://robot_description/meshes/FL_Body_Caster_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.78431 0.78431 0.79216 1" />
-      </material>
+      <material name="amrx_graphite_hardware" />
     </visual>
     <collision>
       <origin
@@ -202,6 +217,7 @@
       link="FL_Body_Caster_Link" />
     <axis
       xyz="0 0 1" />
+    <dynamics damping="0.02" friction="0.0" />
   </joint>
   <link
     name="FL_Caster_Wheel_Link">
@@ -227,19 +243,12 @@
         <mesh
           filename="package://robot_description/meshes/FL_Caster_Wheel_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.94902 0.94902 1 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/FL_Caster_Wheel_Link.STL" />
+        <cylinder radius="0.05" length="0.044" />
       </geometry>
     </collision>
   </link>
@@ -255,6 +264,7 @@
       link="FL_Caster_Wheel_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.01" friction="0.0" />
   </joint>
   <link
     name="BR_Body_Caster_Link">
@@ -280,11 +290,7 @@
         <mesh
           filename="package://robot_description/meshes/BR_Body_Caster_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.78431 0.78431 0.79216 1" />
-      </material>
+      <material name="amrx_graphite_hardware" />
     </visual>
     <collision>
       <origin
@@ -308,6 +314,7 @@
       link="BR_Body_Caster_Link" />
     <axis
       xyz="0 0 1" />
+    <dynamics damping="0.02" friction="0.0" />
   </joint>
   <link
     name="BR_Caster_Wheel_Link">
@@ -333,19 +340,12 @@
         <mesh
           filename="package://robot_description/meshes/BR_Caster_Wheel_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.949019607843137 0.949019607843137 1 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/BR_Caster_Wheel_Link.STL" />
+        <cylinder radius="0.05" length="0.044" />
       </geometry>
     </collision>
   </link>
@@ -361,6 +361,7 @@
       link="BR_Caster_Wheel_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.01" friction="0.0" />
   </joint>
   <link
     name="BL_Body_Caster_Link">
@@ -386,11 +387,7 @@
         <mesh
           filename="package://robot_description/meshes/BL_Body_Caster_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.784313725490196 0.784313725490196 0.792156862745098 1" />
-      </material>
+      <material name="amrx_graphite_hardware" />
     </visual>
     <collision>
       <origin
@@ -414,6 +411,7 @@
       link="BL_Body_Caster_Link" />
     <axis
       xyz="0 0 1" />
+    <dynamics damping="0.02" friction="0.0" />
   </joint>
   <link
     name="BL_Caster_Wheel_Link">
@@ -439,19 +437,12 @@
         <mesh
           filename="package://robot_description/meshes/BL_Caster_Wheel_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.501960784313725 0.501960784313725 0.501960784313725 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/BL_Caster_Wheel_Link.STL" />
+        <cylinder radius="0.05" length="0.044" />
       </geometry>
     </collision>
   </link>
@@ -467,6 +458,7 @@
       link="BL_Caster_Wheel_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.01" friction="0.0" />
   </joint>
   <link
     name="DR_Link">
@@ -492,19 +484,12 @@
         <mesh
           filename="package://robot_description/meshes/DR_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/DR_Link.STL" />
+        <cylinder radius="0.08" length="0.05" />
       </geometry>
     </collision>
   </link>
@@ -520,6 +505,7 @@
       link="DR_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.05" friction="0.0" />
   </joint>
   <link
     name="DL_Link">
@@ -545,19 +531,12 @@
         <mesh
           filename="package://robot_description/meshes/DL_Link.STL" />
       </geometry>
-      <material
-        name="">
-        <color
-          rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
-      </material>
+      <material name="amrx_rubber_black" />
     </visual>
     <collision>
-      <origin
-        xyz="0 0 0"
-        rpy="0 0 0" />
+      <origin xyz="0 0 0" rpy="1.57079632679 0 0" />
       <geometry>
-        <mesh
-          filename="package://robot_description/meshes/DL_Link.STL" />
+        <cylinder radius="0.08" length="0.05" />
       </geometry>
     </collision>
   </link>
@@ -573,5 +552,6 @@
       link="DL_Link" />
     <axis
       xyz="0 1 0" />
+    <dynamics damping="0.05" friction="0.0" />
   </joint>
 </robot>

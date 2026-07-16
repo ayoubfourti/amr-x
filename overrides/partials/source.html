@@ -1,0 +1,12 @@
+<div class="amrx-source-stack">
+  <a class="amrx-header-home" href="/" aria-label="Open the website home page">
+    Home
+  </a>
+  <a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" aria-label="{{ lang.t('source') }}: {{ config.repo_name }}" class="amrx-github-button" data-md-component="source" target="_blank" rel="noreferrer">
+    <span class="amrx-github-icon">
+      {% set icon = "fontawesome/brands/github" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </span>
+    <span>GitHub</span>
+  </a>
+</div>

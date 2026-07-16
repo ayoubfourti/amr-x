@@ -1,0 +1,7 @@
+# OWNER: Navigation (Ghassen?)  -- drive back to home/charging (may wrap Nav2)
+# goal: empty (home is known from station DB)
+---
+bool success
+string message
+---
+float32 distance_remaining

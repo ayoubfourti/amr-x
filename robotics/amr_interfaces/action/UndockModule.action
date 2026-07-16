@@ -1,0 +1,8 @@
+# OWNER: Zeyneb (transition)  -- long-running undock with feedback + cancel
+string module_name
+---
+bool success
+string message
+---
+string stage              # "releasing" | "retracting" | "confirming"
+float32 progress

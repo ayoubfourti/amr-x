@@ -1,0 +1,237 @@
+<?xml version='1.0' encoding='utf-8'?>
+<sdf version="1.6">
+  <world name="hospital">
+    <gravity>0 0 -9.8</gravity>
+    <physics default="0" name="default_physics" type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+    </physics>
+
+    <plugin filename="gz-sim-physics-system" name="gz::sim::systems::Physics"></plugin>
+    <plugin filename="gz-sim-user-commands-system" name="gz::sim::systems::UserCommands"></plugin>
+    <plugin filename="gz-sim-scene-broadcaster-system" name="gz::sim::systems::SceneBroadcaster"></plugin>
+    <plugin filename="gz-sim-imu-system" name="gz::sim::systems::Imu"></plugin>
+    <plugin filename="gz-sim-contact-system" name="gz::sim::systems::Contact"></plugin>
+
+    <scene>
+      <!-- Low ambient light preserves the textures' colour and contrast. -->
+      <ambient>0.22 0.25 0.30 1</ambient>
+      <background>0.08 0.12 0.18 1</background>
+      <shadows>true</shadows>
+    </scene>
+    <light type="directional" name="sun">
+      <visualize>true</visualize>
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.52 0.58 0.68 1</diffuse>
+      <specular>0.12 0.14 0.18 1</specular>
+      <direction>-0.35 0.20 -0.92</direction>
+    </light>
+
+    <!-- Neutral-white ceiling lights give the long hospital corridors an
+         even indoor exposure without washing out the imported textures. -->
+    <light type="point" name="lobby_light">
+      <visualize>true</visualize>
+      <pose>0 7 3.2 0 0 0</pose>
+      <diffuse>0.92 0.95 1.0 1</diffuse>
+      <specular>0.25 0.28 0.32 1</specular>
+      <attenuation><range>16</range><constant>0.55</constant><linear>0.025</linear><quadratic>0.006</quadratic></attenuation>
+      <cast_shadows>false</cast_shadows>
+    </light>
+    <light type="point" name="north_corridor_light">
+      <visualize>true</visualize>
+      <pose>0 17 3.2 0 0 0</pose>
+      <diffuse>0.88 0.93 1.0 1</diffuse>
+      <specular>0.22 0.25 0.30 1</specular>
+      <attenuation><range>15</range><constant>0.55</constant><linear>0.025</linear><quadratic>0.006</quadratic></attenuation>
+      <cast_shadows>false</cast_shadows>
+    </light>
+    <light type="point" name="central_corridor_light">
+      <visualize>true</visualize>
+      <pose>0 -3 3.2 0 0 0</pose>
+      <diffuse>0.92 0.95 1.0 1</diffuse>
+      <specular>0.25 0.28 0.32 1</specular>
+      <attenuation><range>16</range><constant>0.55</constant><linear>0.025</linear><quadratic>0.006</quadratic></attenuation>
+      <cast_shadows>false</cast_shadows>
+    </light>
+    <light type="point" name="south_corridor_light">
+      <visualize>true</visualize>
+      <pose>0 -13 3.2 0 0 0</pose>
+      <diffuse>0.96 0.94 0.88 1</diffuse>
+      <specular>0.28 0.26 0.22 1</specular>
+      <attenuation><range>16</range><constant>0.55</constant><linear>0.025</linear><quadratic>0.006</quadratic></attenuation>
+      <cast_shadows>false</cast_shadows>
+    </light>
+    <light type="point" name="ward_light">
+      <visualize>true</visualize>
+      <pose>0 -23 3.2 0 0 0</pose>
+      <diffuse>0.96 0.93 0.86 1</diffuse>
+      <specular>0.28 0.25 0.20 1</specular>
+      <attenuation><range>16</range><constant>0.55</constant><linear>0.025</linear><quadratic>0.006</quadratic></attenuation>
+      <cast_shadows>false</cast_shadows>
+    </light>
+    <include>
+      <uri>model://aws_robomaker_hospital_floor_01_floor</uri>
+      <name>aws_robomaker_hospital_floor_01_floor_1</name>
+      <static>true</static>
+      <pose>-0.001425 -0.014447 0 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_floor_01_walls</uri>
+      <name>aws_robomaker_hospital_floor_01_walls_1</name>
+      <static>true</static>
+      <pose>-0.013823 -0.013783 0 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_nursesstation_01</uri>
+      <name>aws_robomaker_hospital_nursesstation_01_1</name>
+      <static>true</static>
+      <pose>0 1.5 0 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_portal</uri>
+      <name>aws_robomaker_hospital_elevator_01_portal_1</name>
+      <static>true</static>
+      <pose>-1.50654 19.4813 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_portal</uri>
+      <name>aws_robomaker_hospital_elevator_01_portal_2</name>
+      <static>true</static>
+      <pose>1.51134 19.487 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_car</uri>
+      <name>aws_robomaker_hospital_elevator_01_car_1</name>
+      <static>true</static>
+      <pose>-1.49587 19.35 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_car</uri>
+      <name>aws_robomaker_hospital_elevator_01_car_2</name>
+      <static>true</static>
+      <pose>1.5407 19.35 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_door</uri>
+      <name>aws_robomaker_hospital_elevator_01_door_1</name>
+      <static>true</static>
+      <pose>-1.51 19.35 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_elevator_01_door</uri>
+      <name>aws_robomaker_hospital_elevator_01_door_2</name>
+      <static>true</static>
+      <pose>1.52843 19.3627 0.19 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_1</name>
+      <static>true</static>
+      <pose>-11.0216 -13.8069 0 0 -0 1.55358</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_1</name>
+      <static>true</static>
+      <pose>-11.022 -7.27757 0 0 -0 1.57907</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_2</name>
+      <static>true</static>
+      <pose>11.1417 -21.4039 0 0 0 -1.55117</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_3</name>
+      <static>true</static>
+      <pose>11.1068 -17.8472 0 0 0 -1.55117</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_4</name>
+      <static>true</static>
+      <pose>11.1374 -14.1551 0 0 0 -1.55117</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_5</name>
+      <static>true</static>
+      <pose>-11.0332 -17.61 0 0 -0 1.55358</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_6</name>
+      <static>true</static>
+      <pose>-11.0086 -21.7566 0 0 -0 1.55358</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_7</name>
+      <static>true</static>
+      <pose>-11.0426 0.066126 0 0 -0 1.56614</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_half_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_half_open_01_8</name>
+      <static>true</static>
+      <pose>-11.0309 -3.75145 0 0 -0 1.56614</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_floor_01_ceiling</uri>
+      <name>aws_robomaker_hospital_floor_01_ceiling_1</name>
+      <static>true</static>
+      <pose>0.016552 0.050728 0 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_ramp_01</uri>
+      <name>aws_robomaker_hospital_ramp_01_1</name>
+      <static>true</static>
+      <pose>-1.70996 16.3685 0 0 -0 0</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_open_01</uri>
+      <name>aws_robomaker_hospital_curtain_open_01_1</name>
+      <static>true</static>
+      <pose>11.0051 -6.91002 0 0 0 -1.58737</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_2</name>
+      <static>true</static>
+      <pose>11.0303 -3.70124 0 0 0 -1.58306</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_3</name>
+      <static>true</static>
+      <pose>10.9586 0.159483 0 0 0 -1.58306</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_4</name>
+      <static>true</static>
+      <pose>10.9819 -26.2149 0 0 0 -1.58306</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_5</name>
+      <static>true</static>
+      <pose>1.31506 -30.5771 0 0 -0 3.1401</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_6</name>
+      <static>true</static>
+      <pose>5.49659 -30.5364 0 0 -0 3.1401</pose>
+    </include>
+    <include>
+      <uri>model://aws_robomaker_hospital_curtain_closed_01</uri>
+      <name>aws_robomaker_hospital_curtain_closed_01_7</name>
+      <static>true</static>
+      <pose>9.80048 -30.5918 0 0 -0 3.1401</pose>
+    </include>
+  </world>
+</sdf>

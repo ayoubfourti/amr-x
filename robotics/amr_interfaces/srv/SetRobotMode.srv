@@ -1,0 +1,5 @@
+# OWNER: Zeyneb (transition)  -- request a mode change
+string mode               # "navigation" | "manipulation" | "combined" | "idle"
+---
+bool success
+string message

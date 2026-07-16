@@ -1,229 +1,174 @@
-# AMR-X - Launch & Run Guide
+# AMR-X Launch Guide
 
-Quick reference for running the AMR-X robot model, simulation, teleop, mapping,
-and navigation.
+Commands for ROS 2 Jazzy and Gazebo Harmonic. Run them from the repository
+root. Source ROS and the workspace in every terminal.
 
-Default stack:
-
-- Ubuntu 24.04
-- ROS 2 Jazzy
-- Gazebo Harmonic
-
-Compatibility stack:
-
-- Ubuntu 22.04
-- ROS 2 Humble
-- Gazebo Fortress
-
-Use the default Jazzy/Harmonic path unless you explicitly need compatibility.
-
-## 0. Build once, source every terminal
-
-The colcon workspace root is `robotics/`.
-
-Ubuntu 24.04 / Jazzy:
+## Build
 
 ```bash
-cd ~/amr-x/robotics
 source /opt/ros/jazzy/setup.bash
+rosdep install --from-paths robotics --ignore-src -r -y
 colcon build --symlink-install
 source install/setup.bash
 ```
 
-Ubuntu 22.04 / Humble compatibility:
+Rebuild after changing URDF, launch, world, RViz, or navigation files. Wait for
+`Entity creation successful` before starting teleop or SLAM.
+
+## Complete simulation
 
 ```bash
-cd ~/amr-x/robotics
-source /opt/ros/humble/setup.bash
-colcon build --symlink-install
-source install/setup.bash
+# Default warehouse, robot, sensors, bridge, Gazebo, and RViz
+ros2 launch bringup simulation.launch.py
+
+# Hospital
+ros2 launch bringup simulation.launch.py environment:=hospital
+
+# No simulation RViz; use this before SLAM or localization
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# Headless Gazebo server
+ros2 launch bringup simulation.launch.py gui:=false rviz:=false
+
+# Custom SDF
+ros2 launch bringup simulation.launch.py world:=/absolute/path/world.sdf
+
+# Humble / Fortress compatibility
+ros2 launch bringup simulation.launch.py simulator_variant:=fortress
 ```
 
-Rules:
+Built-in environments are `warehouse` and `hospital`. The launch file
+selects a safe spawn position for each.
 
-- Source exactly one ROS distribution in a shell.
-- Re-run `source install/setup.bash` in every new terminal.
-- Rebuild after changing launch files, URDF/Xacro, worlds, models, or configs.
+## World only
 
-## 1. View the robot model only
+These commands do not spawn the robot or ROS bridge.
+
+| World | Command |
+|---|---|
+| Procedural warehouse | `ros2 launch simulation warehouse.launch.py` |
+| Hospital | `ros2 launch simulation hospital_harmonic.launch.py` |
+| Experimental AWS warehouse | `ros2 launch simulation warehouse_harmonic.launch.py` |
+| Fortress warehouse | `ros2 launch simulation warehouse.launch.py simulator_variant:=fortress` |
+
+The AWS mesh world is intended for visual testing and may be slower than the
+procedural warehouse.
+
+## RViz and teleoperation
+
+View only the URDF:
 
 ```bash
 ros2 launch robot_description display.launch.py
 ```
 
-Use this for URDF and joint sanity checks without starting Gazebo.
-
-## 2. Full simulation
-
-Default Jazzy/Harmonic launch:
-
-```bash
-ros2 launch bringup simulation.launch.py
-```
-
-Useful options:
-
-```bash
-ros2 launch bringup simulation.launch.py rviz:=false
-ros2 launch bringup simulation.launch.py gui:=false
-ros2 launch bringup simulation.launch.py world:=/abs/path/to/world.sdf
-```
-
-Compatibility launch:
-
-```bash
-ros2 launch bringup simulation.launch.py simulator_variant:=fortress
-```
-
-The full simulation publishes `/scan`, `/imu`, `/odom`, `/joint_states`,
-`/tf`, `/tf_static`, and `/clock`.
-
-## 3. Drive the robot
-
-Start teleop in a separate terminal after the simulation is up.
-
-Keyboard:
+Drive from a sourced terminal:
 
 ```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-Gamepad:
+Keys: `i` forward, `,` reverse, `j`/`l` rotate, and `k` stop.
+Alternatively, `ros2 launch bringup teleop.launch.py` opens an `xterm`, and
+`ros2 launch bringup teleop_joy.launch.py` starts gamepad control.
+
+The front LiDAR publishes `/scan` in `lidar_link`. The rear CAD LiDAR is
+currently visual-only.
+
+## SLAM mapping
+
+Use three sourced terminals:
 
 ```bash
-ros2 launch bringup teleop_joy.launch.py
+# Terminal 1: simulation without duplicate RViz
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# Terminal 2: SLAM Toolbox and configured mapping RViz
+ros2 launch navigation slam.launch.py
+
+# Terminal 3: drive
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-Drive gently and keep the robot inside the warehouse bounds. Teleop and SLAM do
-not provide collision avoidance.
+RViz displays the map, orange LiDAR points, robot, and TF with `map` as the
+fixed frame. Black is occupied, white is free, and grey is unexplored. Drive
+slowly and revisit mapped areas. Do not use `2D Pose Estimate` during SLAM.
 
-## 4. Build a map with SLAM
+Save the map while SLAM is running:
 
-Use three terminals:
+```bash
+ros2 run nav2_map_server map_saver_cli -f \
+  "$(pwd)/robotics/navigation/maps/amr_warehouse_map"
+colcon build --packages-select navigation --symlink-install
+source install/setup.bash
+```
+
+## Navigation
+
+### On the live SLAM map
+
+Keep SLAM running:
 
 ```bash
 # T1
-ros2 launch bringup simulation.launch.py
+ros2 launch bringup simulation.launch.py rviz:=false
 
 # T2
 ros2 launch navigation slam.launch.py
 
 # T3
-ros2 run teleop_twist_keyboard teleop_twist_keyboard
-```
-
-Save the map while SLAM is still running:
-
-```bash
-ros2 run nav2_map_server map_saver_cli -f \
-    ~/amr-x/robotics/navigation/maps/amr_warehouse_map
-```
-
-If you changed navigation assets, rebuild before launching Nav2:
-
-```bash
-cd ~/amr-x/robotics
-colcon build --packages-select navigation
-source install/setup.bash
-```
-
-Stop SLAM before starting Nav2 so only one system owns the `map` frame.
-
-## 5. Autonomous navigation
-
-Run Nav2 after the simulation is up and SLAM is stopped:
-
-```bash
-# T1
-ros2 launch bringup simulation.launch.py
-
-# T2
-ros2 launch navigation nav2.launch.py
-```
-
-Useful options:
-
-```bash
-ros2 launch navigation nav2.launch.py map:=/abs/path/to/other_map.yaml
-ros2 launch navigation nav2.launch.py params_file:=/abs/path/to/nav2_params.yaml
 ros2 launch navigation nav2.launch.py rviz:=false
 ```
 
-In RViz:
+Use `Nav2 Goal` in the SLAM RViz window. Do not start AMCL in this mode.
 
-1. Use `2D Pose Estimate` to localize the robot.
-2. Use `Nav2 Goal` to send a target pose.
+### On a saved map
 
-## 6. Launch only the warehouse
-
-Default:
+Stop SLAM first:
 
 ```bash
-ros2 launch simulation warehouse.launch.py
+# T1
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# T2
+ros2 launch navigation localization.launch.py
 ```
 
-Compatibility:
+Use `2D Pose Estimate`, wait for AMCL to converge, then use `Nav2 Goal`.
+Select another map with:
 
 ```bash
-ros2 launch simulation warehouse.launch.py simulator_variant:=fortress
+ros2 launch navigation localization.launch.py map:=/absolute/path/map.yaml
 ```
 
-## Topics
+## Topics and checks
 
-| Topic | Type | Source |
-|---|---|---|
-| `/cmd_vel` | `geometry_msgs/Twist` | teleop or Nav2 to robot |
-| `/odom` | `nav_msgs/Odometry` | wheel odometry |
-| `/scan` | `sensor_msgs/LaserScan` | 2D LiDAR |
-| `/imu` | `sensor_msgs/Imu` | IMU |
-| `/joint_states` | `sensor_msgs/JointState` | wheel joints |
-| `/tf`, `/tf_static` | `tf2_msgs/TFMessage` | robot and odom transforms |
-| `/clock` | `rosgraph_msgs/Clock` | Gazebo simulation clock |
-
-## Troubleshooting
-
-**`package not found` on launch**
-You did not build or source this terminal. Go to `robotics/`, source the right
-ROS distro, rebuild if needed, then run `source install/setup.bash`.
-
-**Wrong ROS distro in the shell**
-Do not mix Jazzy and Humble in one terminal. Start a clean shell and source
-only one of `/opt/ros/jazzy/setup.bash` or `/opt/ros/humble/setup.bash`.
-
-**Launch file or config file not found**
-The package may not have installed its resources. Rebuild with
-`colcon build --symlink-install` and confirm the package installs its `launch`,
-`config`, and `maps` directories.
-
-**RViz map is blank**
-Set the RViz Map display topic to `/map`. If QoS is wrong, remove the display
-and re-add `/map` by topic so RViz picks the right settings.
-
-**`Frame [map] does not exist`**
-During mapping, SLAM must be running. During navigation, Nav2 must be active and
-its map server must have started successfully.
-
-**Gazebo bridge or simulator mismatch**
-The default is Harmonic. Use `simulator_variant:=fortress` only on the Humble /
-Fortress compatibility path. If bridge topics fail, verify the shell and launch
-variant match the intended environment.
-
-**Robot physics or odometry explodes**
-Stop everything and relaunch cleanly:
-
-```bash
-pkill -9 -f 'gz sim'
-pkill -9 -f 'ign gazebo'
-pkill -9 -f parameter_bridge
-pkill -9 -f rviz2
-pkill -9 -f slam_toolbox
-```
-
-**Check what is running**
+| Topic | Purpose |
+|---|---|
+| `/cmd_vel` | Velocity commands |
+| `/odom` | Wheel odometry |
+| `/scan` | Front 2D LiDAR |
+| `/imu` | IMU |
+| `/joint_states` | Wheel and caster joints |
+| `/tf`, `/tf_static` | Frame transforms |
+| `/map` | SLAM or saved occupancy map |
+| `/clock` | Simulation time |
 
 ```bash
 ros2 node list
 ros2 topic hz /scan
-ros2 topic echo /map --field info.width --once
-ros2 run tf2_tools view_frames
+ros2 topic echo /scan --once --field header
+ros2 topic echo /odom --once
+ros2 topic echo /map --once --field info
 ```
+
+## Troubleshooting
+
+- **Package not found:** build and source `install/setup.bash`.
+- **RViz shows only a grid:** launch `navigation slam.launch.py` and verify
+  `/scan` and `/map`.
+- **No `map` frame:** start SLAM or `localization.launch.py`.
+- **Two RViz windows:** start simulation with `rviz:=false`.
+- **No robot in a world-only launch:** use `bringup simulation.launch.py`.
+- **Changes are not visible:** stop Gazebo, rebuild, source, and relaunch.
+- **No rear scan:** expected until `/scan_rear` and scan merging are added.

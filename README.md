@@ -30,6 +30,47 @@ older stack is a compatibility path, not a second implementation track.
 
 Generated PDFs belong under `build/<report_name>/` and are not committed.
 
+## Robotics Quick Start
+
+The supported robotics stack is Ubuntu 24.04, ROS 2 Jazzy, and Gazebo
+Harmonic. Build from the repository root:
+
+```bash
+source /opt/ros/jazzy/setup.bash
+rosdep install --from-paths robotics --ignore-src -r -y
+colcon build --symlink-install
+source install/setup.bash
+```
+
+Launch the default warehouse simulation:
+
+```bash
+ros2 launch bringup simulation.launch.py
+```
+
+Launch the hospital instead:
+
+```bash
+ros2 launch bringup simulation.launch.py environment:=hospital
+```
+
+For SLAM, use separate sourced terminals:
+
+```bash
+# Terminal 1
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# Terminal 2
+ros2 launch navigation slam.launch.py
+
+# Terminal 3
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+See the [complete robotics launch guide](robotics/LAUNCHING.md) for all worlds,
+RViz, teleoperation, SLAM, map saving, live navigation, saved-map localization,
+Fortress compatibility, topic checks, and troubleshooting.
+
 ## Source of Truth
 
 - `config/project_specs.json` - Global project specifications.
@@ -75,6 +116,132 @@ Expected generated PDFs:
 - `build/v1_product_definition/v1_product_definition.pdf`
 - `build/system_requirements_v1/system_requirements_v1.pdf`
 
+## Local Website and Documentation
+
+The documentation can run by itself. The Next.js landing page is optional.
+The supported minimum versions are Python 3.10, Node.js 20.9, and npm 10.
+Ubuntu is the primary local development environment.
+
+### Documentation only (no website packages)
+
+This path creates the shared root `.venv` and installs only the Python
+documentation dependencies. The versions are pinned in
+`requirements-docs.txt`, including the multilingual `mkdocs-static-i18n`
+plugin:
+
+```bash
+git clone git@github.com:cybermech-hub/amr-x.git
+cd amr-x
+npm run setup:docs
+npm run docs
+```
+
+Open <http://127.0.0.1:8000/>. You do not need to install anything under
+`website/`. If preferred, the equivalent Python environment commands are:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -r requirements-docs.txt
+python -m mkdocs serve --dev-addr 127.0.0.1:8000
+```
+
+Always use `npm run docs` or `.venv/bin/python -m mkdocs`; a globally installed
+`mkdocs` command does not use the repository's plugins. The supported command
+checks the pinned toolchain and repairs missing documentation dependencies
+before starting.
+
+### Website and documentation together
+
+```bash
+git clone git@github.com:cybermech-hub/amr-x.git
+cd amr-x
+npm run setup
+npm run dev
+```
+
+- Website: <http://localhost:3000/>
+- Documentation: <http://localhost:3000/docs/>
+
+French, German, and Arabic are available from the language selector:
+
+| Language | Website | Documentation |
+|---|---|---|
+| English | <http://localhost:3000/> | <http://localhost:3000/docs/> |
+| Français | <http://localhost:3000/fr/> | <http://localhost:3000/docs/fr/> |
+| Deutsch | <http://localhost:3000/de/> | <http://localhost:3000/docs/de/> |
+| العربية | <http://localhost:3000/ar/> | <http://localhost:3000/docs/ar/> |
+
+English is the canonical documentation source. Localized Markdown files use
+the `.fr.md`, `.de.md`, and `.ar.md` suffixes, with English fallback for pages
+that have not yet been translated.
+
+### How documentation translation works
+
+Translation happens from Markdown source during the MkDocs build. It is not
+performed dynamically in the browser, and the site does not call a runtime
+translation service.
+
+Current coverage:
+
+- Documentation navigation and the homepage are translated into French,
+  German, and Arabic.
+- Technical pages currently use the English fallback until a translated
+  Markdown file is added.
+- Next.js landing-page translations are maintained separately in
+  `website/lib/i18n.js`.
+
+Translation files are stored beside the canonical English source:
+
+```text
+docs/robotics/simulation.md       # English
+docs/robotics/simulation.fr.md    # French
+docs/robotics/simulation.de.md    # German
+docs/robotics/simulation.ar.md    # Arabic
+```
+
+They generate these routes:
+
+```text
+/docs/robotics/simulation/
+/docs/fr/robotics/simulation/
+/docs/de/robotics/simulation/
+/docs/ar/robotics/simulation/
+```
+
+Do not translate commands, code, filenames, ROS identifiers, API paths, or
+configuration keys. Preserve the technical structure and update translations
+when the English source changes. See the
+[documentation localization guide](docs/reference/localization.md) for the
+complete workflow and current coverage.
+
+`npm run setup` is safe to repeat. It prepares `.venv`, installs the MkDocs
+dependencies, and installs the website packages. Press `Ctrl+C` once to stop
+both development servers; run `npm run dev` to restart them. The optional
+website alone can be prepared with `npm run setup:website` and started with
+`npm run website`.
+
+Edit the landing page under `website/app/`. Edit documentation Markdown under
+`docs/`, and control its navigation in `mkdocs.yml`. MkDocs watches those files
+and automatically refreshes open documentation pages. To add a page, create a
+Markdown file under `docs/`, add it to `nav` in `mkdocs.yml`, and follow the
+[documentation contributor guide](docs/contributing.md).
+
+Before opening a pull request, run `npm run check` for both applications, or
+`npm run check:docs` when changing documentation only. `npm run build` builds
+both locally. Generated `site/` and `website/.next/` output must not be
+committed.
+
+If a server reports that its port is busy, stop the process using port 3000,
+3001, or 8000 and retry. In combined mode, the local gateway owns port 3000,
+Next.js runs internally on port 3001, and MkDocs runs internally on port 8000.
+If a command reports missing dependencies, run the matching setup command
+again. If virtual-environment creation is unavailable on Ubuntu, install the
+OS package that provides `python3-venv` for your Python version.
+
+No public deployment, hosting provider, or GitHub Pages workflow is configured.
+
 ## Rules
 
 - Start every task from a GitHub issue.
@@ -84,4 +251,5 @@ Expected generated PDFs:
 - Do not commit generated LaTeX build files or report PDFs.
 - Keep source PDFs and references only when they are allowed to be shared.
 
-See `CONTRIBUTING.md`, `.agents.md`, and `docs/00_project_management/workflow/`.
+See `CONTRIBUTING.md`, `.agents.md`, and the
+[documentation contributor guide](docs/contributing.md).

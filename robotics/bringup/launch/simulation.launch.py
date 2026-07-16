@@ -13,6 +13,15 @@
 #   ros2 launch bringup simulation.launch.py rviz:=false
 #   ros2 launch bringup simulation.launch.py gui:=false        # headless gz
 #   ros2 launch bringup simulation.launch.py world:=/abs/x.sdf
+#   ros2 launch bringup simulation.launch.py environment:=hospital
+#
+# Mapping workflow (run each command in a sourced terminal):
+#   ros2 launch bringup simulation.launch.py rviz:=false
+#   ros2 launch navigation slam.launch.py
+#   ros2 run teleop_twist_keyboard teleop_twist_keyboard
+#
+# Built-in environments are "warehouse" (default) and "hospital". The
+# environment argument also selects a verified robot spawn position.
 # =============================================================================
 import os
 
@@ -28,6 +37,8 @@ from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
+is_wsl = "microsoft" in open("/proc/version").read().lower() if os.path.exists("/proc/version") else False
+default_render_engine = "ogre" if is_wsl else "ogre2"
 
 def generate_launch_description():
     pkg_gazebo = get_package_share_directory("simulation")
@@ -40,18 +51,33 @@ def generate_launch_description():
     use_rviz = LaunchConfiguration("rviz")
     gui = LaunchConfiguration("gui")
     world = LaunchConfiguration("world")
+
     simulator_variant = LaunchConfiguration("simulator_variant")
+    environment = LaunchConfiguration("environment")
+
+    render_engine = LaunchConfiguration("render_engine")
+
 
     default_world = PythonExpression([
         "'",
+        os.path.join(pkg_gazebo, "worlds", "hospital_harmonic.sdf"),
+        "' if '", environment, "' == 'hospital' else ('",
         os.path.join(pkg_gazebo, "worlds", "warehouse.sdf"),
         "' if '", simulator_variant, "' == 'harmonic' else '",
         os.path.join(pkg_gazebo, "worlds", "warehouse_fortress.sdf"),
-        "'"
+        "')"
     ])
+    # Spawn in the warehouse loading area, or in the hospital's main
+    # corridor (verified clear of walls/furniture - min. 1.7m clearance).
+    default_spawn_x = PythonExpression([
+        "'0.0' if '", environment, "' == 'hospital' else '-8.0'"])
+    default_spawn_y = PythonExpression([
+        "'8.0' if '", environment, "' == 'hospital' else '0.0'"])
     gazebo_resource_path = os.pathsep.join([
         pkg_gazebo,
         os.path.join(pkg_gazebo, "models"),
+        os.path.join(pkg_gazebo, "fuel_models"),
+        os.path.join(pkg_gazebo, "photos"),
         os.path.dirname(pkg_robot_description),
     ])
     rviz_config = os.path.join(pkg_bringup, "rviz", "simulation.rviz")
@@ -88,7 +114,8 @@ def generate_launch_description():
 
     # ---- Gazebo with the warehouse world -----------------------------------
     gz_args = PythonExpression([
-        "'", world, " -r' if '", gui, "' == 'true' else '", world, " -r -s'"
+        "'", world, " -r --render-engine ", render_engine,
+        "' if '", gui, "' == 'true' else '", world, " -r -s'"
     ])
     gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -97,8 +124,8 @@ def generate_launch_description():
     )
 
     # ---- spawn the robot from /robot_description ----------------------------
-    # Spawn slightly above the floor (z=0.12) so the wheels settle without
-    # clipping into the ground plane.
+    # Spawn just above the floor so contacts initialize cleanly without a
+    # 12 cm impact that can excite the passive caster joints.
     spawn_robot = Node(
         package="ros_gz_sim",
         executable="create",
@@ -107,7 +134,7 @@ def generate_launch_description():
         arguments=[
             "-topic", "/robot_description",
             "-name", "amr_x",
-            "-x", "-8.0", "-y", "0.0", "-z", "0.12",   # start in loading area
+            "-x", default_spawn_x, "-y", default_spawn_y, "-z", "0.02",
             "-Y", "0.0",
         ],
     )
@@ -137,7 +164,11 @@ def generate_launch_description():
     )
 
     # Start the bridge + spawn a little after Gazebo so the world is ready.
-    delayed_spawn = TimerAction(period=3.0, actions=[spawn_robot])
+    # (The hospital world has far more meshes/props than the warehouse and
+    # needs longer to finish loading - spawning the robot too early races
+    # the scene manager and can crash the renderer, so we wait 10s for any
+    # world rather than tuning per-world.)
+    delayed_spawn = TimerAction(period=10.0, actions=[spawn_robot])
     delayed_bridge = TimerAction(period=2.0, actions=[bridge])
 
     return LaunchDescription([
@@ -154,8 +185,14 @@ def generate_launch_description():
             "simulator_variant", default_value="harmonic",
             description="Gazebo integration variant: harmonic (default) or fortress."
         ),
+        DeclareLaunchArgument(
+            "environment", default_value="warehouse",
+            description="Which built-in world to load: warehouse (default) or hospital."
+        ),
         DeclareLaunchArgument("world", default_value=default_world,
                               description="Absolute path to the .sdf world."),
+        DeclareLaunchArgument("render_engine", default_value=default_render_engine,
+                              description="Gazebo render engine ('ogre' or 'ogre2')."),
 
         robot_state_publisher,
         gazebo,
