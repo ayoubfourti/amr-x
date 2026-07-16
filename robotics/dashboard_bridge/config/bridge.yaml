@@ -1,2 +1,0 @@
-# TODO(team): dashboard bridge config (websocket port, topic whitelist, etc.).
-bridge: {}

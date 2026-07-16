@@ -18,6 +18,13 @@ ROSBRIDGE_HOST = "localhost"
 ROSBRIDGE_PORT = 9090
 ROBOT_NAME = "amr_x" #hardcoded for now, but should be dynamic in the future
 
+MODE_NAMES = {
+    0: "idle",
+    1: "navigation",
+    2: "manipulation",
+    3: "combined",
+}
+
 def quaternion_to_yaw(x, y, z, w):
     # Converts a quaternion (x, y, z, w) into a yaw angle in degrees
     siny_cosp = 2 * (w * z + x * y)
@@ -47,6 +54,7 @@ def handle_robot_state(message):
 
         yaw = quaternion_to_yaw(ori["x"], ori["y"], ori["z"], ori["w"])
         speed = math.sqrt(vel["x"] ** 2 + vel["y"] ** 2 + vel["z"] ** 2)
+        mode_name = MODE_NAMES.get(message["mode"], "unknown")
 
         data = {
             "status": "online",
@@ -54,7 +62,7 @@ def handle_robot_state(message):
             "position_y": pos["y"],
             "orientation": yaw,
             "speed": speed,
-            "mode": message["mode"],
+            "mode": mode_name,
         }
 
         update_robot_status(db, robot.id, data)
