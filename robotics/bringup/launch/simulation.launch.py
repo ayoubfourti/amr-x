@@ -116,8 +116,8 @@ def generate_launch_description():
     )
 
     # ---- spawn the robot from /robot_description ----------------------------
-    # Spawn slightly above the floor (z=0.12) so the wheels settle without
-    # clipping into the ground plane.
+    # Spawn just above the floor so contacts initialize cleanly without a
+    # 12 cm impact that can excite the passive caster joints.
     spawn_robot = Node(
         package="ros_gz_sim",
         executable="create",
@@ -126,7 +126,7 @@ def generate_launch_description():
         arguments=[
             "-topic", "/robot_description",
             "-name", "amr_x",
-            "-x", default_spawn_x, "-y", default_spawn_y, "-z", "0.12",
+            "-x", default_spawn_x, "-y", default_spawn_y, "-z", "0.02",
             "-Y", "0.0",
         ],
     )
