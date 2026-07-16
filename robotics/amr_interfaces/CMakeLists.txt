@@ -16,6 +16,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/SafetyState.msg"
   "msg/MotorStatus.msg"
   "msg/FaultCode.msg"
+  "msg/InspectionResult.msg"
   # ---- services ----
   "srv/SetRobotMode.srv"
   "srv/ConfirmModuleState.srv"
@@ -27,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "action/UndockModule.action"
   "action/ReturnHome.action"
   "action/ExecuteMission.action"
+  "action/RunInspection.action"
   DEPENDENCIES std_msgs geometry_msgs
 )
 

@@ -1,0 +1,9 @@
+# Trigger an inspection scan. TODO(team): refine.
+string inspection_type
+---
+bool success
+string message
+InspectionResult result
+---
+string current_step
+float32 progress
