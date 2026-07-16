@@ -39,6 +39,7 @@ def generate_launch_description():
     slam_params = LaunchConfiguration("slam_params_file")
 
     default_slam_params = os.path.join(pkg_nav, "config", "slam_params.yaml")
+    default_rviz_config = os.path.join(pkg_nav, "rviz", "slam.rviz")
 
     slam = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
@@ -54,6 +55,7 @@ def generate_launch_description():
         executable="rviz2",
         name="rviz2",
         output="screen",
+        arguments=["-d", default_rviz_config],
         parameters=[{"use_sim_time": use_sim_time}],
         condition=IfCondition(use_rviz),
     )
