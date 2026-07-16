@@ -77,11 +77,12 @@
   </div>
     <div id="mode-selector" style="margin-top: 20px;">
     <h3>Set Mode</h3>
-    <select id="mode-select">
-      <option value="idle">Idle</option>
-      <option value="teleop">Teleop</option>
-      <option value="autonomous">Autonomous</option>
-    </select>
+  <select id="mode-select">
+    <option value="idle">Idle</option>
+    <option value="navigation">Navigation</option>
+    <option value="manipulation">Manipulation</option>
+    <option value="combined">Combined</option>
+  </select>
     <button onclick="setMode()">Apply</button>
     <p>Last result: <span id="mode-result">-</span></p>
   </div>

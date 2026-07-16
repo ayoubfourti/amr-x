@@ -31,6 +31,8 @@ from amr_interfaces.msg import ModuleStatus, RobotState, DockingStatus
 
 from module_manager.mode_state_machine import ModeStateMachine
 
+from nav_msgs.msg import Odometry
+
 
 class ModuleManager(Node):
     def __init__(self):
@@ -43,6 +45,13 @@ class ModuleManager(Node):
         self._docking = DockingStatus()
         self._docking.state = DockingStatus.STATE_UNDOCKED
         self._safe = True                          # updated from SafetyState later
+
+        #Add Subscription to /odom
+        self._latest_pose = None
+        self._latest_velocity = None
+        self.create_subscription(
+            Odometry, "odom", self._odom_callback, 10,
+            callback_group=self._cb)
 
         # --- publishers (continuous state) ---
         self._pub_robot = self.create_publisher(RobotState, "robot_state", 10)
@@ -191,6 +200,10 @@ class ModuleManager(Node):
         self._docking.state = state
         if dock_id:
             self._docking.dock_id = dock_id
+    
+    def _odom_callback(self, msg):
+        self._latest_pose = msg.pose.pose
+        self._latest_velocity = msg.twist.twist
 
     def _publish_state(self):
         now = self.get_clock().now().to_msg()
@@ -207,6 +220,10 @@ class ModuleManager(Node):
             "combined": RobotState.MODE_COMBINED,
         }
         rs.mode = mode_map.get(self._sm.mode, RobotState.MODE_IDLE)
+        if self._latest_pose is not None:
+            rs.base_pose = self._latest_pose
+        if self._latest_velocity is not None:
+            rs.base_velocity = self._latest_velocity
         rs.modules = list(self._attached.values())
         rs.localized = True     # TODO(integration): wire from AMCL/SLAM
         rs.safe = self._safe
