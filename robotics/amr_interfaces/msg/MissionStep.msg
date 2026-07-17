@@ -1,4 +1,4 @@
-# OWNER: Iyed (mission manager)  -- one step of a mission
+# OWNER: Iyed (mission manager) : one step of a mission
 uint8 STATUS_PENDING=0
 uint8 STATUS_RUNNING=1
 uint8 STATUS_COMPLETED=2
