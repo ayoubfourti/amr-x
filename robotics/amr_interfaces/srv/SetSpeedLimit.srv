@@ -1,4 +1,4 @@
-# OWNER: Navigation (Ghassen?)  -- cap robot speed
+# OWNER: Navigation (Ghassen?) : cap robot speed
 float64 max_linear        # m/s
 float64 max_angular       # rad/s
 ---

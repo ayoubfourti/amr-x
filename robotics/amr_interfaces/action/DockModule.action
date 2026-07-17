@@ -1,4 +1,4 @@
-# OWNER: Zeyneb (transition)  -- long-running docking with feedback + cancel
+# OWNER: Zeyneb (transition) : long-running docking with feedback + cancel
 string module_name
 string dock_id
 ---

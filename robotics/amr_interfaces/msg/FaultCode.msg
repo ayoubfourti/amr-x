@@ -1,4 +1,4 @@
-# OWNER: Safety / embedded (unassigned)  -- a single fault report
+# OWNER: Safety / embedded (unassigned) : a single fault report
 uint8 SEVERITY_INFO=0
 uint8 SEVERITY_WARN=1
 uint8 SEVERITY_ERROR=2

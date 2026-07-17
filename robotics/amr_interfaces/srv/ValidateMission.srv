@@ -1,4 +1,4 @@
-# OWNER: Iyed (mission manager)  -- pre-flight check before a mission starts
+# OWNER: Iyed (mission manager) : pre-flight check before a mission starts
 string mission_id
 string mission_spec       # JSON/YAML mission definition
 ---

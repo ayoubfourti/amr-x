@@ -1,4 +1,4 @@
-# OWNER: Iyed (mission manager)  -- run a full mission end to end
+# OWNER: Iyed (mission manager) : run a full mission end to end
 string mission_id
 ---
 bool success

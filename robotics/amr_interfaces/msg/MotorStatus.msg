@@ -1,4 +1,4 @@
-# OWNER: Embedded feedback (unassigned)  -- per-actuator health
+# OWNER: Embedded feedback (unassigned) : per-actuator health
 std_msgs/Header header
 string[] joint_names
 float64[] velocities
