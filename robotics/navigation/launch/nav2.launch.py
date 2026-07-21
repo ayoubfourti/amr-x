@@ -30,9 +30,8 @@ from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import Node
-
+from launch.substitutions import LaunchConfiguration, PythonExpression, PathJoinSubstitution
 
 def generate_launch_description():
     pkg_nav = get_package_share_directory("navigation")
@@ -43,14 +42,21 @@ def generate_launch_description():
     map_yaml = LaunchConfiguration("map")
     params_file = LaunchConfiguration("params_file")
     autostart = LaunchConfiguration("autostart")
-    self_hit_range = LaunchConfiguration("self_hit_range")
+    blank_min_deg_LIDAR1 = LaunchConfiguration("blank_min_deg_LIDAR1")
+    blank_max_deg_LIDAR1 = LaunchConfiguration("blank_max_deg_LIDAR1")
+    blank_min_deg_LIDAR2 = LaunchConfiguration("blank_min_deg_LIDAR2")
+    blank_max_deg_LIDAR2 = LaunchConfiguration("blank_max_deg_LIDAR2")
+    blank2_min_deg_LIDAR1 = LaunchConfiguration("blank2_min_deg_LIDAR1")
+    blank2_max_deg_LIDAR1 = LaunchConfiguration("blank2_max_deg_LIDAR1")
     scan_pipeline = LaunchConfiguration("scan_pipeline")
+    keepout_filter = LaunchConfiguration("keepout_filter")
 
 
     # Defaults: the map you save from slam.launch.py, and Ghassen's tuned params.
     default_map = os.path.join(pkg_nav, "maps", "amr_warehouse_map.yaml")
     default_params = os.path.join(pkg_nav, "config", "nav2_params.yaml")
     default_rviz = os.path.join(pkg_nav2_bringup, "rviz", "nav2_default_view.rviz")
+    keepout_params = os.path.join(pkg_nav, "config", "keepout_params.yaml")
 
 
      
@@ -58,13 +64,24 @@ def generate_launch_description():
     # Scan pipeline: two self-hit filters + merger -> /scan_merged
     # (installed executables, run via ros2 run navigation ...)
     # ------------------------------------------------------------------
+    use_keepout = PythonExpression(["'", keepout_filter, "' != 'none'"])
+    mask_yaml = PathJoinSubstitution([
+        pkg_nav, "maps", PythonExpression(["'", keepout_filter, "' + '_keepout.yaml'"])
+    ])
+
+
+
+
     filter1 = Node(
         package="navigation", executable="scan_filter_node.py",
         name="scan_filter_1", output="screen",
         condition=IfCondition(scan_pipeline),
         parameters=[{
             "use_sim_time": use_sim_time,
-            "min_range": self_hit_range,
+            "blank_min_deg": blank_min_deg_LIDAR1, 
+            "blank_max_deg": blank_max_deg_LIDAR1,
+            "blank2_min_deg": blank2_min_deg_LIDAR1,
+            "blank2_max_deg": blank2_max_deg_LIDAR1,
             "input_topic": "/scan",
             "output_topic": "/scan_clean",
         }],
@@ -75,7 +92,8 @@ def generate_launch_description():
         condition=IfCondition(scan_pipeline),
         parameters=[{
             "use_sim_time": use_sim_time,
-            "min_range": self_hit_range,
+            "blank_min_deg": blank_min_deg_LIDAR2, 
+            "blank_max_deg": blank_max_deg_LIDAR2,
             "input_topic": "/scan_2",
             "output_topic": "/scan_2_clean",
         }],
@@ -91,6 +109,27 @@ def generate_launch_description():
             "scan1_topic": "/scan_clean",
             "scan2_topic": "/scan_2_clean",
         }],
+    )
+
+    filter_mask = Node(
+        package="nav2_map_server", executable="map_server",
+        name="filter_mask_server", output="screen",
+        condition=IfCondition(use_keepout),
+        parameters=[keepout_params, {"yaml_filename": mask_yaml}],
+    )
+    costmap_filter_info = Node(
+        package="nav2_map_server", executable="costmap_filter_info_server",
+        name="costmap_filter_info_server", output="screen",
+        condition=IfCondition(use_keepout),
+        parameters=[keepout_params],
+    )
+    lifecycle_filters = Node(
+        package="nav2_lifecycle_manager", executable="lifecycle_manager",
+        name="lifecycle_manager_costmap_filters", output="screen",
+        condition=IfCondition(use_keepout),
+        parameters=[{"use_sim_time": True, "autostart": True,
+                     "node_names": ["filter_mask_server",
+                                    "costmap_filter_info_server"]}],
     )
  
 
@@ -130,14 +169,32 @@ def generate_launch_description():
                               description="Nav2 parameter file."),
         DeclareLaunchArgument("autostart", default_value="true",
                               description="Auto-activate the Nav2 lifecycle nodes."),
-        DeclareLaunchArgument("self_hit_range", default_value="0.9",
-                              description="Range (m) below which scans are the robot's own body."),
+        DeclareLaunchArgument("blank_min_deg_LIDAR1", default_value="-180.0",
+                              description="Inferior limit of the self-hit filter 1 range, in degrees, over it detected scans are the robot's own body."),
+        DeclareLaunchArgument("blank_max_deg_LIDAR1", default_value="-92.0",
+                              description="Superior limit of the self-hit filter 1 range, in degrees, below it detected scans are the robot's own body."), 
+        DeclareLaunchArgument("blank_min_deg_LIDAR2", default_value="-8.0",
+                              description="Inferior limit of the self-hit filter 2 range, in degrees, over it detected scans are the robot's own body."),
+        DeclareLaunchArgument("blank_max_deg_LIDAR2", default_value="88.0",
+                              description="Superior limit of the self-hit filter 2 range, in degrees, below it detected scans are the robot's own body."),
+        DeclareLaunchArgument("blank2_min_deg_LIDAR1", default_value="170.0",
+                              description="LiDAR 1 second self-hit wedge start (deg). "
+                                          "The chassis view wraps the +/-180 seam, so "
+                                          "LiDAR 1 needs two wedges."),
+        DeclareLaunchArgument("blank2_max_deg_LIDAR1", default_value="180.0",
+                              description="LiDAR 1 second self-hit wedge end (deg)."),
         DeclareLaunchArgument("scan_pipeline", default_value="true",
                               description="Start the two filters + merger. Set false if run elsewhere."),
+        DeclareLaunchArgument("keepout_filter", default_value="none",
+                              description="Keepout zone set to load, e.g. 'hospital' "
+                                          "loads maps/hospital_keepout.yaml. 'none' disables."),
         # scan pipeline first, then Nav2
         filter1,
         filter2,
         merger,
+        filter_mask,              
+        costmap_filter_info,      
+        lifecycle_filters,
         nav2,
         rviz,
     ])

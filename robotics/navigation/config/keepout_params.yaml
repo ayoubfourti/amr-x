@@ -1,0 +1,23 @@
+# AMR-X - costmap filter servers for keepout zones (hospital stairwells)
+#
+# Two nodes:
+#   filter_mask_server        - serves keepout_mask.yaml on /keepout_filter_mask
+#   costmap_filter_info_server- tells the costmaps how to read that mask
+#
+# Both are lifecycle nodes and must be managed by a lifecycle manager
+# (see nav2.launch.py).
+
+costmap_filter_info_server:
+  ros__parameters:
+    use_sim_time: true
+    type: 0                                   # 0 = keepout filter
+    filter_info_topic: "/costmap_filter_info"
+    mask_topic: "/keepout_filter_mask"
+    base: 0.0
+    multiplier: 1.0
+
+filter_mask_server:
+  ros__parameters:
+    use_sim_time: true
+    frame_id: "map"
+    topic_name: "/keepout_filter_mask"
