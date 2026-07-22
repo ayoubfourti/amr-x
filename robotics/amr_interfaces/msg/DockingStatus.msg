@@ -1,4 +1,4 @@
-# OWNER: Zeyneb (transition/docking)  -- live docking state
+# OWNER: Zeyneb (transition/docking) : live docking state
 uint8 STATE_UNDOCKED=0
 uint8 STATE_DOCKING=1
 uint8 STATE_DOCKED=2

@@ -1,4 +1,4 @@
-# OWNER: Iyed (mission manager)  -- overall mission progress
+# OWNER: Iyed (mission manager) : overall mission progress
 uint8 STATE_PENDING=0
 uint8 STATE_RUNNING=1
 uint8 STATE_COMPLETED=2
