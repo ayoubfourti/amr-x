@@ -1,4 +1,4 @@
-# OWNER: Zeyneb (transition)  -- long-running undock with feedback + cancel
+# OWNER: Zeyneb (transition) : long-running undock with feedback + cancel
 string module_name
 ---
 bool success
