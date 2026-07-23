@@ -1,1 +1,58 @@
-# TODO(team): top-level arm module xacro: mount to base + include both arms
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="arm_module">
+    <xacro:arg name="robot_name" default="mycobot_280"/>
+    <xacro:arg name="add_world" default="true"/>
+    <xacro:arg name="base_link" default="base_link"/>
+    <xacro:arg name="base_type" default="g_shape"/>
+    <xacro:arg name="flange_link" default="link6_flange"/>
+    <xacro:arg name="gripper_type" default="gripper"/>
+    <xacro:arg name="prefix" default=""/>
+    <xacro:arg name="use_camera" default="false"/>
+    <xacro:arg name="use_gazebo" default="false"/>
+    <xacro:arg name="use_gripper" default="true"/>
+
+    <xacro:arg name="add_world" default="true"/>
+
+    <xacro:if value="$(arg add_world)">
+    <link name="world"/>
+    <joint name="$(arg prefix)virtual_joint" type="fixed">
+        <parent link="world"/>
+        <child link="$(arg prefix)$(arg base_link)"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+    </xacro:if>
+   
+    <xacro:include filename="$(find arm_description)/urdf/single_arm.xacro"/>
+    <xacro:g_shape_base
+        base_link="$(arg base_link)"
+        prefix="$(arg prefix)"/>
+    <xacro:single_arm
+      base_link="$(arg base_link)"
+      flange_link="$(arg flange_link)"
+      prefix="$(arg prefix)">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:single_arm>
+
+    <xacro:if value="$(arg use_gripper)">
+        <xacro:property name="current_gripper" value="$(arg gripper_type)"/>
+        <xacro:if value="${current_gripper == 'gripper'}">
+            <xacro:include filename="$(find arm_description)/urdf/gripper.xacro"/>
+            <xacro:gripper
+                parent="$(arg flange_link)"
+                prefix="$(arg prefix)">
+                <origin xyz="0 0 0.034" rpy="1.579 0 0"/>
+            </xacro:gripper>
+        </xacro:if>
+    </xacro:if>
+    <xacro:include filename="$(find arm_description)/urdf/arm_gazebo.xacro"/>
+        <xacro:load_gazebo_sim_ros2_control_plugin
+        robot_name="$(arg robot_name)"
+        use_gazebo="$(arg use_gazebo)"/>
+
+        <xacro:include filename="$(find arm_description)/urdf/arm_control.xacro"/>
+        <xacro:arm_ros2_control
+        prefix="$(arg prefix)"
+        flange_link="$(arg flange_link)"
+        use_gazebo="$(arg use_gazebo)"/>
+
+</robot>
