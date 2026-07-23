@@ -1,0 +1,1 @@
+controller_joint_names: ['', 'robot_base_joint', 'shoulder1_joint', 'shoulder2_joint', 'shoulder3_joint', 'shoulder4_joint', 'shoulder5_joint', 'shoulder6_joint', 'wrist_joint', 'shoulderR_joint', 'shoulderR_2_joint', 'shoulderR_3joint', 'shoulderR_4joint', 'shoulderR_5joint', 'shoulderR_6joint', 'wristR_joint', ]
