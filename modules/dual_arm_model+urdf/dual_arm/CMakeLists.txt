@@ -8,7 +8,7 @@ install(
     config
     launch
     meshes
-    textures
+    rviz
     urdf
   DESTINATION
     share/${PROJECT_NAME}
