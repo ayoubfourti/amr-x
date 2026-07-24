@@ -137,15 +137,8 @@ npm run docs
 ```
 
 Open <http://127.0.0.1:8000/>. You do not need to install anything under
-`website/`. If preferred, the equivalent Python environment commands are:
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -r requirements-docs.txt
-python -m mkdocs serve --dev-addr 127.0.0.1:8000
-```
+`website/`. The setup script creates or reuses the single root `.venv`; do not
+create another environment for documentation or the dashboard.
 
 Always use `npm run docs` or `.venv/bin/python -m mkdocs`; a globally installed
 `mkdocs` command does not use the repository's plugins. The supported command
@@ -228,10 +221,10 @@ and automatically refreshes open documentation pages. To add a page, create a
 Markdown file under `docs/`, add it to `nav` in `mkdocs.yml`, and follow the
 [documentation contributor guide](docs/contributing.md).
 
-Before opening a pull request, run `npm run check` for both applications, or
-`npm run check:docs` when changing documentation only. `npm run build` builds
-both locally. Generated `site/` and `website/.next/` output must not be
-committed.
+Before opening a pull request for the landing page or documentation, run
+`npm run check`, or `npm run check:docs` when changing documentation only.
+For dashboard changes, run `npm run check:dashboard`. Generated `site/`,
+`website/.next/`, and dashboard `dist/` output must not be committed.
 
 If a server reports that its port is busy, stop the process using port 3000,
 3001, or 8000 and retry. In combined mode, the local gateway owns port 3000,
@@ -241,6 +234,50 @@ again. If virtual-environment creation is unavailable on Ubuntu, install the
 OS package that provides `python3-venv` for your Python version.
 
 No public deployment, hosting provider, or GitHub Pages workflow is configured.
+
+## Dashboard Development
+
+The operator dashboard consists of a React/Vite frontend, a FastAPI backend,
+and PostgreSQL 16 in Docker. It uses the same repository-root `.venv` as the
+documentation toolchain; do not create a virtual environment under
+`dashboard_app/`.
+
+First-time setup:
+
+```bash
+npm run setup:dashboard
+```
+
+Start the complete dashboard:
+
+```bash
+npm run dashboard
+```
+
+This starts PostgreSQL, FastAPI, and Vite:
+
+- Dashboard: <http://localhost:5173/>
+- API documentation: <http://localhost:8000/docs>
+
+Press `Ctrl+C` to stop the frontend and backend. PostgreSQL remains running so
+its data is available next time. Stop it separately with
+`npm run dashboard:db:stop`.
+
+Individual services can also be run from the repository root:
+
+```bash
+npm run dashboard:db          # Start PostgreSQL
+npm run dashboard:backend     # Start FastAPI on port 8000
+npm run dashboard:frontend    # Start Vite on port 5173
+npm run dashboard:db:status   # Show PostgreSQL status
+npm run dashboard:db:logs     # Follow PostgreSQL logs
+npm run dashboard:db:stop     # Stop PostgreSQL without deleting its data
+npm run check:dashboard       # Check the backend and lint/build the frontend
+```
+
+See the [dashboard guide](dashboard_app/README.md), the
+[backend guide](dashboard_app/backend/README.md), and the
+[full ROS-to-dashboard setup](dashboard_app/SETUP.md) for more detail.
 
 ## Rules
 

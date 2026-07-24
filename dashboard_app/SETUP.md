@@ -34,87 +34,53 @@ source install/setup.bash
 sudo apt install ros-jazzy-rosbridge-suite
 ```
 
-## A3. PostgreSQL
+## A3. Backend `.env` file
 
-Install it:
-
-``` bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib -y
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
-```
-
-Confirm it's running:
+Prepare all dashboard dependencies from the repository root:
 
 ``` bash
-pg_lsclusters
+cd ~/amr-x
+npm run setup:dashboard
 ```
 
-Status should say `online`.
+This creates `.env` from `.env.example` if needed, prepares the only Python
+environment at `~/amr-x/.venv`, installs the backend requirements there, and
+installs the React frontend packages. The template credentials are intended
+only for local development, and `.env` is ignored by Git.
 
-Set a password for the `postgres` user (pick anything, just remember
-it):
+## A4. PostgreSQL in Docker
+
+Start the database from the repository root:
 
 ``` bash
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'YOUR_PASSWORD';"
+npm run dashboard:db
+npm run dashboard:db:status
 ```
 
-Create the database:
-
-``` bash
-sudo -u postgres createdb amr
-```
-
-Confirm it exists:
-
-``` bash
-sudo -u postgres psql -c "\l" | grep amr
-```
-
-## A4. Backend `.env` file
-
-Copy the provided template:
-
-``` bash
-cd ~/amr-x/dashboard_app/backend
-cp .env.example .env
-```
-
-Edit `.env` and replace `YOUR_PASSWORD` with the PostgreSQL password you
-set in A3:
-
-``` bash
-cat > .env << 'EOF'
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost/amr
-DEBUG=True
-EOF
-```
-
+Wait until its status is `healthy`. PostgreSQL is exposed only on
+`127.0.0.1:5432`, and its data persists in a Docker volume.
 
 ## A5. Backend Python environment
 
-``` bash
-cd ~/amr-x/dashboard_app/backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+The setup command in A3 installs the backend into the shared repository-root
+`.venv`. Do not create or activate another environment in `dashboard_app/`;
+the run scripts invoke the root environment directly.
 
 ## A6. First server boot --- creates database tables automatically
 
 ``` bash
-source venv/bin/activate
-python3 -m uvicorn app.main:app --reload
+cd ~/amr-x
+npm run dashboard:backend
 ```
 
 This automatically creates all tables (`robots`, `missions`, `modules`,
 `alerts`, `users`) on first run via `Base.metadata.create_all()`.
 
-Confirm:
+Confirm the database tables:
 
 ``` bash
-sudo -u postgres psql -d amr -c "\dt"
+cd ~/amr-x
+docker compose -f dashboard_app/compose.yaml exec postgres psql -U amrx -d amr -c "\dt"
 ```
 
 You should see all five tables.
@@ -141,13 +107,8 @@ Or use Swagger at `http://localhost:8000/docs`.
 ## B1. PostgreSQL
 
 ``` bash
-sudo systemctl status postgresql
-```
-
-If needed:
-
-``` bash
-sudo systemctl start postgresql
+cd ~/amr-x
+npm run dashboard:db
 ```
 
 ## B2. Simulation
@@ -179,9 +140,8 @@ ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ## B5. FastAPI backend
 
 ``` bash
-cd ~/amr-x/dashboard_app/backend
-source venv/bin/activate
-python3 -m uvicorn app.main:app --reload
+cd ~/amr-x
+npm run dashboard:backend
 ```
 
 Look for:
@@ -191,9 +151,18 @@ Look for:
 [ros_bridge_client] Connected to rosbridge.
 ```
 
-## B6. (Optional) Teleop dashboard
+## B6. React dashboard
 
-Open `amr-x/robotics/dashboard_app/dashboard.html` in your browser.
+In another terminal:
+
+``` bash
+cd ~/amr-x
+npm run dashboard:frontend
+```
+
+Open <http://localhost:5173/>. The preliminary standalone ROS page at
+`robotics/dashboard_app/dashboard.html` remains available for direct
+roslibjs-based testing.
 
 ## B7. Verify everything is connected
 
