@@ -1,4 +1,4 @@
-# OWNER: Zeyneb (architecture)  -- high-level robot state for dashboard/telemetry
+# OWNER: Zeyneb (architecture) : high-level robot state for dashboard/telemetry
 uint8 MODE_IDLE=0
 uint8 MODE_NAVIGATION=1
 uint8 MODE_MANIPULATION=2

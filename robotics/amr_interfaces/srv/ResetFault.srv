@@ -1,4 +1,4 @@
-# OWNER: Safety / mission (unassigned)  -- clear a fault (0 = clear all)
+# OWNER: Safety / mission (unassigned) : clear a fault (0 = clear all)
 uint16 code
 ---
 bool success

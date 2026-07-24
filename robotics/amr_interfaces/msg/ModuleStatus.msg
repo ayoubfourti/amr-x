@@ -1,4 +1,4 @@
-# OWNER: Zeyneb (transition/module)  -- status of ONE attached module
+# OWNER: Zeyneb (transition/module) : status of ONE attached module
 uint8 STATE_ABSENT=0
 uint8 STATE_ATTACHING=1
 uint8 STATE_ATTACHED=2
