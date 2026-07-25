@@ -1,28 +1,42 @@
-# Frontend
+# AMR-X Dashboard Frontend
 
-Dashboard web interface for mission control and robot monitoring.
+React and Vite frontend for the AMR-X monitoring and mission-control
+dashboard.
 
-## Purpose
+## Prerequisites
 
-Build the user interface for remote robot monitoring, mission management, and real-time telemetry visualization.
+- Node.js 20.19+ or 22.12+
+- npm
 
-## Selected Stack
+## Install and start
 
-- **Framework** -
-- **Styling** -
-- **Package Manager** -
-- **UI Components** -
+From the repository root:
 
-## Future Content
+```bash
+npm run setup:dashboard
+npm run dashboard:frontend
+```
 
-- Component library
-- Page structure
-- Real-time data visualization
-- User interface patterns
+Open <http://localhost:5173/> in a browser. Press `Ctrl+C` to stop the
+development server.
 
-## Open Questions
+The dashboard sends requests under `/api` to the backend at
+<http://localhost:8000>. Start the backend separately if you need live data;
+see the [backend setup guide](../backend/README.md).
 
-- Exact UI components needed
-- Map visualization library
-- Real-time update frequency
-- Dashboard layout design
+To start PostgreSQL, FastAPI, and this frontend together, use:
+
+```bash
+npm run dashboard
+```
+
+## Other commands
+
+```bash
+npm run build:dashboard  # Create a production build in dist/
+npm run check:dashboard  # Check Python, lint the frontend, and build it
+```
+
+The lower-level frontend commands remain available when working inside
+`dashboard_app/frontend`: `npm run dev`, `npm run build`, `npm run preview`,
+and `npm run lint`.

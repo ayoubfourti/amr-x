@@ -5,13 +5,16 @@
   <figcaption><strong>Web dashboard concept.</strong> A visual target for the future operator experience; the implemented preliminary browser page does not yet provide this complete interface.</figcaption>
 </figure>
 
-The repository contains two dashboard layers with different maturity:
+The repository contains three dashboard components with different roles:
 
 1. `robotics/dashboard_app/dashboard.html` is a working preliminary browser
    teleoperation and telemetry page using roslibjs.
 2. `dashboard_app/backend/` is a FastAPI/PostgreSQL backend with robot,
-   mission, module, alert, and user endpoints. The planned full frontend in
-   `dashboard_app/frontend/` has not been implemented.
+   mission, module, alert, and user endpoints.
+3. `dashboard_app/frontend/` is an implemented React/Vite operator application
+   with authentication, dashboard, robot, mission, alert, module,
+   teleoperation, and user-management pages. Map and settings pages are still
+   placeholders.
 
 ## Data path
 
@@ -27,6 +30,11 @@ rosbridge_server :9090
     └── FastAPI background client (roslibpy)
             ▼
         PostgreSQL
+
+React/Vite frontend :5173
+    │  HTTP /api
+    ▼
+FastAPI backend :8000
 ```
 
 ## What is implemented
@@ -38,8 +46,8 @@ rosbridge_server :9090
 | rosbridge | WebSocket transport on port `9090` | External ROS dependency |
 | FastAPI backend | CRUD-style API for robots, missions, modules, alerts, and users | Implemented backend |
 | ROS database updater | Subscribes to `/robot_state` and updates a pre-registered robot | Implemented, currently one hard-coded robot identity |
-| PostgreSQL | Persistent backend database | Required external service |
-| Full dashboard frontend | Application pages, maps, mission UI, authentication, production telemetry | Not implemented |
+| PostgreSQL | Persistent backend database in Docker | Implemented local service |
+| React/Vite frontend | Authentication plus dashboard, robot, mission, alert, module, teleoperation, and user pages | Implemented; map and settings remain placeholders |
 
 ## Run the browser teleoperation path
 
@@ -91,34 +99,41 @@ ros2 topic echo /cmd_vel
 
 ### One-time setup
 
-Install and start PostgreSQL, create a database named `amr`, then configure the
-backend:
+From the repository root, prepare all dashboard dependencies:
 
 ```bash
-cd /path/to/amr-x/dashboard_app/backend
-cp .env.example .env
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+cd /path/to/amr-x
+npm run setup:dashboard
 ```
 
-Set the actual database password in `.env`:
+The command creates `.env` from `.env.example` if it is missing, prepares the
+single root `.venv`, installs the backend requirements there, and installs the
+frontend packages. Start PostgreSQL with `npm run dashboard:db`.
+
+The template already contains working local credentials:
 
 ```dotenv
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost/amr
+POSTGRES_DB=amr
+POSTGRES_USER=amrx
+POSTGRES_PASSWORD=amrx_local_dev_7f3c9b2e
+DATABASE_URL=postgresql+psycopg2://amrx:amrx_local_dev_7f3c9b2e@localhost:5432/amr
 DEBUG=True
 ```
 
-Do not commit `.env`; it contains local credentials and is ignored by Git.
+Do not commit `.env`; it is ignored by Git. These credentials are for local
+development only.
+
+The dashboard and MkDocs share the repository-root `.venv`. Do not create
+another environment inside `dashboard_app/`. The supported scripts call the
+root environment directly, so manual activation is unnecessary.
 
 ### Start the API
 
 Start simulation, `dashboard_bridge`, and rosbridge as shown above, then:
 
 ```bash
-cd /path/to/amr-x/dashboard_app/backend
-source venv/bin/activate
-python3 -m uvicorn app.main:app --reload
+cd /path/to/amr-x
+npm run dashboard:backend
 ```
 
 The API currently uses port `8000`. Its OpenAPI interface is available at
@@ -138,6 +153,21 @@ Then verify database-backed state:
 curl http://localhost:8000/api/robots/
 ```
 
+### Start the React frontend
+
+In another terminal, from the repository root:
+
+```bash
+npm run dashboard:frontend
+```
+
+Open <http://localhost:5173/>. The Vite development server proxies `/api`
+requests to FastAPI at `http://localhost:8000`.
+
+For dashboard-only work, `npm run dashboard` starts PostgreSQL, FastAPI, and
+Vite together. Press `Ctrl+C` to stop the two development servers, then use
+`npm run dashboard:db:stop` when PostgreSQL is no longer needed.
+
 ## API surface
 
 | Resource | Current operations |
@@ -150,7 +180,8 @@ curl http://localhost:8000/api/robots/
 
 ## Important limitations
 
-- The full web frontend is absent; the standalone HTML is a development tool.
+- The React frontend is under active development; map and settings are
+  placeholders, and the standalone ROS HTML page remains a development tool.
 - The FastAPI service assumes rosbridge at `localhost:9090` and robot name
   `amr_x`; both are hard-coded in the current client.
 - Teleoperation is not authenticated, rate-limited, or protected by a complete
