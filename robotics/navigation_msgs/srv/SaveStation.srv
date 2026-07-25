@@ -1,0 +1,11 @@
+# Record the robot's CURRENT pose as a named station.
+# The pose is taken from /amcl_pose, so the station is guaranteed to be
+# somewhere the robot has physically stood - reachable and clear of obstacles.
+
+string name           # station name, e.g. "pharmacy". Overwrites if it exists.
+---
+bool success
+string message        # human-readable result, or the reason it failed
+float64 x             # the pose that was stored (map frame)
+float64 y
+float64 yaw           # radians
