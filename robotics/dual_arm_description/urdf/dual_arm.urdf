@@ -4,7 +4,13 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="dual_arm">
-  <link
+  <link name="world"/>
+  <joint name="world_fixed" type="fixed">
+    <parent link="world"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 1.5" rpy="0 0 0"/>
+  </joint>
+<link
     name="base_link">
     <inertial>
       <origin
@@ -26,7 +32,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/base_link.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -40,7 +46,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/base_link.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -66,7 +72,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/pinion.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/pinion.STL" />
       </geometry>
       <material
         name="">
@@ -80,7 +86,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/pinion.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/pinion.STL" />
       </geometry>
     </collision>
   </link>
@@ -121,7 +127,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/rack.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/rack.STL" />
       </geometry>
       <material
         name="">
@@ -135,7 +141,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/rack.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/rack.STL" />
       </geometry>
     </collision>
   </link>
@@ -178,7 +184,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/robot_base.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/robot_base.STL" />
       </geometry>
       <material
         name="">
@@ -192,7 +198,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/robot_base.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/robot_base.STL" />
       </geometry>
     </collision>
   </link>
@@ -233,7 +239,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_1.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_1.STL" />
       </geometry>
       <material
         name="">
@@ -247,7 +253,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_1.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -288,7 +294,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_2.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_2.STL" />
       </geometry>
       <material
         name="">
@@ -302,7 +308,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_2.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -343,7 +349,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_3.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_3.STL" />
       </geometry>
       <material
         name="">
@@ -357,7 +363,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_3.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -398,7 +404,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_4.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_4.STL" />
       </geometry>
       <material
         name="">
@@ -412,7 +418,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_4.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_4.STL" />
       </geometry>
     </collision>
   </link>
@@ -453,7 +459,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_5.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_5.STL" />
       </geometry>
       <material
         name="">
@@ -467,7 +473,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_5.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_5.STL" />
       </geometry>
     </collision>
   </link>
@@ -508,7 +514,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_6.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_6.STL" />
       </geometry>
       <material
         name="">
@@ -522,7 +528,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_6.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulder_6.STL" />
       </geometry>
     </collision>
   </link>
@@ -563,7 +569,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wrist.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/wrist.STL" />
       </geometry>
       <material
         name="">
@@ -577,7 +583,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wrist.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/wrist.STL" />
       </geometry>
     </collision>
   </link>
@@ -618,7 +624,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_1.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_1.STL" />
       </geometry>
       <material
         name="">
@@ -632,7 +638,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_1.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -673,7 +679,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_2.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_2.STL" />
       </geometry>
       <material
         name="">
@@ -687,7 +693,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_2.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -728,7 +734,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_3.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_3.STL" />
       </geometry>
       <material
         name="">
@@ -742,7 +748,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_3.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -783,7 +789,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_4.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_4.STL" />
       </geometry>
       <material
         name="">
@@ -797,7 +803,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_4.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_4.STL" />
       </geometry>
     </collision>
   </link>
@@ -838,7 +844,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_5.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_5.STL" />
       </geometry>
       <material
         name="">
@@ -852,7 +858,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_5.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_5.STL" />
       </geometry>
     </collision>
   </link>
@@ -893,7 +899,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_6.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_6.STL" />
       </geometry>
       <material
         name="">
@@ -907,7 +913,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_6.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/shoulderR_6.STL" />
       </geometry>
     </collision>
   </link>
@@ -948,7 +954,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wristR.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/wristR.STL" />
       </geometry>
       <material
         name="">
@@ -962,7 +968,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wristR.STL" />
+          filename="file:///home/ubuntu/robot_ws/install/dual_arm_description/share/dual_arm_description/meshes/wristR.STL" />
       </geometry>
     </collision>
   </link>
