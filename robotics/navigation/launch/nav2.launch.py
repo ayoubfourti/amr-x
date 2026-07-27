@@ -50,6 +50,8 @@ def generate_launch_description():
     blank2_max_deg_LIDAR1 = LaunchConfiguration("blank2_max_deg_LIDAR1")
     scan_pipeline = LaunchConfiguration("scan_pipeline")
     keepout_filter = LaunchConfiguration("keepout_filter")
+    mission_server_enabled = LaunchConfiguration("mission_server")
+    stations_file = LaunchConfiguration("stations_file")
 
 
     # Defaults: the map you save from slam.launch.py, and Ghassen's tuned params.
@@ -108,6 +110,23 @@ def generate_launch_description():
             "output_topic": "/scan_merged",
             "scan1_topic": "/scan_clean",
             "scan2_topic": "/scan_2_clean",
+        }],
+    )
+
+
+    # ------------------------------------------------------------------
+    # Mission server: accepts goals on /mission/go_to_station and
+    # /mission/go_to_pose, validates them against the global costmap,
+    # reports progress and parking error on /mission/status.
+    # ------------------------------------------------------------------
+    mission_server = Node(
+        package="navigation", executable="mission_server_node.py",
+        name="mission_server", output="screen",
+        condition=IfCondition(mission_server_enabled),
+        parameters=[{
+            "use_sim_time": use_sim_time,
+            "stations_file": stations_file,
+            "cost_threshold": 200,
         }],
     )
 
@@ -188,10 +207,20 @@ def generate_launch_description():
         DeclareLaunchArgument("keepout_filter", default_value="none",
                               description="Keepout zone set to load, e.g. 'hospital' "
                                           "loads maps/hospital_keepout.yaml. 'none' disables."),
+        DeclareLaunchArgument("mission_server", default_value="true",
+                              description="Start the mission server node."),
+        DeclareLaunchArgument(
+    "stations_file",
+    default_value=os.path.expanduser(
+        "~/amr-x/robotics/navigation/config/stations.yaml"),
+    description="Named station poses (READ and WRITTEN). Must be a PERSISTENT "
+                "path in the source tree - NOT install/, which colcon build "
+                "overwrites."),
         # scan pipeline first, then Nav2
         filter1,
         filter2,
         merger,
+        mission_server,
         filter_mask,              
         costmap_filter_info,      
         lifecycle_filters,

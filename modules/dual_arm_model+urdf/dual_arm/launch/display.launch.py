@@ -8,6 +8,7 @@ def generate_launch_description():
 
     pkg_path = get_package_share_directory('dual_arm')
     urdf_file = os.path.join(pkg_path, 'urdf', 'dual_arm.urdf')
+    rviz_config = os.path.join(pkg_path, 'rviz', 'display.rviz')
 
     with open(urdf_file, 'r') as f:
         robot_description = f.read()
@@ -32,7 +33,8 @@ def generate_launch_description():
         Node(
             package='rviz2',
             executable='rviz2',
-            output='screen'
+            output='screen',
+            arguments=["-d", rviz_config]
         )
 
     ])

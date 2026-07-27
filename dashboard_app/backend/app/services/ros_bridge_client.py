@@ -6,7 +6,6 @@ Robots must already exist in the database (registered via POST /api/robots)
 before this service will update them - it does not auto-create robots.
 """
 import math
-import threading
 
 import roslibpy
 
@@ -78,12 +77,13 @@ class RosBridgeClient:
         self.listener = roslibpy.Topic(
             self.ros, "/robot_state", "amr_interfaces/msg/RobotState"
         )
-        self.thread = None
 
     def start(self):
         self.ros.on_ready(self.on_ready)
-        self._thread = threading.Thread(target=self.ros.run_forever, daemon=True)
-        self._thread.start()
+        # roslibpy starts its event loop in a daemon thread and disables
+        # Twisted signal handlers there. Calling run_forever() in our own
+        # thread makes Twisted try to install signals outside the main thread.
+        self.ros.factory.manager.run()
         print("[ros_bridge_client] Starting connection to rosbridge...")
 
     def on_ready(self):
