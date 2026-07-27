@@ -1,208 +1,75 @@
-# AMR-X Dashboard Stack --- Setup & Startup Guide
+# AMR-X Dashboard Setup
 
-Covers everything needed to run and test the full pipeline: **ROS2
-simulation → dashboard_bridge → rosbridge → FastAPI backend →
-PostgreSQL**, plus the browser-based teleop dashboard.
+This guide covers the current dashboard stack in this repository:
 
-Two sections:
+- PostgreSQL 16 in Docker
+- FastAPI backend in the shared repository-root `.venv`
+- React/Vite frontend
+- Optional rosbridge_server if you want live robot telemetry from ROS 2
 
--   **Part A --- First-Time Setup** (do this once per machine)
--   **Part B --- Daily Startup** (do this every time you want to
-    run/test)
+The supported dashboard commands are run from the repository root.
 
-------------------------------------------------------------------------
+## First-Time Setup
 
-# Part A --- First-Time Setup
+1. Prepare the shared Python environment and frontend packages:
 
-Skip any step you've already done. Everything here only needs to happen
-once per machine.
-
-## A1. ROS2 workspace
-
-``` bash
-cd ~/amr-x
-git pull origin main   # or the branch you're testing
-cd robotics
-rosdep install --from-paths . --ignore-src -r -y
-colcon build --symlink-install
-source install/setup.bash
+```bash
+npm run setup:dashboard
 ```
 
-## A2. rosbridge_suite
+This creates or reuses the root `.venv`, installs the backend dependencies into it, creates `.env` from `.env.example` when needed, and installs the frontend packages.
 
-``` bash
-sudo apt install ros-jazzy-rosbridge-suite
+2. Start PostgreSQL and wait for it to become healthy:
+
+```bash
+npm run dashboard:db
+npm run dashboard:db:status
 ```
 
-## A3. PostgreSQL
+3. Start the backend:
 
-Install it:
-
-``` bash
-sudo apt update
-sudo apt install postgresql postgresql-contrib -y
-sudo systemctl start postgresql
-sudo systemctl enable postgresql
+```bash
+npm run dashboard:backend
 ```
 
-Confirm it's running:
+Open <http://127.0.0.1:8000/docs> to verify the API.
 
-``` bash
-pg_lsclusters
+4. Start the frontend:
+
+```bash
+npm run dashboard:frontend
 ```
 
-Status should say `online`.
+Open <http://localhost:5173/>.
 
-Set a password for the `postgres` user (pick anything, just remember
-it):
+## Daily Startup
 
-``` bash
-sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'YOUR_PASSWORD';"
+Start the services you need from the repository root:
+
+```bash
+npm run dashboard:db
+npm run dashboard:backend
+npm run dashboard:frontend
 ```
 
-Create the database:
+For ROS-connected testing, start rosbridge in a separate terminal after sourcing the ROS 2 workspace:
 
-``` bash
-sudo -u postgres createdb amr
-```
-
-Confirm it exists:
-
-``` bash
-sudo -u postgres psql -c "\l" | grep amr
-```
-
-## A4. Backend `.env` file
-
-Copy the provided template:
-
-``` bash
-cd ~/amr-x/dashboard_app/backend
-cp .env.example .env
-```
-
-Edit `.env` and replace `YOUR_PASSWORD` with the PostgreSQL password you
-set in A3:
-
-``` bash
-cat > .env << 'EOF'
-DATABASE_URL=postgresql://postgres:YOUR_PASSWORD@localhost/amr
-DEBUG=True
-EOF
-```
-
-
-## A5. Backend Python environment
-
-``` bash
-cd ~/amr-x/dashboard_app/backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
-
-## A6. First server boot --- creates database tables automatically
-
-``` bash
-source venv/bin/activate
-python3 -m uvicorn app.main:app --reload
-```
-
-This automatically creates all tables (`robots`, `missions`, `modules`,
-`alerts`, `users`) on first run via `Base.metadata.create_all()`.
-
-Confirm:
-
-``` bash
-sudo -u postgres psql -d amr -c "\dt"
-```
-
-You should see all five tables.
-
-## A7. Register the robot (one-time, unless the database is wiped)
-
-The `roslibpy` background service only **updates** robots that already
-exist---it does not create them.
-
-Register `amr_x` once:
-
-``` bash
-curl -X POST http://localhost:8000/api/robots/ \
-  -H "Content-Type: application/json" \
-  -d '{"name":"amr_x","ip_address":null}'
-```
-
-Or use Swagger at `http://localhost:8000/docs`.
-
-------------------------------------------------------------------------
-
-# Part B --- Daily Startup
-
-## B1. PostgreSQL
-
-``` bash
-sudo systemctl status postgresql
-```
-
-If needed:
-
-``` bash
-sudo systemctl start postgresql
-```
-
-## B2. Simulation
-
-``` bash
-cd ~/amr-x/robotics
-source /opt/ros/jazzy/setup.bash
-source install/setup.bash
-killsim
-ros2 launch bringup simulation.launch.py
-```
-
-## B3. dashboard_bridge
-
-``` bash
-cd ~/amr-x/robotics
-source /opt/ros/jazzy/setup.bash
-source install/setup.bash
-ros2 launch dashboard_bridge dashboard_bridge.launch.py
-```
-
-## B4. rosbridge_server
-
-``` bash
+```bash
 source /opt/ros/jazzy/setup.bash
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 
-## B5. FastAPI backend
+## Legacy Standalone Page
 
-``` bash
-cd ~/amr-x/dashboard_app/backend
-source venv/bin/activate
-python3 -m uvicorn app.main:app --reload
+The old browser prototype is still available at [robotics/dashboard_app/dashboard.html](../robotics/dashboard_app/dashboard.html). It connects directly to rosbridge on `ws://localhost:9090` and is separate from the supported React/Vite dashboard.
+
+## Useful Checks
+
+```bash
+npm run dashboard:db:status
+npm run dashboard:db:logs
+npm run dashboard:db:stop
+npm run check:dashboard
 ```
 
-Look for:
-
-``` text
-[ros_bridge_client] Starting connection to rosbridge...
-[ros_bridge_client] Connected to rosbridge.
-```
-
-## B6. (Optional) Teleop dashboard
-
-Open `amr-x/robotics/dashboard_app/dashboard.html` in your browser.
-
-## B7. Verify everything is connected
-
-Drive the robot using the Teleop Dashboard or with publishing velocity directly to the topic:
-``` bash
-ros2 topic pub /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}}"
-```
-
-Check that the Robot values changed:
-``` bash
-curl http://localhost:8000/api/robots/
-```
+If you need the full setup walkthrough, see the backend README at [backend/README.md](backend/README.md) and the frontend README at [frontend/README.md](frontend/README.md).

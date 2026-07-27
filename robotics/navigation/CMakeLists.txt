@@ -11,6 +11,7 @@ install(
 install(PROGRAMS
   scripts/scan_filter_node.py
   scripts/scan_merger_node.py
+  scripts/mission_server_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 

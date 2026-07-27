@@ -24,6 +24,16 @@ mapping.
   the robot's own chassis, republishing a cleaned scan.
 - `scripts/scan_merger_node.py` - merges the two filtered LiDAR scans into a
   single 360-degree scan in `base_link`.
+- `scripts/mission_server_node.py` - long-running node launched with Nav2.
+  Accepts navigation goals over topics/services so the robot can be commanded
+  programmatically (e.g. from a dashboard) instead of only by clicking in RViz.
+  See "Commanding the robot" below.
+- `scripts/go_to_goal.py` - small standalone client: sends the robot to one
+  x/y[/yaw] coordinate, prints progress, exits. For hand-testing / debugging.
+- `config/stations.yaml` - named task poses (e.g. `pharmacy`) created by the
+  mission server. See "Stations" below.
+- `navigation_msgs/` (separate package) - defines the `SaveStation` service
+  used to record a station.
 - `maps/` - saved maps (`.pgm` + `.yaml`) and keepout masks.
 
 ## Dependencies
@@ -58,9 +68,9 @@ cover a full 360 degrees - but each one also sees part of the robot's own
 chassis. The scan pipeline removes those self-hits and merges both scans:
 
 ```
-/scan    --> scan_filter_node --> /scan_clean    ┐
-/scan_2  --> scan_filter_node --> /scan_2_clean   ├─> scan_merger_node --> /scan_merged
-                                                  ┘
+/scan    --> scan_filter_node --> /scan_clean   ---\
+                                                    >-- scan_merger_node --> /scan_merged
+/scan_2  --> scan_filter_node --> /scan_2_clean ---/
 ```
 
 - **SLAM** reads `/scan_merged` (`scan_topic` in `slam_params.yaml`).
@@ -272,6 +282,132 @@ ros2 topic echo /costmap_filter_info --once
 Then check visually: the zones appear as blocked on the global costmap, and a
 goal inside a zone fails to plan rather than routing there.
 
+## Commanding the robot
+
+Once `nav2.launch.py` is running, the **mission server** node
+(`/mission_server`) is up and listening. Nothing extra to start. It is the
+programmatic way to drive the robot - the same interface a dashboard would use.
+
+Interface (all standard message types, so a dashboard can drive it over
+rosbridge with no custom packages except `SaveStation`):
+
+| direction | name | type | purpose |
+|---|---|---|---|
+| send | `/mission/go_to_station` | `std_msgs/String` | drive to a named station |
+| send | `/mission/go_to_pose` | `geometry_msgs/PoseStamped` | drive to a raw map coordinate |
+| listen | `/mission/status` | `std_msgs/String` | progress, arrival, parking error, refusals |
+| call | `/mission/cancel` | `std_srvs/Trigger` | cancel the goal in progress |
+| call | `/mission/save_station` | `navigation_msgs/SaveStation` | record the current pose as a station |
+
+Watch what the robot is doing (leave this open in its own terminal):
+
+```bash
+ros2 topic echo /mission/status
+```
+
+Drive to a coordinate in the map frame:
+
+```bash
+ros2 topic pub --once /mission/go_to_pose geometry_msgs/PoseStamped \
+  "{header: {frame_id: 'map'}, pose: {position: {x: 2.0, y: 8.0, z: 0.0}, orientation: {z: 0.0, w: 1.0}}}"
+```
+
+Drive to a named station:
+
+```bash
+ros2 topic pub --once /mission/go_to_station std_msgs/String "{data: 'pharmacy'}"
+```
+
+Cancel mid-drive:
+
+```bash
+ros2 service call /mission/cancel std_srvs/srv/Trigger
+```
+
+Every goal is checked against the global costmap *before* being sent. A goal on
+a wall, an obstacle, or inside a keepout zone is refused instantly (status says
+so) rather than letting Nav2 spin through its recovery behaviours for several
+seconds first.
+
+`go_to_goal.py` does the same coordinate goal from the command line, with a
+progress bar, for quick hand-testing:
+
+```bash
+python3 navigation/scripts/go_to_goal.py 2.0 8.0        # x y
+python3 navigation/scripts/go_to_goal.py 2.0 8.0 90     # x y yaw(deg)
+```
+
+## Stations
+
+A **station** is a named pose the robot has physically stood at, e.g. `pharmacy`
+-> (x, y, yaw). Missions are then expressed as names instead of coordinates,
+which is what a task ("go to the pharmacy, the arm takes over") actually needs.
+
+Because a station is captured from the robot's *live* pose, it is guaranteed
+reachable and clear of obstacles - you cannot define one inside a wall, because
+the robot could not have stood inside a wall.
+
+**To save one:** drive the robot to the spot (teleop or a Nav2/mission goal),
+confirm the scan sits on the walls (i.e. it is well localised), then:
+
+```bash
+ros2 service call /mission/save_station navigation_msgs/srv/SaveStation "{name: 'pharmacy'}"
+```
+
+The service replies with the stored pose. Stations live in
+`config/stations.yaml` as plain, hand-editable YAML:
+
+```yaml
+stations:
+  pharmacy:
+    x: 2.34
+    y: 8.91
+    yaw: 1.57
+```
+
+The mission server re-reads the file on every request, so hand-edits take effect
+without a restart.
+
+**IMPORTANT - where stations.yaml lives.** The `stations_file` launch argument
+must point at the **source** tree
+(`~/amr-x/robotics/navigation/config/stations.yaml`), NOT into `install/`.
+`install/` is regenerated by every `colcon build`, so stations saved there are
+wiped on the next build. Check which file the running node uses:
+
+```bash
+ros2 param get /mission_server stations_file
+```
+
+## Odometry / robot geometry (why the URDF numbers matter)
+
+Localisation quality depends on two numbers in
+`robot_description/urdf/amr_2lidar.urdf.xacro`:
+
+| property | value | how it was obtained |
+|---|---|---|
+| `wheel_radius` | 0.080 | measured from `DL_Link.STL` (0.16 m diameter) |
+| `wheel_separation` | 0.541 | measured from the wheel meshes, NOT joint origins |
+
+**Do not read `wheel_separation` off the joint origins.** The SolidWorks export
+places each wheel mesh offset by -0.0189 m *inside* its joint, so the joint
+origins (+/-0.289353) imply 0.5787, but the true track width is
+2 x (0.289353 - 0.0189) = 0.541. Using 0.5787 makes the robot physically rotate
+faster than odometry reports, so the scan drifts off the map during every turn.
+
+Verify odometry against ground truth, never against the commanded velocity (the
+controller and odometry use the same parameter, so an error cancels and is
+invisible):
+
+```bash
+ros2 run tf2_ros tf2_echo odom base_footprint > /tmp/odom.txt
+ros2 run tf2_ros tf2_echo map  base_footprint > /tmp/true.txt
+# spin in place several turns, then compare total yaw over the same window
+```
+
+If the scan drifts off the walls **while moving but recovers when stopped**,
+that is AMCL update spacing, not geometry - `update_min_d` / `update_min_a` in
+`nav2_params.yaml` (both set to 0.05 here) control how often AMCL corrects.
+
 ## Troubleshooting
 
 **You changed something and the behaviour did not change.** Check the
@@ -345,3 +481,45 @@ no `static_layer` - you are running navigation with the mapping parameter file.
 **Map drifts or rebuilds itself rotated during mapping.** Usually turning too
 fast for the scan matcher. `wz_max` in the controller parameters caps rotation
 speed; 0.5 rad/s maps reliably. Also confirm the merged scan has no self-hits.
+
+**Scan drifts off the walls whenever the robot moves.** Localisation is wrong,
+not the scan. If it happens at any speed and does not recover, check
+`wheel_separation` (see "Odometry" above). If it only happens during motion and
+snaps back at rest, lower AMCL's `update_min_d` / `update_min_a`.
+
+**`unknown station 'X'` when commanding a station.** The mission server is
+reading a different `stations.yaml` than the one your save wrote to. Check
+`ros2 param get /mission_server stations_file` and make sure that path is the
+one that actually contains the station. This is almost always the install-vs-
+source path issue - the launch default must point at the source tree.
+
+**"Unknown package" for a package you just built** (especially an interface /
+`_msgs` package). Two usual causes: (1) you did not re-source after building, or
+(2) the package built as ROS 1 catkin instead of ament and is invisible. Check
+the build type - it must say `ros.ament_cmake`, not `ros.catkin`:
+
+```bash
+colcon list | grep <package>
+```
+
+If it says `ros.catkin`, the `package.xml` is missing its build-type export. Add
+this before `</package>` and rebuild:
+
+```xml
+<export>
+  <build_type>ament_cmake</build_type>
+</export>
+```
+
+**A change is ignored no matter what you do - check which copy you are running.**
+More than one workspace on the path means you cannot know which copy of a
+package a command resolves to. A 5-second check that catches a whole class of
+problems:
+
+```bash
+echo $AMENT_PREFIX_PATH | tr ':' '\n'    # should be ONLY this workspace + /opt/ros/jazzy
+ros2 pkg prefix navigation                # which copy is being used
+```
+
+See `ROS2_FIELD_GUIDE.md` (workspace root) for the full workspace-anatomy and
+debugging reference.
