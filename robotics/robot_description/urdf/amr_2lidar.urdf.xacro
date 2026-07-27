@@ -18,7 +18,7 @@
        >>> VERIFY THESE AGAINST THE NEW CAD / REAL ROBOT <<<
        =================================================================== -->
   <xacro:property name="wheel_radius"     value="0.080"/>   <!-- VERIFY: not derivable from the CAD export -->
-  <xacro:property name="wheel_separation" value="0.5787"/>  <!-- from DL/DR joint origins (2 x 0.289353) -->
+  <xacro:property name="wheel_separation" value="0.541"/>  <!-- from DL/DR joint origins (2 x 0.289353) -->
   <xacro:property name="base_to_axle_z"   value="0.3305"/>  <!-- NEW CAD: DL/DR joint z = -0.3305 (was 0.3505) -->
 
   <!-- IMU mount point on base_link -->

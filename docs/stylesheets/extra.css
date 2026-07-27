@@ -136,17 +136,7 @@
   color: var(--md-accent-fg-color);
 }
 
-/* Mission control is a key project workflow, so keep its navigation group visible. */
-.md-nav__item--nested:has(a[href*="mission-management/"]) > label.md-nav__link {
-  background: var(--md-accent-fg-color--transparent);
-  border-inline-start: 0.14rem solid var(--md-accent-fg-color);
-  border-radius: 0.24rem;
-  color: var(--md-default-fg-color);
-  font-weight: 750;
-  padding-inline: 0.48rem;
-}
-
-/* A compact, collapsible tree for every level of the primary navigation. */
+/* A compact, collapsible tree below the primary navigation level. */
 .md-nav--primary > .md-nav__title {
   align-items: center;
   background: linear-gradient(
@@ -154,9 +144,6 @@
     var(--md-accent-fg-color--transparent),
     transparent 72%
   ), var(--md-default-bg-color);
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--md-accent-fg-color) 38%, transparent);
-  border-inline-start: 0.16rem solid var(--md-accent-fg-color);
   color: var(--md-default-fg-color);
   display: flex;
   font-size: 0.72rem;
@@ -169,6 +156,7 @@
   min-height: 3.5rem;
   padding: 0.58rem 0.62rem;
   white-space: normal;
+  z-index: 3;
 }
 
 .md-nav--primary > .md-nav__title .md-logo {
@@ -308,18 +296,23 @@
   width: 1rem;
 }
 
-.md-nav--primary .md-nav[data-md-level] > .md-nav__list {
+.md-nav--primary
+  .md-nav:not(.md-nav--primary)[data-md-level]
+  > .md-nav__list {
   margin: 0.18rem 0 0.35rem 0.62rem;
   padding-inline-start: 0.58rem;
 }
 
-[dir="rtl"] .md-nav--primary .md-nav[data-md-level] > .md-nav__list {
+[dir="rtl"]
+  .md-nav--primary
+  .md-nav:not(.md-nav--primary)[data-md-level]
+  > .md-nav__list {
   margin-left: 0;
   margin-right: 0.62rem;
 }
 
 .md-nav--primary
-  .md-nav[data-md-level]
+  .md-nav:not(.md-nav--primary)[data-md-level]
   > .md-nav__list
   > .md-nav__item {
   display: flow-root;
@@ -327,7 +320,7 @@
 }
 
 .md-nav--primary
-  .md-nav[data-md-level]
+  .md-nav:not(.md-nav--primary)[data-md-level]
   > .md-nav__list
   > .md-nav__item::before {
   border-top: 1px solid
@@ -341,7 +334,7 @@
 }
 
 .md-nav--primary
-  .md-nav[data-md-level]
+  .md-nav:not(.md-nav--primary)[data-md-level]
   > .md-nav__list
   > .md-nav__item::after {
   border-inline-start: 1px solid
@@ -355,7 +348,7 @@
 }
 
 .md-nav--primary
-  .md-nav[data-md-level]
+  .md-nav:not(.md-nav--primary)[data-md-level]
   > .md-nav__list
   > .md-nav__item:last-child::after {
   bottom: auto;
