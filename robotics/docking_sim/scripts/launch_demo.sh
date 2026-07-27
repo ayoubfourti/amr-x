@@ -29,7 +29,7 @@ echo "Spawning robot..."
 ros2 run ros_gz_sim create \
   -world amr_warehouse \
   -file /tmp/amr_bare.urdf \
-  -name amr \
+  -name robot \
   -x 2 -y -5.4 -z 0.0
 
 echo "================================================"

@@ -112,7 +112,7 @@ def main():
     print("  ✓ Arm station hidden")
 
     print("\n[STEP 4] Spawning robot with arm on top...")
-    node.spawn(ARMED_URDF, "amr_armed", dock_world_x, ARM_STATION_Y)
+    node.spawn(ARMED_URDF, "robot_armed", dock_world_x, ARM_STATION_Y)
     time.sleep(1.0)
     print("  ✓ Robot + arm spawned")
 
@@ -134,7 +134,7 @@ def main():
     print("  ✓ DETACHED")
 
     print("\n[STEP 6] Hiding armed robot underground...")
-    node.set_pose("amr_armed", dock_world_x, ARM_STATION_Y, HIDDEN_Z)
+    node.set_pose("robot_armed", dock_world_x, ARM_STATION_Y, HIDDEN_Z)
     time.sleep(0.5)
     print("  ✓ Armed robot hidden")
 
