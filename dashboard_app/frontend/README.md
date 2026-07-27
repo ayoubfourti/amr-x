@@ -5,8 +5,8 @@ dashboard.
 
 ## Prerequisites
 
-- Node.js 20.19+ or 22.12+
-- npm
+- Node.js 20.9+
+- npm 10+
 
 ## Install and start
 
