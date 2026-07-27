@@ -331,5 +331,823 @@
       </link>
     </model>
 
+
+    <model name="arm_station">
+      <static>true</static>
+      <pose>10.0 -5.4 0.0 0 0 0</pose>
+      
+    <link name='base_link'>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.45</mass>
+        <inertia>
+          <ixx>0.000932</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.001015</iyy>
+          <iyz>0</iyz>
+          <izz>0.001694</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_collision'>
+        <pose>0 0 -0.015 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.105 0.14 0.02</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='base_link_fixed_joint_lump__link1_collision_1'>
+        <pose>0 -0.01 0.034 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.08 0.12 0.075</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='base_link_visual'>
+        <pose>0 0 -0.03 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/g_shape_base_v2_0/visual/base_link.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+          <specular>0.5 0.5 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__link1_visual_1'>
+        <pose>0 0 0 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link1.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+          <specular>0.5 0.5 0.5 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link1_to_link2' type='revolute'>
+      <pose relative_to='base_link'>0 0 0.13156 0 -0 1.5708</pose>
+      <parent>base_link</parent>
+      <child>link2</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-2.87979</lower>
+          <upper>2.87979</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link2'>
+      <pose relative_to='link1_to_link2'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.19</mass>
+        <inertia>
+          <ixx>0.000148</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000148</iyy>
+          <iyz>0</iyz>
+          <izz>9.6e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link2_collision'>
+        <pose>0 0 -0.02 0 0 -1.5708</pose>
+        <geometry>
+          <cylinder>
+            <length>0.085</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link2_visual'>
+        <pose>0 0 -0.06096 0 0 -1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link2.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link2_to_link3' type='revolute'>
+      <pose relative_to='link2'>0 0 -0.001 1.5708 1.5708 0</pose>
+      <parent>link2</parent>
+      <child>link3</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-2.87979</lower>
+          <upper>2.87979</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link3'>
+      <pose relative_to='link2_to_link3'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.16</mass>
+        <inertia>
+          <ixx>0.000148</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000148</iyy>
+          <iyz>0</iyz>
+          <izz>9.6e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link3_collision'>
+        <pose>-0.058 0 0.059 0 -1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.15</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link3_visual'>
+        <pose>0 0 0.03256 0 -1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link3.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link3_to_link4' type='revolute'>
+      <pose relative_to='link3'>-0.1104 0 0 0 -0 0</pose>
+      <parent>link3</parent>
+      <child>link4</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-2.87979</lower>
+          <upper>2.87979</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link4'>
+      <pose relative_to='link3_to_link4'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.124</mass>
+        <inertia>
+          <ixx>0.000103</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000103</iyy>
+          <iyz>0</iyz>
+          <izz>9.6e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link4_collision'>
+        <pose>-0.05 0 0 0 -1.5708 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.125</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link4_visual'>
+        <pose>0 0 0.03056 0 -1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link4.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link4_to_link5' type='revolute'>
+      <pose relative_to='link4'>-0.096 0 0.06062 0 0 -1.5708</pose>
+      <parent>link4</parent>
+      <child>link5</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-2.87979</lower>
+          <upper>2.87979</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link5'>
+      <pose relative_to='link4_to_link5'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.11</mass>
+        <inertia>
+          <ixx>0.000103</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.000103</iyy>
+          <iyz>0</iyz>
+          <izz>9.6e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link5_collision'>
+        <pose>0 0 -0.005 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.03 0.035 0.05</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link5_visual'>
+        <pose>0 0 -0.03356 -1.5708 0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link5.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link5_to_link6' type='revolute'>
+      <pose relative_to='link5'>0 -0.07318 0 1.5708 -1.5708 0</pose>
+      <parent>link5</parent>
+      <child>link6</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-2.87979</lower>
+          <upper>2.87979</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link6'>
+      <pose relative_to='link5_to_link6'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.0739</mass>
+        <inertia>
+          <ixx>6.649e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>6.649e-05</iyy>
+          <iyz>0</iyz>
+          <izz>9.6e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link6_collision'>
+        <pose>0 0 0 -1.5708 0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.06</length>
+            <radius>0.025</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link6_visual'>
+        <pose>0 0 -0.038 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link6.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='link6_to_link6_flange' type='revolute'>
+      <pose relative_to='link6'>0 0.0456 0 -1.5708 0 0</pose>
+      <parent>link6</parent>
+      <child>link6_flange</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-3.05</lower>
+          <upper>3.05</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='link6_flange'>
+      <pose relative_to='link6_to_link6_flange'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0.022667 0 -0 0</pose>
+        <mass>0.105</mass>
+        <inertia>
+          <ixx>5.25983e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>6.03901e-05</iyy>
+          <iyz>3.38386e-08</iyz>
+          <izz>3.39923e-05</izz>
+        </inertia>
+      </inertial>
+      <collision name='link6_flange_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.02</length>
+            <radius>0.02</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <collision name='link6_flange_fixed_joint_lump__gripper_base_collision_1'>
+        <pose>0 0 0.034 1.579 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.065 0.025 0.025</size>
+          </box>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link6_flange_visual'>
+        <pose>0 0 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/mycobot_280/visual/link7.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>0.5 0.5 0.5 1</ambient>
+          <diffuse>0.5 0.5 0.5 1</diffuse>
+          <specular>0.5 0.5 0.5 1</specular>
+        </material>
+      </visual>
+      <visual name='link6_flange_fixed_joint_lump__gripper_base_visual_1'>
+        <pose>0 0.012 0.034098 1.579 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_base.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <ambient>1 1 1 1</ambient>
+          <diffuse>1 1 1 1</diffuse>
+          <specular>1 1 1 1</specular>
+        </material>
+      </visual>
+    </link>
+    <joint name='gripper_base_to_gripper_left2' type='revolute'>
+      <pose relative_to='link6_flange'>-0.005 -0.000221 0.060999 1.579 -0 0</pose>
+      <parent>link6_flange</parent>
+      <child>gripper_left2</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.8</lower>
+          <upper>0.5</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_left2'>
+      <pose relative_to='gripper_base_to_gripper_left2'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_left2_collision'>
+        <pose>-0.025 0 -0.01 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_left2_visual'>
+        <pose>0.005 -0.0195 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_left2.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='gripper_base_to_gripper_right2' type='revolute'>
+      <pose relative_to='link6_flange'>0.005 -0.000221 0.060999 1.579 -0 0</pose>
+      <parent>link6_flange</parent>
+      <child>gripper_right2</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.8</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_right2'>
+      <pose relative_to='gripper_base_to_gripper_right2'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_right2_collision'>
+        <pose>0.025 0 -0.01 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.02 0.02 0.02</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_right2_visual'>
+        <pose>-0.005 -0.0195 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_right2.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='gripper_base_to_gripper_right3' type='revolute'>
+      <pose relative_to='link6_flange'>0.012 -4.1e-05 0.039 1.579 -0 0</pose>
+      <parent>link6_flange</parent>
+      <child>gripper_right3</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.15</lower>
+          <upper>0.7</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_right3'>
+      <pose relative_to='gripper_base_to_gripper_right3'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_right3_collision'>
+        <pose>0.014 0.005 0.005 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.01 0.01</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_right3_visual'>
+        <pose>-0.012 0.0025 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_right3.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='gripper_right3_to_gripper_right1' type='revolute'>
+      <pose relative_to='gripper_right3'>0.027 0.016 0 0 -0 0</pose>
+      <parent>gripper_right3</parent>
+      <child>gripper_right1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_right1'>
+      <pose relative_to='gripper_right3_to_gripper_right1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_right1_collision'>
+        <pose>-0.013 0.042 -0.01 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.013 0.02 0.015</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_right1_visual'>
+        <pose>-0.039 -0.0133 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_right1.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='gripper_controller' type='revolute'>
+      <pose relative_to='link6_flange'>-0.012 -4.1e-05 0.039 1.579 -0 0</pose>
+      <parent>link6_flange</parent>
+      <child>gripper_left3</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.7</lower>
+          <upper>0.15</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_left3'>
+      <pose relative_to='gripper_controller'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_left3_collision'>
+        <pose>-0.014 0.005 0.005 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.01 0.01 0.01</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_left3_visual'>
+        <pose>0.012 0.0025 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_left3.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='gripper_left3_to_gripper_left1' type='revolute'>
+      <pose relative_to='gripper_left3'>-0.027 0.016 0 0 -0 0</pose>
+      <parent>gripper_left3</parent>
+      <child>gripper_left1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <lower>-0.5</lower>
+          <upper>0.5</upper>
+          <effort>56</effort>
+          <velocity>2.79253</velocity>
+        </limit>
+        <dynamics>
+          <damping>0</damping>
+          <friction>0</friction>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='gripper_left1'>
+      <pose relative_to='gripper_left3_to_gripper_left1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>0.007</mass>
+        <inertia>
+          <ixx>1e-06</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-06</iyy>
+          <iyz>0</iyz>
+          <izz>1e-06</izz>
+        </inertia>
+      </inertial>
+      <collision name='gripper_left1_collision'>
+        <pose>0.013 0.042 -0.01 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.013 0.02 0.015</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='gripper_left1_visual'>
+        <pose>0.039 -0.0133 -0.012 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>file:///home/mohamed/amr-x/install/arm_description/share/arm_description/meshes/adaptive_gripper/visual/gripper_left1.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+  
+    </model>
   </world>
 </sdf>
