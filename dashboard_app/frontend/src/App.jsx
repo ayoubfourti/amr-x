@@ -20,6 +20,12 @@ import Profile from './pages/Profile'
 import NotFound from './pages/NotFound'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import './App.css'
+import { useDockingStatus } from './hooks/useDockingStatus'
+import { useModuleDocking } from './hooks/useModuleDocking'
+import DockingPanel from './components/DockingPanel'
+
+import { useRos } from './hooks/useRos'
+import { useTeleopControl } from './hooks/useTeleopControl'
 
 const queryClient = new QueryClient()
 
@@ -112,6 +118,10 @@ function AppLayout({ children }) {
 }
 
 function App() {
+  const { ros, connected } = useRos('ws://localhost:9090');
+  const { sendCommand, emergencyStop } = useTeleopControl(ros);
+  const docking = useDockingStatus(ros);
+  const { dock, undock, progress, result } = useModuleDocking(ros);
   return (
     <ErrorBoundary
       fallback={
@@ -214,6 +224,13 @@ function App() {
                 <ProtectedRoute>
                   <AppLayout>
                     <Modules />
+                    <DockingPanel
+                      docking={docking}
+                      progress={progress}
+                      result={result}
+                      onDock={() => dock()}
+                      onUndock={undock}
+                    />
                   </AppLayout>
                 </ProtectedRoute>
               }
@@ -223,7 +240,11 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AppLayout>
-                    <Teleoperation />
+                    <Teleoperation
+                      unitOnline={connected}
+                      onSendCommand={sendCommand}
+                      onEmergencyStop={emergencyStop}
+                    />
                   </AppLayout>
                 </ProtectedRoute>
               }
