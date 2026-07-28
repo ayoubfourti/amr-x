@@ -17,4 +17,5 @@ class Mission(Base):
     is_recurring = Column(Boolean, default=False)
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
+    duration_seconds = Column(Integer)
     created_at = Column(DateTime, server_default=func.now())

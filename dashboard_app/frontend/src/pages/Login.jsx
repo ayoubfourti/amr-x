@@ -1,8 +1,7 @@
 import { useState } from 'react'
+import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
-import { getUsers } from '../api/users'
 import { useAuth } from '../context/AuthContext'
-import { getAllUsers, getStatus } from '../utils/pendingUsers'
 
 function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
@@ -21,23 +20,14 @@ function Login() {
     setError('')
     setIsSubmitting(true)
     try {
-      const users = await getUsers()
-      const user = users.find((u) => u.email === form.email)
-      if (!user || user.password_hash !== form.password) {
-        setError('Invalid email or password')
-        return
-      }
-
-      const status = getStatus(user.email, getAllUsers())
-      if (status === 'rejected') {
-        setError('This registration was rejected by an administrator.')
-        return
-      }
-
-      login({ ...user, status })
-      navigate(status === 'approved' ? '/' : '/pending')
-    } catch {
-      setError('Invalid email or password')
+      const response = await axios.post('/api/auth/login', {
+        email: form.email,
+        password: form.password,
+      })
+      login(response.data)
+      navigate('/')
+    } catch (err) {
+      setError(err.response?.data?.detail || 'Invalid email or password')
     } finally {
       setIsSubmitting(false)
     }

@@ -1,56 +1,20 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getModules, toggleModule, createModule } from '../api/modules'
-import { useAuth } from '../context/AuthContext'
+import { getRobots } from '../api/robots'
+import Badge from '../components/ui/Badge'
+import PageTopbar from '../components/ui/PageTopbar'
+import EmptyState from '../components/ui/EmptyState'
+import { useToast } from '../components/ui/Toast'
+import { formatDate } from '../utils/format'
 
 const FILTERS = ['all', 'active', 'inactive', 'error']
-const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#d97706', '#dc2626', '#0891b2']
-
-function initials(name) {
-  return (name || '?')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
-function avatarColor(name) {
-  const index = (name || '').charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index] || AVATAR_COLORS[0]
-}
-
-function Badge({ text, color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        color: '#fff',
-        padding: '4px 12px',
-        borderRadius: '999px',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        textTransform: 'capitalize',
-        boxShadow: `0 2px 6px ${color}55`,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
 
 function tempColor(temperature) {
   if (temperature == null) return '#6b7280'
   if (temperature < 50) return '#16a34a'
   if (temperature <= 70) return '#d97706'
   return '#dc2626'
-}
-
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString()
 }
 
 const emptyForm = { robot_id: '', name: '', type: '', status: 'disconnected' }
@@ -110,7 +74,7 @@ function ModuleModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage
 
 function Modules() {
   const queryClient = useQueryClient()
-  const { currentUser } = useAuth()
+  const { showToast } = useToast()
   const [filter, setFilter] = useState('all')
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(emptyForm)
@@ -122,9 +86,21 @@ function Modules() {
     error,
   } = useQuery({ queryKey: ['modules'], queryFn: getModules, refetchInterval: 5000 })
 
+  const { data: robots } = useQuery({
+    queryKey: ['robots'],
+    queryFn: getRobots,
+    refetchInterval: 4000,
+  })
+
   const toggleMutation = useMutation({
     mutationFn: ({ id, isActive }) => toggleModule(id, isActive),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['modules'] }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['modules'] })
+      showToast('Module updated', 'success')
+    },
+    onError: () => {
+      showToast('Failed to update module', 'error')
+    },
   })
 
   const createMutation = useMutation({
@@ -133,6 +109,10 @@ function Modules() {
       queryClient.invalidateQueries({ queryKey: ['modules'] })
       setShowForm(false)
       setForm(emptyForm)
+      showToast('Module added', 'success')
+    },
+    onError: () => {
+      showToast('Failed to add module', 'error')
     },
   })
 
@@ -164,25 +144,11 @@ function Modules() {
     return true
   })
 
+  const latency = (robots || []).find((r) => r.status === 'online')?.wifi_latency ?? null
+
   return (
     <div className="users-page">
-      <div className="page-topbar">
-        <div>
-          <h2>Modules</h2>
-          <p className="topbar-subtext">{new Date().toLocaleString()}</p>
-        </div>
-        <div className="topbar-right">
-          <span className="connection-pill">📶 Connected · 12ms</span>
-          {currentUser && (
-            <span
-              className="avatar-chip"
-              style={{ backgroundColor: avatarColor(currentUser.name) }}
-            >
-              {initials(currentUser.name)}
-            </span>
-          )}
-        </div>
-      </div>
+      <PageTopbar title="Modules" latency={latency} />
 
       <div className="page-heading-row">
         <div>
@@ -236,7 +202,23 @@ function Modules() {
       {isLoading && <p>Loading modules…</p>}
       {isError && <p className="error">Failed to load modules: {error.message}</p>}
 
-      {!isLoading && !isError && (
+      {!isLoading && !isError && moduleList.length === 0 && (
+        <EmptyState
+          icon="🔌"
+          title="No modules registered"
+          subtitle="Attach a module to a robot to see it here"
+        />
+      )}
+
+      {!isLoading && !isError && moduleList.length > 0 && filteredModules.length === 0 && (
+        <EmptyState
+          icon="🔍"
+          title="No modules match your search"
+          subtitle="Try a different filter"
+        />
+      )}
+
+      {!isLoading && !isError && filteredModules.length > 0 && (
         <div className="card-grid">
           {filteredModules.map((mod) => (
             <div className="stat-card" key={mod.id}>

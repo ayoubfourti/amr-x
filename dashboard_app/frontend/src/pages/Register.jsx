@@ -1,36 +1,18 @@
 import { useState } from 'react'
-import { useMutation } from '@tanstack/react-query'
+import axios from 'axios'
 import { Link, useNavigate } from 'react-router-dom'
-import { createUser, getUsers } from '../api/users'
-import { useAuth } from '../context/AuthContext'
-import { getAllUsers, upsertUser } from '../utils/pendingUsers'
 
-const emptyForm = { name: '', email: '', password: '', role: 'operator' }
+const emptyForm = { name: '', email: '', password: '' }
 
 function Register() {
   const [form, setForm] = useState(emptyForm)
   const [validationError, setValidationError] = useState('')
   const [duplicateEmail, setDuplicateEmail] = useState(false)
-  const [isChecking, setIsChecking] = useState(false)
-  const { login } = useAuth()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [success, setSuccess] = useState('')
+  const [isAdmin, setIsAdmin] = useState(false)
+  const [adminCode, setAdminCode] = useState('')
   const navigate = useNavigate()
-
-  const mutation = useMutation({
-    mutationFn: createUser,
-    onSuccess: (createdUser, variables) => {
-      const status = variables.role === 'admin' ? 'approved' : 'pending'
-      upsertUser({
-        id: createdUser.id,
-        name: createdUser.name,
-        email: createdUser.email,
-        role: createdUser.role,
-        status,
-        created_at: createdUser.created_at,
-      })
-      login({ ...createdUser, status })
-      navigate(status === 'approved' ? '/' : '/pending')
-    },
-  })
 
   function handleChange(e) {
     const { name, value } = e.target
@@ -43,7 +25,7 @@ function Register() {
     setValidationError('')
     setDuplicateEmail(false)
 
-    if (!form.name || !form.email || !form.password || !form.role) {
+    if (!form.name || !form.email || !form.password) {
       setValidationError('All fields are required.')
       return
     }
@@ -52,26 +34,33 @@ function Register() {
       return
     }
 
-    setIsChecking(true)
+    setIsSubmitting(true)
     try {
-      const [backendUsers, localUsers] = await Promise.all([getUsers(), getAllUsers()])
-      const exists =
-        backendUsers.some((u) => u.email === form.email) ||
-        localUsers.some((u) => u.email === form.email)
-      if (exists) {
+      const response = await axios.post('/api/auth/register', {
+        email: form.email,
+        password: form.password,
+        name: form.name || form.email.split('@')[0],
+        admin_code: isAdmin ? adminCode : undefined,
+      })
+
+      if (response.data.auto_approved) {
+        // Admin — can login immediately
+        setSuccess('✅ Admin account created! You can now login.')
+        setTimeout(() => navigate('/login'), 2000)
+      } else {
+        // Regular user — needs approval
+        setSuccess('✅ Account created! Waiting for admin approval.')
+        setTimeout(() => navigate('/pending'), 2000)
+      }
+    } catch (err) {
+      if (err.response?.status === 400) {
         setDuplicateEmail(true)
-        return
+      } else {
+        setValidationError(err.response?.data?.detail || 'Registration failed.')
       }
     } finally {
-      setIsChecking(false)
+      setIsSubmitting(false)
     }
-
-    mutation.mutate({
-      name: form.name,
-      email: form.email,
-      password: form.password,
-      role: form.role,
-    })
   }
 
   return (
@@ -104,13 +93,82 @@ function Register() {
             onChange={handleChange}
             required
           />
-          <select name="role" value={form.role} onChange={handleChange}>
-            <option value="admin">Admin</option>
-            <option value="operator">Operator</option>
-            <option value="client">Client</option>
-          </select>
-          <button type="submit" disabled={mutation.isPending || isChecking}>
-            {mutation.isPending || isChecking ? 'Registering…' : 'Register'}
+
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              margin: '12px 0',
+              padding: '10px 14px',
+              background: 'rgba(255,255,255,0.04)',
+              borderRadius: 8,
+              border: '1px solid rgba(255,255,255,0.08)',
+              cursor: 'pointer',
+            }}
+            onClick={() => {
+              setIsAdmin((v) => !v)
+              setAdminCode('')
+            }}
+          >
+            <div
+              style={{
+                width: 36,
+                height: 20,
+                borderRadius: 10,
+                background: isAdmin ? '#00d4aa' : 'rgba(255,255,255,0.15)',
+                position: 'relative',
+                transition: 'background 0.2s',
+                flexShrink: 0,
+              }}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 2,
+                  left: isAdmin ? 18 : 2,
+                  width: 16,
+                  height: 16,
+                  borderRadius: '50%',
+                  background: '#fff',
+                  transition: 'left 0.2s',
+                }}
+              />
+            </div>
+            <span
+              style={{
+                fontSize: 13,
+                color: isAdmin ? '#00d4aa' : 'rgba(255,255,255,0.5)',
+              }}
+            >
+              Register as Administrator
+            </span>
+          </div>
+
+          {isAdmin && (
+            <label className="auth-field">
+              <span className="auth-label">🔑 Admin Code</span>
+              <input
+                type="password"
+                placeholder="Enter admin secret code"
+                value={adminCode}
+                onChange={(e) => setAdminCode(e.target.value)}
+                required={isAdmin}
+              />
+              <span
+                style={{
+                  fontSize: 11,
+                  color: 'rgba(255,255,255,0.3)',
+                  marginTop: 4,
+                }}
+              >
+                Contact your system administrator for the admin code
+              </span>
+            </label>
+          )}
+
+          <button type="submit" disabled={isSubmitting}>
+            {isSubmitting ? 'Registering…' : 'Register'}
           </button>
         </form>
         {validationError && <p className="error">{validationError}</p>}
@@ -120,8 +178,21 @@ function Register() {
             to login. <Link to="/login">Go to login</Link>
           </p>
         )}
-        {mutation.isError && (
-          <p className="error">Registration failed: {mutation.error.message}</p>
+        {success && (
+          <p
+            style={{
+              color: '#00d4aa',
+              fontSize: 13,
+              textAlign: 'center',
+              marginTop: 12,
+              padding: '8px 12px',
+              background: 'rgba(0,212,170,0.1)',
+              borderRadius: 8,
+              border: '1px solid rgba(0,212,170,0.2)',
+            }}
+          >
+            {success}
+          </p>
         )}
         <p>
           Already have an account? <Link to="/login">Login</Link>

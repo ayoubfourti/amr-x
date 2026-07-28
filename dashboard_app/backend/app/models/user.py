@@ -9,5 +9,6 @@ class User(Base):
     email = Column(String(100), unique=True)
     password_hash = Column(String(255))
     role = Column(String(20), default="operator")
+    status = Column(String(20), default="approved")
     created_at = Column(DateTime, server_default=func.now())
     last_login = Column(DateTime)

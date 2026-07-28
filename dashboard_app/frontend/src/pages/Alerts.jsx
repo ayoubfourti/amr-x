@@ -1,7 +1,13 @@
 import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getAlerts, resolveAlert } from '../api/alerts'
-import { useAuth } from '../context/AuthContext'
+import { getRobots } from '../api/robots'
+import Badge from '../components/ui/Badge'
+import PageTopbar from '../components/ui/PageTopbar'
+import EmptyState from '../components/ui/EmptyState'
+import { useToast } from '../components/ui/Toast'
+import ConfirmModal from '../components/ui/ConfirmModal'
+import { formatDate } from '../utils/format'
 
 const TYPE_COLORS = {
   critical: '#dc2626',
@@ -11,53 +17,13 @@ const TYPE_COLORS = {
 }
 
 const TYPES = ['critical', 'error', 'warning', 'info']
-const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#d97706', '#dc2626', '#0891b2']
-
-function initials(name) {
-  return (name || '?')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
-function avatarColor(name) {
-  const index = (name || '').charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index] || AVATAR_COLORS[0]
-}
-
-function Badge({ text, color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        color: '#fff',
-        padding: '4px 12px',
-        borderRadius: '999px',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        textTransform: 'capitalize',
-        boxShadow: `0 2px 6px ${color}55`,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
-
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString()
-}
 
 function Alerts() {
   const queryClient = useQueryClient()
-  const { currentUser } = useAuth()
+  const { showToast } = useToast()
   const [unresolvedOnly, setUnresolvedOnly] = useState(false)
   const [resolvedIds, setResolvedIds] = useState(new Set())
+  const [confirmResolve, setConfirmResolve] = useState(null)
 
   const {
     data: alerts,
@@ -66,11 +32,21 @@ function Alerts() {
     error,
   } = useQuery({ queryKey: ['alerts'], queryFn: getAlerts, refetchInterval: 5000 })
 
+  const { data: robots } = useQuery({
+    queryKey: ['robots'],
+    queryFn: getRobots,
+    refetchInterval: 4000,
+  })
+
   const resolveMutation = useMutation({
     mutationFn: resolveAlert,
     onSuccess: (_data, id) => {
       setResolvedIds((prev) => new Set(prev).add(id))
       queryClient.invalidateQueries({ queryKey: ['alerts'] })
+      showToast('Alert resolved', 'success')
+    },
+    onError: () => {
+      showToast('Failed to resolve alert', 'error')
     },
   })
 
@@ -89,25 +65,11 @@ function Alerts() {
       return new Date(b.created_at) - new Date(a.created_at)
     })
 
+  const latency = (robots || []).find((r) => r.status === 'online')?.wifi_latency ?? null
+
   return (
     <div className="users-page">
-      <div className="page-topbar">
-        <div>
-          <h2>Alerts</h2>
-          <p className="topbar-subtext">{new Date().toLocaleString()}</p>
-        </div>
-        <div className="topbar-right">
-          <span className="connection-pill">📶 Connected · 12ms</span>
-          {currentUser && (
-            <span
-              className="avatar-chip"
-              style={{ backgroundColor: avatarColor(currentUser.name) }}
-            >
-              {initials(currentUser.name)}
-            </span>
-          )}
-        </div>
-      </div>
+      <PageTopbar title="Alerts" latency={latency} />
 
       <div className="page-heading-row">
         <div>
@@ -135,7 +97,20 @@ function Alerts() {
       {isLoading && <p>Loading alerts…</p>}
       {isError && <p className="error">Failed to load alerts: {error.message}</p>}
 
-      {!isLoading && !isError && (
+      {!isLoading && !isError && alertList.length === 0 && (
+        <EmptyState icon="✅" title="All clear" subtitle="No alerts have been triggered" />
+      )}
+
+      {!isLoading && !isError && alertList.length > 0 && visibleAlerts.length === 0 && (
+        <EmptyState
+          icon="🔍"
+          title="No alerts match this filter"
+          subtitle="Try a different alert type"
+        />
+      )}
+
+      {!isLoading && !isError && visibleAlerts.length > 0 && (
+        <div className="data-table-wrapper">
         <table className="data-table">
           <thead>
             <tr>
@@ -165,7 +140,7 @@ function Alerts() {
                       <button
                         type="button"
                         className="icon-button"
-                        onClick={() => resolveMutation.mutate(alert.id)}
+                        onClick={() => setConfirmResolve(alert)}
                       >
                         Resolve
                       </button>
@@ -176,7 +151,23 @@ function Alerts() {
             })}
           </tbody>
         </table>
+        </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmResolve}
+        title="Resolve Alert"
+        message="Mark this alert as resolved?"
+        confirmLabel="Resolve"
+        confirmColor="#10b981"
+        loading={resolveMutation.isPending}
+        onConfirm={() => {
+          resolveMutation.mutate(confirmResolve.id, {
+            onSuccess: () => setConfirmResolve(null),
+          })
+        }}
+        onCancel={() => setConfirmResolve(null)}
+      />
     </div>
   )
 }

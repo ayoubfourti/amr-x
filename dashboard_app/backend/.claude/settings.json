@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pkill -f \"uvicorn app.main\")",
+      "Bash(./venv/Scripts/python.exe -m uvicorn app.main:app --reload --port 8000)",
+      "Read(//tmp/**)",
+      "Bash(curl -s -L http://127.0.0.1:8000/api/robots -w \"\\\\nHTTP %{http_code}\\\\n\")",
+      "Bash(curl -s http://127.0.0.1:8000/ -w \"\\\\nHTTP %{http_code}\\\\n\")",
+      "Bash(curl -s http://localhost:8000/ -w \"\\\\nHTTP %{http_code}\\\\n\")"
+    ]
+  }
+}

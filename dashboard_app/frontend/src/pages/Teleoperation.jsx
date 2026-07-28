@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
+import { useTheme } from '../context/ThemeContext'
+import { useRos } from '../hooks/useRos'
+import { useTeleopControl } from '../hooks/useTeleopControl'
 
 /**
  * Teleoperation.jsx — ported from amr-frontend-teleop-feature/amr-frontend's TeleopPage.jsx.
- * Static UI shell only: onSendCommand/onEmergencyStop default to console.log no-ops,
- * no roslib/WebSocket connectivity wired in.
+ * Connects to a rosbridge WebSocket via useRos/useTeleopControl and publishes real /cmd_vel commands.
  */
 
 const KEY_MAP = {
@@ -17,11 +19,12 @@ const KEY_MAP = {
   ArrowRight: 'right',
 }
 
-export default function Teleoperation({
-  latencyMs = 12,
-  onSendCommand = (linear, angular) => console.log('cmd_vel:', linear, angular),
-  onEmergencyStop = () => console.log('EMERGENCY STOP'),
-}) {
+export default function Teleoperation() {
+  const { colors: c, theme } = useTheme()
+  const isLight = theme === 'light'
+  const wsUrl = localStorage.getItem('amrx-ws-url') || 'ws://localhost:9090'
+  const { ros, connected } = useRos(wsUrl)
+  const { sendCommand, emergencyStop } = useTeleopControl(ros)
   const [mode, setMode] = useState('keyboard')
   const [maxSpeed, setMaxSpeed] = useState(0.6)
   const [direction, setDirection] = useState('stopped')
@@ -40,23 +43,23 @@ export default function Teleoperation({
       if (dir === 'right') ang = -1.0
       setDirection(dir)
       setAngular(ang)
-      onSendCommand(linear, ang)
+      sendCommand(linear, ang)
     },
-    [maxSpeed, onSendCommand],
+    [maxSpeed, sendCommand],
   )
 
   const stop = useCallback(() => {
     setDirection('stopped')
     setAngular(0)
-    onSendCommand(0, 0)
-  }, [onSendCommand])
+    sendCommand(0, 0)
+  }, [sendCommand])
 
   useEffect(() => {
     if (mode !== 'keyboard') return
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
         e.preventDefault()
-        onEmergencyStop()
+        emergencyStop()
         stop()
         return
       }
@@ -79,7 +82,7 @@ export default function Teleoperation({
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }
-  }, [mode, move, stop, onEmergencyStop])
+  }, [mode, move, stop, emergencyStop])
 
   const updateJoystick = useCallback(
     (clientX, clientY) => {
@@ -103,9 +106,9 @@ export default function Teleoperation({
       const ang = (-dx / radius) * 1.0
       setDirection(linear > 0.05 ? 'forward' : linear < -0.05 ? 'backward' : 'stopped')
       setAngular(ang)
-      onSendCommand(linear, ang)
+      sendCommand(linear, ang)
     },
-    [maxSpeed, onSendCommand],
+    [maxSpeed, sendCommand],
   )
 
   const releaseJoystick = useCallback(() => {
@@ -121,13 +124,229 @@ export default function Teleoperation({
     stopped: 'STOPPED',
   }[direction]
 
+  const st = {
+    app: {
+      display: 'flex',
+      minHeight: '100vh',
+      background: c.bg,
+      color: c.text,
+      fontFamily: "'Segoe UI', Inter, sans-serif",
+    },
+    main: { flex: 1, padding: '24px 32px' },
+    header: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 24,
+    },
+    pageTitle: {
+      fontSize: 24,
+      fontWeight: 700,
+      color: c.text,
+      margin: 0,
+    },
+    headerRight: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 14,
+    },
+    connectedBadge: {
+      padding: '6px 12px',
+      borderRadius: 20,
+      border: `1px solid ${c.border}`,
+      background: c.card,
+      fontSize: 12,
+      color: c.textSub,
+    },
+    avatar: {
+      width: 30,
+      height: 30,
+      borderRadius: '50%',
+      background: '#166534',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 12,
+      fontWeight: 700,
+      color: '#fff',
+    },
+    layout: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: 20,
+      maxWidth: 900,
+    },
+    card: {
+      background: c.card,
+      border: `1px solid ${c.border}`,
+      borderRadius: 14,
+      padding: 20,
+      boxShadow: isLight ? '0 2px 16px rgba(0,0,0,0.08)' : '0 4px 24px rgba(0,0,0,0.3)',
+      transition: 'background 0.2s, border-color 0.2s',
+    },
+    cardHeader: {
+      fontSize: 11,
+      fontWeight: 700,
+      textTransform: 'uppercase',
+      letterSpacing: 0.6,
+      color: c.textSub,
+      marginBottom: 16,
+      paddingBottom: 10,
+      borderBottom: `1px solid ${c.border}`,
+    },
+    modeToggle: {
+      display: 'flex',
+      gap: 6,
+      background: c.bg,
+      borderRadius: 10,
+      padding: 4,
+      marginBottom: 16,
+      border: `1px solid ${c.border}`,
+    },
+    modeBtn: {
+      flex: 1,
+      padding: 8,
+      border: 'none',
+      borderRadius: 7,
+      background: 'transparent',
+      color: c.textSub,
+      fontSize: 12,
+      cursor: 'pointer',
+      transition: 'background 0.15s, color 0.15s',
+    },
+    modeBtnActive: {
+      background: '#38bdf8',
+      color: '#0b0b10',
+      fontWeight: 700,
+    },
+    keyHints: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 8,
+      fontSize: 12,
+      color: c.textSub,
+      marginBottom: 16,
+    },
+    dpad: {
+      display: 'grid',
+      gridTemplateColumns: '52px 52px 52px',
+      gridTemplateRows: '52px 52px 52px',
+      gap: 5,
+      justifyContent: 'center',
+      margin: '0 0 16px',
+    },
+    dpadBtn: {
+      border: `1px solid ${c.border}`,
+      borderRadius: 8,
+      background: c.bgSecondary,
+      color: c.text,
+      fontSize: 16,
+      cursor: 'pointer',
+      transition: 'background 0.1s',
+    },
+    dpadCenter: {
+      borderRadius: 8,
+      background: c.bg,
+    },
+    joystickWrap: {
+      display: 'flex',
+      justifyContent: 'center',
+      margin: '4px 0 16px',
+    },
+    joystickPad: {
+      width: 150,
+      height: 150,
+      borderRadius: '50%',
+      background: c.bg,
+      border: `1px solid ${c.border}`,
+      position: 'relative',
+      cursor: 'grab',
+    },
+    joystickKnob: {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      width: 46,
+      height: 46,
+      marginTop: -23,
+      marginLeft: -23,
+      borderRadius: '50%',
+      background: '#38bdf8',
+      border: `2px solid ${c.bg}`,
+      boxShadow: '0 2px 8px rgba(56,189,248,0.4)',
+      cursor: 'grab',
+    },
+    speedControl: { marginBottom: 16 },
+    speedRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      fontSize: 12,
+      color: c.textSub,
+      marginBottom: 6,
+    },
+    speedVal: {
+      fontFamily: 'monospace',
+      color: '#38bdf8',
+      fontWeight: 700,
+    },
+    slider: { width: '100%' },
+    emergencyBtn: {
+      width: '100%',
+      padding: 12,
+      background: isLight ? 'rgba(239,68,68,0.08)' : 'rgba(239,68,68,0.10)',
+      border: '1px solid rgba(239,68,68,0.4)',
+      borderRadius: 10,
+      color: '#ef4444',
+      fontSize: 13,
+      fontWeight: 700,
+      cursor: 'pointer',
+      letterSpacing: 0.5,
+      transition: 'background 0.15s, box-shadow 0.15s',
+    },
+    infoRow: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      padding: '10px 0',
+      borderBottom: `1px solid ${c.border}`,
+      fontSize: 13,
+    },
+    cameraBox: { marginTop: 16 },
+    cameraLabel: {
+      fontSize: 11,
+      color: c.textSub,
+      marginBottom: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    cameraFrame: {
+      height: 120,
+      borderRadius: 10,
+      background: c.bg,
+      border: `1px solid ${c.border}`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      fontSize: 28,
+      opacity: 0.4,
+    },
+  }
+
   return (
     <div style={st.app}>
       <main style={st.main}>
         <div style={st.header}>
           <h1 style={st.pageTitle}>Teleoperation</h1>
           <div style={st.headerRight}>
-            <span style={st.connectedBadge}>Connected · {latencyMs}ms</span>
+            <span
+              style={{
+                ...st.connectedBadge,
+                color: connected ? c.online : c.warning,
+                background: connected ? 'rgba(0,212,170,0.1)' : 'rgba(245,158,11,0.1)',
+                border: `1px solid ${connected ? c.online : c.warning}`,
+              }}
+            >
+              {connected ? '● Connected' : '◌ Connecting…'}
+            </span>
             <div style={st.avatar}>T</div>
           </div>
         </div>
@@ -229,7 +448,7 @@ export default function Teleoperation({
             <button
               style={st.emergencyBtn}
               onClick={() => {
-                onEmergencyStop()
+                emergencyStop()
                 stop()
               }}
             >
@@ -255,10 +474,18 @@ export default function Teleoperation({
   )
 }
 
-function InfoRow({ label, value, accent = '#e5e7eb' }) {
+function InfoRow({ label, value, accent = 'var(--text)' }) {
   return (
-    <div style={st.infoRow}>
-      <span style={{ color: '#6b7280' }}>{label}</span>
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        padding: '10px 0',
+        borderBottom: '1px solid var(--border)',
+        fontSize: 13,
+      }}
+    >
+      <span style={{ color: 'var(--text-sub)' }}>{label}</span>
       <span style={{ fontFamily: 'monospace', color: accent, fontWeight: 600 }}>{value}</span>
     </div>
   )
@@ -272,12 +499,12 @@ function Key({ children, wide }) {
         padding: '2px 7px',
         minWidth: wide ? 48 : 'auto',
         textAlign: 'center',
-        background: '#1c1c26',
-        border: '1px solid #2a2a38',
+        background: 'var(--bg-secondary, #1c1c26)',
+        border: '1px solid var(--border, #2a2a38)',
         borderRadius: 4,
         fontFamily: 'monospace',
         fontSize: 11,
-        color: '#e5e7eb',
+        color: 'var(--text, #e5e7eb)',
         marginRight: 6,
       }}
     >
@@ -286,134 +513,3 @@ function Key({ children, wide }) {
   )
 }
 
-const st = {
-  app: {
-    display: 'flex',
-    minHeight: '100vh',
-    background: '#0b0b10',
-    color: '#e5e7eb',
-    fontFamily: "'Segoe UI', Inter, sans-serif",
-  },
-
-  main: { flex: 1, padding: '24px 32px' },
-  header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 },
-  pageTitle: { fontSize: 24, fontWeight: 700, color: '#f1f5f9', margin: 0 },
-  headerRight: { display: 'flex', alignItems: 'center', gap: 14 },
-  connectedBadge: {
-    padding: '6px 12px',
-    borderRadius: 20,
-    border: '1px solid #1c1c26',
-    background: '#141420',
-    fontSize: 12,
-    color: '#9ca3af',
-  },
-  avatar: {
-    width: 30,
-    height: 30,
-    borderRadius: '50%',
-    background: '#166534',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 12,
-    fontWeight: 700,
-  },
-
-  layout: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20, maxWidth: 800 },
-
-  card: { background: '#111117', border: '1px solid #1c1c26', borderRadius: 14, padding: 20 },
-  cardHeader: {
-    fontSize: 12,
-    fontWeight: 700,
-    textTransform: 'uppercase',
-    letterSpacing: 0.6,
-    color: '#6b7280',
-    marginBottom: 16,
-    paddingBottom: 10,
-    borderBottom: '1px solid #1c1c26',
-  },
-
-  modeToggle: {
-    display: 'flex',
-    gap: 6,
-    background: '#0b0b10',
-    borderRadius: 10,
-    padding: 4,
-    marginBottom: 16,
-    border: '1px solid #1c1c26',
-  },
-  modeBtn: { flex: 1, padding: 8, border: 'none', borderRadius: 7, background: 'transparent', color: '#6b7280', fontSize: 12, cursor: 'pointer' },
-  modeBtnActive: { background: '#38bdf8', color: '#0b0b10', fontWeight: 700 },
-
-  keyHints: { display: 'flex', flexDirection: 'column', gap: 8, fontSize: 12, color: '#9ca3af', marginBottom: 16 },
-
-  dpad: {
-    display: 'grid',
-    gridTemplateColumns: '52px 52px 52px',
-    gridTemplateRows: '52px 52px 52px',
-    gap: 5,
-    justifyContent: 'center',
-    margin: '0 0 16px',
-  },
-  dpadBtn: { border: '1px solid #1c1c26', borderRadius: 8, background: '#141420', color: '#e5e7eb', fontSize: 16, cursor: 'pointer' },
-  dpadCenter: { borderRadius: 8, background: '#0b0b10' },
-
-  joystickWrap: { display: 'flex', justifyContent: 'center', margin: '4px 0 16px' },
-  joystickPad: {
-    width: 150,
-    height: 150,
-    borderRadius: '50%',
-    background: '#0b0b10',
-    border: '1px solid #1c1c26',
-    position: 'relative',
-    cursor: 'grab',
-  },
-  joystickKnob: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    width: 46,
-    height: 46,
-    marginTop: -23,
-    marginLeft: -23,
-    borderRadius: '50%',
-    background: '#38bdf8',
-    border: '1px solid #0b0b10',
-    boxShadow: '0 2px 8px rgba(56,189,248,0.35)',
-    cursor: 'grab',
-  },
-
-  speedControl: { marginBottom: 16 },
-  speedRow: { display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#6b7280', marginBottom: 6 },
-  speedVal: { fontFamily: 'monospace', color: '#38bdf8', fontWeight: 700 },
-  slider: { width: '100%' },
-
-  emergencyBtn: {
-    width: '100%',
-    padding: 12,
-    background: 'rgba(239,68,68,0.10)',
-    border: '1px solid rgba(239,68,68,0.4)',
-    borderRadius: 10,
-    color: '#ef4444',
-    fontSize: 13,
-    fontWeight: 700,
-    cursor: 'pointer',
-    letterSpacing: 0.5,
-  },
-
-  infoRow: { display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid #1c1c26', fontSize: 13 },
-
-  cameraBox: { marginTop: 16 },
-  cameraLabel: { fontSize: 11, color: '#6b7280', marginBottom: 8, textTransform: 'uppercase', letterSpacing: 0.5 },
-  cameraFrame: {
-    height: 110,
-    borderRadius: 8,
-    background: '#0b0b10',
-    border: '1px solid #1c1c26',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 24,
-    opacity: 0.4,
-  },
-}

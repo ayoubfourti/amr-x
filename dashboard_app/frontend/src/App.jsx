@@ -1,5 +1,6 @@
+import { useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Sidebar from './components/Sidebar'
@@ -13,28 +14,146 @@ import Missions from './pages/Missions'
 import Alerts from './pages/Alerts'
 import Modules from './pages/Modules'
 import Teleoperation from './pages/Teleoperation'
+import Map from './pages/Map'
+import Settings from './pages/Settings'
+import Profile from './pages/Profile'
+import NotFound from './pages/NotFound'
+import ErrorBoundary from './components/ui/ErrorBoundary'
 import './App.css'
 
 const queryClient = new QueryClient()
 
-function Placeholder({ title }) {
-  return <h2>{title}</h2>
+const PAGE_TITLES = {
+  '/': 'Dashboard',
+  '/robots': 'Robots',
+  '/missions': 'Missions',
+  '/map': 'Live Map',
+  '/teleoperation': 'Teleoperation',
+  '/alerts': 'Alerts',
+  '/modules': 'Modules',
+  '/users': 'Users',
+  '/settings': 'Settings',
+  '/profile': 'Profile',
+}
+
+function usePageTitle() {
+  const location = useLocation()
+  useEffect(() => {
+    const page = PAGE_TITLES[location.pathname]
+    document.title = page ? `${page} — AMR-X` : 'AMR-X — Control System'
+  }, [location.pathname])
+}
+
+function TitleUpdater() {
+  usePageTitle()
+  return null
 }
 
 function AppLayout({ children }) {
   return (
     <div className="app-layout">
       <Sidebar />
-      <main className="app-content">{children}</main>
+      <div
+        className="sidebar-overlay"
+        onClick={() => {
+          document.body.removeAttribute('data-sidebar')
+          window.dispatchEvent(new CustomEvent('closeSidebar'))
+        }}
+      />
+      <main className="app-content">
+        <ErrorBoundary
+          fallback={
+            <div
+              style={{
+                padding: '48px 32px',
+                textAlign: 'center',
+                color: '#6b7280',
+                fontSize: 14,
+              }}
+            >
+              <div style={{ fontSize: 32, marginBottom: 16 }}>⚠</div>
+              <div
+                style={{
+                  color: '#e2e8f0',
+                  fontWeight: 600,
+                  marginBottom: 8,
+                  fontSize: 16,
+                }}
+              >
+                This page encountered an error
+              </div>
+              <div style={{ marginBottom: 20 }}>
+                Use the sidebar to navigate to another page, or reload the app.
+              </div>
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                style={{
+                  background: '#38bdf8',
+                  color: '#0a0a0f',
+                  border: 'none',
+                  borderRadius: 8,
+                  padding: '10px 24px',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: 14,
+                }}
+              >
+                Reload
+              </button>
+            </div>
+          }
+        >
+          {children}
+        </ErrorBoundary>
+      </main>
     </div>
   )
 }
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <BrowserRouter>
+    <ErrorBoundary
+      fallback={
+        <div
+          style={{
+            minHeight: '100vh',
+            background: '#07080f',
+            color: '#e8eaf6',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            flexDirection: 'column',
+            gap: 16,
+            fontFamily: 'Inter, sans-serif',
+          }}
+        >
+          <div style={{ fontSize: 48 }}>⚠</div>
+          <div style={{ fontSize: 20, fontWeight: 700 }}>AMR-X Dashboard crashed</div>
+          <div style={{ fontSize: 13, color: '#6b7280' }}>An unexpected error occurred.</div>
+          <button
+            onClick={() => window.location.reload()}
+            style={{
+              background: '#00d4aa',
+              color: '#000',
+              border: 'none',
+              borderRadius: 8,
+              padding: '10px 24px',
+              fontWeight: 700,
+              cursor: 'pointer',
+              fontSize: 14,
+              marginTop: 8,
+            }}
+          >
+            Reload App
+          </button>
+        </div>
+      }
+    >
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
+          <BrowserRouter>
+          <TitleUpdater />
           <Routes>
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
@@ -74,7 +193,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AppLayout>
-                    <Placeholder title="Map" />
+                    <Map />
                   </AppLayout>
                 </ProtectedRoute>
               }
@@ -114,7 +233,7 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AppLayout>
-                    <Placeholder title="Settings" />
+                    <Settings />
                   </AppLayout>
                 </ProtectedRoute>
               }
@@ -129,10 +248,22 @@ function App() {
                 </ProtectedRoute>
               }
             />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Profile />
+                  </AppLayout>
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
-      </AuthProvider>
-    </QueryClientProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   )
 }
 

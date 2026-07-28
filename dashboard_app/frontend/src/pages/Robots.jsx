@@ -1,54 +1,17 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getRobots, createRobot, updateRobotStatus } from '../api/robots'
-import { useAuth } from '../context/AuthContext'
+import Badge from '../components/ui/Badge'
+import PageTopbar from '../components/ui/PageTopbar'
+import EmptyState from '../components/ui/EmptyState'
+import { useToast } from '../components/ui/Toast'
+import { useDemo } from '../context/DemoContext'
+import { formatDate } from '../utils/format'
 
 const STATUS_COLORS = {
   online: '#16a34a',
   offline: '#6b7280',
   error: '#dc2626',
-}
-
-const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#d97706', '#dc2626', '#0891b2']
-
-function initials(name) {
-  return (name || '?')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
-function avatarColor(name) {
-  const index = (name || '').charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index] || AVATAR_COLORS[0]
-}
-
-function Badge({ text, color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        color: '#fff',
-        padding: '4px 12px',
-        borderRadius: '999px',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        textTransform: 'capitalize',
-        boxShadow: `0 2px 6px ${color}55`,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
-
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString()
 }
 
 const emptyForm = { name: '', ip_address: '', status: 'online', mode: 'idle' }
@@ -128,7 +91,8 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
 
 function Robots() {
   const queryClient = useQueryClient()
-  const { currentUser } = useAuth()
+  const { showToast } = useToast()
+  const { demo, DEMO_ROBOTS } = useDemo()
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -147,6 +111,10 @@ function Robots() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['robots'] })
       closeModal()
+      showToast('Robot registered successfully', 'success')
+    },
+    onError: () => {
+      showToast('Failed to register robot', 'error')
     },
   })
 
@@ -155,6 +123,10 @@ function Robots() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['robots'] })
       closeModal()
+      showToast('Robot updated', 'success')
+    },
+    onError: () => {
+      showToast('Failed to update robot', 'error')
     },
   })
 
@@ -183,6 +155,10 @@ function Robots() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    if (demo) {
+      showToast('Demo mode active — disable to add real robots', 'warning')
+      return
+    }
     if (editingId) {
       statusMutation.mutate({ id: editingId, data: { status: form.status, mode: form.mode } })
     } else {
@@ -190,47 +166,34 @@ function Robots() {
     }
   }
 
+  const displayRobots = useMemo(() => (demo ? DEMO_ROBOTS : robots || []), [demo, DEMO_ROBOTS, robots])
+
   const stats = useMemo(() => {
-    const list = robots || []
+    const list = displayRobots
     return {
       total: list.length,
       online: list.filter((r) => r.status === 'online').length,
       offline: list.filter((r) => r.status === 'offline').length,
       error: list.filter((r) => r.status === 'error').length,
     }
-  }, [robots])
+  }, [displayRobots])
 
   const filteredRobots = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return (robots || []).filter((r) => {
+    return displayRobots.filter((r) => {
       const matchesSearch =
         !term || r.name?.toLowerCase().includes(term) || r.ip_address?.toLowerCase().includes(term)
       const matchesStatus = statusFilter === 'all' || r.status === statusFilter
       return matchesSearch && matchesStatus
     })
-  }, [robots, search, statusFilter])
+  }, [displayRobots, search, statusFilter])
 
   const activeMutation = editingId ? statusMutation : createMutation
+  const latency = displayRobots.find((r) => r.status === 'online')?.wifi_latency ?? null
 
   return (
     <div className="users-page">
-      <div className="page-topbar">
-        <div>
-          <h2>Robots</h2>
-          <p className="topbar-subtext">{new Date().toLocaleString()}</p>
-        </div>
-        <div className="topbar-right">
-          <span className="connection-pill">📶 Connected · 12ms</span>
-          {currentUser && (
-            <span
-              className="avatar-chip"
-              style={{ backgroundColor: avatarColor(currentUser.name) }}
-            >
-              {initials(currentUser.name)}
-            </span>
-          )}
-        </div>
-      </div>
+      <PageTopbar title="Robots" latency={latency} />
 
       <div className="page-heading-row">
         <div>
@@ -292,7 +255,29 @@ function Robots() {
       {isLoading && <p>Loading robots…</p>}
       {isError && <p className="error">Failed to load robots: {error.message}</p>}
 
-      {!isLoading && !isError && (
+      {!isLoading && !isError && displayRobots.length === 0 && (
+        <EmptyState
+          icon="🤖"
+          title="No robots registered yet"
+          subtitle="Add your first robot to start managing your fleet"
+          action={
+            <button type="button" className="primary-button" onClick={openCreateModal}>
+              + Register Robot
+            </button>
+          }
+        />
+      )}
+
+      {!isLoading && !isError && displayRobots.length > 0 && filteredRobots.length === 0 && (
+        <EmptyState
+          icon="🔍"
+          title="No robots match your search"
+          subtitle="Try a different name or status filter"
+        />
+      )}
+
+      {!isLoading && !isError && filteredRobots.length > 0 && (
+        <div className="data-table-wrapper">
         <table className="data-table">
           <thead>
             <tr>
@@ -340,6 +325,7 @@ function Robots() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

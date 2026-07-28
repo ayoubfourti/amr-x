@@ -1,8 +1,14 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { getUsers, createUser, updateUser, deleteUser } from '../api/users'
+import { getUsers, createUser, updateUser, deleteUser, patchUser } from '../api/users'
+import { getRobots } from '../api/robots'
 import { useAuth } from '../context/AuthContext'
-import { getAllUsers, upsertUser, setUserStatus, getStatus, removeUser } from '../utils/pendingUsers'
+import Badge from '../components/ui/Badge'
+import PageTopbar from '../components/ui/PageTopbar'
+import { useToast } from '../components/ui/Toast'
+import ConfirmModal from '../components/ui/ConfirmModal'
+import { formatDate } from '../utils/format'
+import { initials, avatarColor } from '../utils/avatar'
 
 const ROLE_COLORS = {
   admin: '#dc2626',
@@ -14,48 +20,6 @@ const STATUS_COLORS = {
   approved: '#16a34a',
   pending: '#d97706',
   rejected: '#dc2626',
-}
-
-const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#d97706', '#dc2626', '#0891b2']
-
-function initials(name) {
-  return (name || '?')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
-function avatarColor(name) {
-  const index = (name || '').charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index] || AVATAR_COLORS[0]
-}
-
-function Badge({ text, color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        color: '#fff',
-        padding: '4px 12px',
-        borderRadius: '999px',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        textTransform: 'capitalize',
-        boxShadow: `0 2px 6px ${color}55`,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
-
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString()
 }
 
 const emptyForm = { name: '', email: '', password: '', role: 'operator', status: 'pending' }
@@ -164,13 +128,15 @@ function UserModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMes
 
 function Users() {
   const queryClient = useQueryClient()
+  const { showToast } = useToast()
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
-  const [allUsers, setAllUsers] = useState(getAllUsers)
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('all')
   const [statusFilter, setStatusFilter] = useState('all')
+  const [confirmDelete, setConfirmDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
   const { currentUser } = useAuth()
   const isAdmin = currentUser?.role === 'admin'
 
@@ -181,38 +147,55 @@ function Users() {
     error,
   } = useQuery({ queryKey: ['users'], queryFn: getUsers, refetchInterval: 5000 })
 
+  const { data: robots } = useQuery({
+    queryKey: ['robots'],
+    queryFn: getRobots,
+    refetchInterval: 4000,
+  })
+
   const createMutation = useMutation({
     mutationFn: createUser,
-    onSuccess: (createdUser) => {
-      const updated = upsertUser({
-        id: createdUser.id,
-        name: createdUser.name,
-        email: createdUser.email,
-        role: createdUser.role,
-        status: 'pending',
-        created_at: createdUser.created_at,
-      })
-      setAllUsers(updated)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
       closeModal()
+      showToast('User updated', 'success')
+    },
+    onError: () => {
+      showToast('Failed to update user', 'error')
     },
   })
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }) => updateUser(id, data),
-    onSuccess: (updatedUser, variables) => {
-      const updated = setUserStatus(variables.id, variables.status)
-      upsertUser({
-        id: updatedUser.id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        role: updatedUser.role,
-        status: variables.status,
-        created_at: updatedUser.created_at,
-      })
-      setAllUsers(updated)
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
       closeModal()
+      showToast('User updated', 'success')
+    },
+    onError: () => {
+      showToast('Failed to update user', 'error')
+    },
+  })
+
+  const approveMutation = useMutation({
+    mutationFn: (id) => patchUser(id, { status: 'approved' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      showToast('User approved', 'success')
+    },
+    onError: () => {
+      showToast('Failed to approve user', 'error')
+    },
+  })
+
+  const rejectMutation = useMutation({
+    mutationFn: (id) => patchUser(id, { status: 'rejected' }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      showToast('User rejected', 'warning')
+    },
+    onError: () => {
+      showToast('Failed to reject user', 'error')
     },
   })
 
@@ -250,8 +233,7 @@ function Users() {
     if (editingId) {
       updateMutation.mutate({
         id: editingId,
-        data: { name: form.name, email: form.email, role: form.role },
-        status: form.status,
+        data: { name: form.name, email: form.email, role: form.role, status: form.status },
       })
     } else {
       createMutation.mutate({
@@ -263,17 +245,18 @@ function Users() {
     }
   }
 
-  async function handleDelete(id) {
-    if (!window.confirm('Delete this user? This cannot be undone.')) return
-    await deleteUser(id)
-    setAllUsers(removeUser(id))
-    queryClient.invalidateQueries({ queryKey: ['users'] })
+  async function handleConfirmDelete() {
+    setDeleting(true)
+    try {
+      await deleteUser(confirmDelete.id)
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+      setConfirmDelete(null)
+    } finally {
+      setDeleting(false)
+    }
   }
 
-  const combinedUsers = useMemo(
-    () => (users || []).map((u) => ({ ...u, status: getStatus(u.email, allUsers) })),
-    [users, allUsers],
-  )
+  const combinedUsers = useMemo(() => users || [], [users])
 
   const stats = useMemo(
     () => ({
@@ -307,25 +290,11 @@ function Users() {
 
   const activeMutation = editingId ? updateMutation : createMutation
 
+  const latency = (robots || []).find((r) => r.status === 'online')?.wifi_latency ?? null
+
   return (
     <div className="users-page">
-      <div className="page-topbar">
-        <div>
-          <h2>Users</h2>
-          <p className="topbar-subtext">{new Date().toLocaleString()}</p>
-        </div>
-        <div className="topbar-right">
-          <span className="connection-pill">📶 Connected · 12ms</span>
-          {currentUser && (
-            <span
-              className="avatar-chip"
-              style={{ backgroundColor: avatarColor(currentUser.name) }}
-            >
-              {initials(currentUser.name)}
-            </span>
-          )}
-        </div>
-      </div>
+      <PageTopbar title="Users" latency={latency} />
 
       <div className="page-heading-row">
         <div>
@@ -396,6 +365,7 @@ function Users() {
       {isError && <p className="error">Failed to load users: {error.message}</p>}
 
       {!isLoading && !isError && (
+        <div className="data-table-wrapper">
         <table className="users-table">
           <thead>
             <tr>
@@ -439,10 +409,30 @@ function Users() {
                 <td>—</td>
                 <td>{formatDate(user.last_login)}</td>
                 <td>
+                  {user.status === 'pending' && (
+                    <>
+                      <button
+                        type="button"
+                        className="icon-button"
+                        disabled={approveMutation.isPending}
+                        onClick={() => approveMutation.mutate(user.id)}
+                      >
+                        {approveMutation.isPending ? '…' : '✅ Approve'}
+                      </button>
+                      <button
+                        type="button"
+                        className="icon-button"
+                        disabled={rejectMutation.isPending}
+                        onClick={() => rejectMutation.mutate(user.id)}
+                      >
+                        {rejectMutation.isPending ? '…' : '⛔ Reject'}
+                      </button>
+                    </>
+                  )}
                   <button type="button" className="icon-button" onClick={() => openEditModal(user)}>
                     ✏️
                   </button>
-                  <button type="button" className="icon-button" onClick={() => handleDelete(user.id)}>
+                  <button type="button" className="icon-button" onClick={() => setConfirmDelete(user)}>
                     🗑️
                   </button>
                 </td>
@@ -450,7 +440,19 @@ function Users() {
             ))}
           </tbody>
         </table>
+        </div>
       )}
+
+      <ConfirmModal
+        open={!!confirmDelete}
+        title="Delete User"
+        message={`Remove "${confirmDelete?.name}" from the system? This cannot be undone.`}
+        confirmLabel="Delete User"
+        confirmColor="#ef4444"
+        loading={deleting}
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmDelete(null)}
+      />
     </div>
   )
 }
