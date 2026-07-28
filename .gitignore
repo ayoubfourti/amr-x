@@ -182,3 +182,6 @@ docker-compose.override.yml
 # Git
 reports/**/build/
 reports/**/*.pdf
+
+robotics/navigation/test/assets/*
+!robotics/navigation/test/assets/.gitkeep
