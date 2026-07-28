@@ -1,0 +1,38 @@
+<?xml version="1.0" ?>
+<sdf version="1.8">
+  <actor name="actor_wanderer_7">
+    <skin>
+      <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+      <scale>1.0</scale>
+    </skin>
+    <animation name="walk">
+      <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+      <interpolate_x>true</interpolate_x>
+    </animation>
+    <script>
+      <loop>true</loop>
+      <delay_start>24.0</delay_start>
+      <auto_start>true</auto_start>
+      <trajectory id="0" type="walk" tension="0.6">
+        <waypoint><time>0.00</time><pose>0.00 0.00 1.00 0 0 3.14</pose></waypoint>
+        <waypoint><time>1.90</time><pose>-1.21 0.00 1.00 0 0 -2.89</pose></waypoint>
+        <waypoint><time>3.66</time><pose>-2.33 -0.28 1.00 0 0 -2.36</pose></waypoint>
+        <waypoint><time>5.71</time><pose>-3.18 -1.14 1.00 0 0 -2.32</pose></waypoint>
+        <waypoint><time>7.43</time><pose>-4.00 -2.02 1.00 0 0 -1.61</pose></waypoint>
+        <waypoint><time>9.46</time><pose>-4.04 -3.23 1.00 0 0 -1.28</pose></waypoint>
+        <waypoint><time>11.12</time><pose>-3.71 -4.33 1.00 0 0 -0.81</pose></waypoint>
+        <waypoint><time>13.38</time><pose>-3.71 -4.33 1.00 0 0 -0.81</pose></waypoint>
+        <waypoint><time>15.31</time><pose>-2.88 -5.21 1.00 0 0 -0.81</pose></waypoint>
+        <waypoint><time>17.08</time><pose>-2.06 -6.09 1.00 0 0 2.33</pose></waypoint>
+        <waypoint><time>18.79</time><pose>-2.88 -5.21 1.00 0 0 2.33</pose></waypoint>
+        <waypoint><time>20.95</time><pose>-3.71 -4.33 1.00 0 0 1.86</pose></waypoint>
+        <waypoint><time>22.52</time><pose>-4.04 -3.23 1.00 0 0 1.53</pose></waypoint>
+        <waypoint><time>24.65</time><pose>-4.00 -2.02 1.00 0 0 0.83</pose></waypoint>
+        <waypoint><time>26.31</time><pose>-3.18 -1.14 1.00 0 0 0.79</pose></waypoint>
+        <waypoint><time>28.44</time><pose>-2.33 -0.28 1.00 0 0 0.25</pose></waypoint>
+        <waypoint><time>30.04</time><pose>-1.21 0.00 1.00 0 0 0.00</pose></waypoint>
+        <waypoint><time>31.90</time><pose>0.00 0.00 1.00 0 0 0.00</pose></waypoint>
+      </trajectory>
+    </script>
+  </actor>
+</sdf>
