@@ -39,6 +39,17 @@
   <xacro:property name="lidar_samples"      value="360"/>
   <xacro:property name="lidar_update_rate"  value="10"/>
 
+  <!-- Front-facing RGB camera (for AprilTag / visual-dock detection).
+       Mounted at the front edge, facing +X (robot forward), above the
+       Lidar deck. VERIFY xyz against wherever the real camera ends up. -->
+  <xacro:property name="camera_xyz"          value="0.40 0.0 0.15"/>
+  <xacro:property name="camera_rpy"          value="0 0 0"/>
+  <xacro:property name="camera_topic"        value="camera/image_raw"/>
+  <xacro:property name="camera_width"        value="640"/>
+  <xacro:property name="camera_height"       value="480"/>
+  <xacro:property name="camera_update_rate"  value="30"/>
+  <xacro:property name="camera_horizontal_fov" value="1.089"/> <!-- ~62 deg -->
+
   <!-- ===================================================================
        1. Pull in the NEW CAD export (chassis + casters + drive wheels +
           Lidar1_link + Lidar2_link, all with meshes)
@@ -66,6 +77,43 @@
     <parent link="base_link"/>
     <child  link="imu_link"/>
     <origin xyz="${imu_xyz}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===================================================================
+       3b. Camera frame. camera_link follows REP-103 (X fwd, Y left, Z up)
+           for a sane mount pose; camera_optical_link rotates into the
+           optical convention (Z fwd, X right, Y down) that image_geometry
+           / apriltag_ros expect, and is what the sensor reports as its
+           gz_frame_id below. Both links carry a small non-zero inertial:
+           since they host a sensor, sdformat must preserve them as real
+           bodies rather than lumping them into base_link, and a zero-mass
+           body can't be welded by the physics engine - it just drifts
+           free instead of staying mounted.
+       =================================================================== -->
+  <link name="camera_link">
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <joint name="camera_joint" type="fixed">
+    <parent link="base_link"/>
+    <child  link="camera_link"/>
+    <origin xyz="${camera_xyz}" rpy="${camera_rpy}"/>
+  </joint>
+
+  <link name="camera_optical_link">
+    <inertial>
+      <mass value="0.001"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-7" iyy="1e-7" izz="1e-7" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
   </joint>
 
   <!-- ===================================================================
@@ -179,6 +227,34 @@
       <gz_frame_id>imu_link</gz_frame_id>
       <update_rate>100</update_rate>
       <always_on>true</always_on>
+    </sensor>
+  </gazebo>
+
+  <!-- ===================================================================
+       6b. Camera sensor -> publishes ${camera_topic}/image + camera_info.
+           gz_frame_id points at the optical frame, not camera_link, so
+           downstream image consumers (apriltag_ros, image_proc) get poses
+           in the standard camera-optical convention without a re-rotation.
+       =================================================================== -->
+  <gazebo reference="camera_link">
+    <sensor name="camera" type="camera">
+      <topic>${camera_topic}</topic>
+      <gz_frame_id>camera_optical_link</gz_frame_id>
+      <update_rate>${camera_update_rate}</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <camera>
+        <horizontal_fov>${camera_horizontal_fov}</horizontal_fov>
+        <image>
+          <width>${camera_width}</width>
+          <height>${camera_height}</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>30.0</far>
+        </clip>
+      </camera>
     </sensor>
   </gazebo>
 
