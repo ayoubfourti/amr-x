@@ -5,7 +5,8 @@ from launch import LaunchDescription
 from launch.actions import IncludeLaunchDescription, TimerAction, SetEnvironmentVariable
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node
-
+from launch.substitutions import Command
+from launch_ros.parameter_descriptions import ParameterValue
 
 def generate_launch_description():
 
@@ -13,11 +14,11 @@ def generate_launch_description():
     pkg_dual_arm_control = get_package_share_directory('dual_arm_control')
     pkg_ros_gz_sim = get_package_share_directory('ros_gz_sim')
 
-    urdf_file = os.path.join(pkg_dual_arm_description, 'urdf', 'dual_arm.urdf')
-
-    with open(urdf_file, 'r') as f:
-        robot_description = f.read()
-
+    xacro_file = os.path.join(pkg_dual_arm_description, 'urdf', 'dual_arm.urdf.xacro')
+    robot_description = ParameterValue(
+        Command(['xacro', ' ', xacro_file]),
+        value_type=str
+    )
     # Set mesh resource path
     set_gz_resource_path = SetEnvironmentVariable(
         name='GZ_SIM_RESOURCE_PATH',
