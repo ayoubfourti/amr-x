@@ -7,19 +7,19 @@
   <!-- Product finishes shared by the existing CAD parts. These materials
        change appearance only; no geometry or physical properties are added. -->
   <material name="amrx_metallic_medium_grey">
-    <color rgba="0.38 0.41 0.43 1" />
+    <color rgba="1 0 0 1" />
   </material>
   <material name="amrx_brushed_silver">
-    <color rgba="0.24 0.27 0.30 1" />
+    <color rgba="1 0 0 1" />
   </material>
   <material name="amrx_graphite_hardware">
-    <color rgba="0.12 0.14 0.16 1" />
+    <color rgba="1 0 0 1" />
   </material>
   <material name="amrx_rubber_black">
-    <color rgba="0.025 0.03 0.035 1" />
+    <color rgba="1 0 0 1" />
   </material>
   <material name="amrx_sensor_graphite">
-    <color rgba="0.035 0.045 0.055 1" />
+    <color rgba="1 0 0 1" />
   </material>
   <link
     name="base_link">
