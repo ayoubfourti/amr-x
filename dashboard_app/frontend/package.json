@@ -14,11 +14,7 @@
     "axios": "^1.18.1",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
-<<<<<<< HEAD
-    "react-router-dom": "^7.11.0",
-=======
     "react-router-dom": "^7.18.1",
->>>>>>> 32cc58492a1462bb4746e3b8ce7ae7f59057e107
     "recharts": "^3.9.2",
     "roslib": "^2.1.0"
   },
