@@ -22,6 +22,17 @@ class RobotResponse(BaseModel):
     class Config:
         from_attributes = True
 
+class RobotStatusUpdate(BaseModel):
+    status: Optional[str] = None
+    battery: Optional[float] = None
+    speed: Optional[float] = None
+    position_x: Optional[float] = None
+    position_y: Optional[float] = None
+    orientation: Optional[float] = None
+    mode: Optional[str] = None
+    ip_address: Optional[str] = None
+    wifi_latency: Optional[int] = None
+
 class TelemetryUpdate(BaseModel):
     battery: Optional[float] = None
     speed: Optional[float] = None

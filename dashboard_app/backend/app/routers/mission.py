@@ -72,8 +72,14 @@ def set_progress(
 
 @router.get("/{mission_id}")
 def get_mission(mission_id: int, db: Session = Depends(get_db)):
-    return get_mission_by_id(db, mission_id)
+    mission = get_mission_by_id(db, mission_id)
+    if not mission:
+        raise HTTPException(404, "Mission not found")
+    return mission
 
 @router.delete("/{mission_id}")
 def remove_mission(mission_id: int, db: Session = Depends(get_db)):
-    return delete_mission(db, mission_id)
+    mission = delete_mission(db, mission_id)
+    if not mission:
+        raise HTTPException(404, "Mission not found")
+    return {"detail": "Mission deleted"}

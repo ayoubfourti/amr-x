@@ -1,4 +1,5 @@
 import os
+import secrets
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
@@ -9,7 +10,7 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/auth", tags=["Auth"])
 
-ADMIN_SECRET_CODE = os.getenv("ADMIN_CODE", "AMRX2025")
+ADMIN_SECRET_CODE = os.getenv("ADMIN_CODE")
 # This is the secret code that grants
 # instant admin approval.
 # Stored in .env as ADMIN_CODE.
@@ -39,13 +40,6 @@ def login(data: LoginRequest,
             detail="Invalid email or password"
         )
 
-    # Check password (bcrypt, with a plain-text fallback for any
-    # accounts not yet migrated by hash_existing_passwords.py)
-    print(f"[LOGIN DEBUG] email={data.email}")
-    print(f"[LOGIN DEBUG] plain={data.password}")
-    print(f"[LOGIN DEBUG] hash={user.password_hash[:20]}...")
-    result = verify_password(data.password, user.password_hash)
-    print(f"[LOGIN DEBUG] result={result}")
     if not verify_password(data.password, user.password_hash):
         raise HTTPException(
             status_code=401,
@@ -97,8 +91,10 @@ def register(
     # admin code and existing users
     total_users = db.query(User).count()
 
-    is_admin_code = (
-        data.admin_code == ADMIN_SECRET_CODE
+    is_admin_code = bool(
+        ADMIN_SECRET_CODE
+        and data.admin_code
+        and secrets.compare_digest(data.admin_code, ADMIN_SECRET_CODE)
     )
     is_first_user = total_users == 0
 
