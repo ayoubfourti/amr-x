@@ -71,7 +71,7 @@ plugins:
             Operator Interfaces: Interfaces opérateur
             Web Dashboard: Tableau de bord web
             Digital Twin Maps: Cartes du jumeau numérique
-            Dashboard Design Reference: Référence de conception du tableau de bord
+            Dashboard UX and Architecture: UX et architecture du tableau de bord
             Qt/QML HMI: IHM Qt/QML
             Embedded and Electrical: Embarqué et électrique
             Implementation Status: État de l'implémentation
@@ -104,7 +104,7 @@ plugins:
             Operator Interfaces: Bedienoberflächen
             Web Dashboard: Web-Dashboard
             Digital Twin Maps: Karten des digitalen Zwillings
-            Dashboard Design Reference: Dashboard-Designreferenz
+            Dashboard UX and Architecture: Dashboard-UX und -Architektur
             Qt/QML HMI: Qt/QML-Bedienoberfläche
             Embedded and Electrical: Embedded-Systeme und Elektrik
             Implementation Status: Implementierungsstand
@@ -137,7 +137,7 @@ plugins:
             Operator Interfaces: واجهات المشغّل
             Web Dashboard: لوحة التحكم عبر الويب
             Digital Twin Maps: خرائط التوأم الرقمي
-            Dashboard Design Reference: مرجع تصميم لوحة التحكم
+            Dashboard UX and Architecture: تجربة المستخدم وبنية لوحة التحكم
             Qt/QML HMI: واجهة Qt/QML
             Embedded and Electrical: الأنظمة المضمنة والكهربائية
             Implementation Status: حالة التنفيذ
@@ -169,7 +169,7 @@ nav:
           - Overview: workstreams/operator-interfaces.md
           - Web Dashboard: interfaces/dashboard.md
           - Digital Twin Maps: interfaces/digital-twin-maps.md
-          - Dashboard Design Reference: frontend-dashboard-redesign.md
+          - Dashboard UX and Architecture: frontend-dashboard-redesign.md
           - Qt/QML HMI: interfaces/qt-hmi.md
       - Embedded and Electrical:
           - Overview: workstreams/embedded-electrical.md

@@ -1,10 +1,11 @@
-# AMR-X dashboard redesign prototype
+# AMR-X dashboard UX and architecture
 
 ## Purpose
 
-This prototype establishes a mission-first visual and information architecture
-for the AMR-X operations dashboard. It keeps the existing React/Vite runtime,
-API calls, ROS hooks, routes, permissions, theme state, and demo data.
+This implementation establishes a mission-first visual and information
+architecture for the AMR-X operations dashboard. It keeps the React/Vite
+runtime, API calls, ROS hooks, routes, permissions, theme state, and demo data
+while providing a consistent command-center interface.
 
 Vite remains the correct runtime for the robot console: this is an authenticated,
 client-side, WebSocket-heavy application and does not benefit from server-side
@@ -157,9 +158,40 @@ Camera feeds use `sensor_msgs/CompressedImage` over rosbridge:
 | Rear | `/camera/rear/image_raw/compressed` |
 | Deck | `/camera/deck/image_raw/compressed` |
 
-The frontend displays a clearly marked representative warehouse image only in
-demo mode. In normal operation, a missing topic is shown as **Awaiting stream**
-and is never presented as a live image.
+When a stream is unavailable, the frontend displays the corresponding
+representative warehouse image. Demo mode labels it **Demo feed**; normal
+operation labels it **Preview feed**, so it is never presented as live
+telemetry. The three optimized WebP previews total less than 600 KB.
+
+## Shared selection controls
+
+Every dashboard dropdown uses `SelectField.jsx` rather than a browser-native
+`select`. The control provides:
+
+- consistent dark/light command-center styling;
+- a selected checkmark and hover/keyboard active state;
+- `combobox`/`listbox` semantics with unique option identifiers;
+- Arrow, Enter, Space, Escape, and Tab keyboard handling;
+- portal rendering so menus are not clipped by cards, modals, or HUD panels;
+- automatic above/below positioning based on viewport space.
+
+The component is used by Mission Control filters and sorting, mission
+composition, world selection, map-label editing, teleoperation robot selection,
+fleet and team filters, settings, and administrative forms.
+
+## Runtime and loading architecture
+
+- Route components are lazy-loaded, keeping the initial application chunk
+  separate from page-specific CSS and logic.
+- roslib is isolated in its own asynchronous chunk.
+- `RosProvider` owns one rosbridge connection shared by Overview,
+  Teleoperation, camera feeds, and module docking controls.
+- `CORS_ORIGINS`, `ROSBRIDGE_HOST`, `ROSBRIDGE_PORT`, and
+  `ROSBRIDGE_ROBOT_NAME` configure backend deployment without source edits;
+  `ROSBRIDGE_SYNC_ENABLED` explicitly opts the API into lifecycle-managed
+  `/robot_state` database synchronization.
+- `npm run check:dashboard` validates backend compilation/tests, the committed
+  SDF manifest, frontend lint, and the production build.
 
 ## Files introduced or substantially changed
 
@@ -172,6 +204,8 @@ and is never presented as a live image.
 - `dashboard_app/frontend/src/components/ui/CommandUI.css`
 - `dashboard_app/frontend/src/components/ui/PageTopbar.jsx`
 - `dashboard_app/frontend/src/components/ui/LiveCameraFeed.jsx`
+- `dashboard_app/frontend/src/components/ui/SelectField.jsx`
+- `dashboard_app/frontend/src/context/RosProvider.jsx`
 - `dashboard_app/frontend/src/hooks/useRosImage.js`
 - `dashboard_app/frontend/src/pages/Teleoperation.jsx`
 - `dashboard_app/frontend/src/pages/Teleoperation.css`
@@ -185,7 +219,7 @@ Missions uses these primitives directly; the shared top bar and legacy-route
 surface bridge apply the same system to Fleet, Alerts, Modules, Team, Settings,
 and Profile while those routes are progressively moved to the primitives.
 
-## Prototype behavior
+## Preview behavior
 
 When the backend is unavailable, the overview displays a clearly labeled
 simulation preview using existing demo data. It never presents simulated data
