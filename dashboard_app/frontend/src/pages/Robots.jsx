@@ -9,6 +9,7 @@ import { useToast } from '../hooks/useToast'
 import { useDemo } from '../hooks/useDemo'
 import { formatDate } from '../utils/format'
 import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
 import './Robots.css'
 
 const STATUS_COLORS = {
@@ -18,6 +19,16 @@ const STATUS_COLORS = {
 }
 
 const emptyForm = { name: '', ip_address: '', status: 'online', mode: 'idle' }
+const ROBOT_STATUS_OPTIONS = [
+  { value: 'online', label: 'Online' },
+  { value: 'offline', label: 'Offline' },
+  { value: 'error', label: 'Error' },
+]
+const ROBOT_MODE_OPTIONS = [
+  { value: 'idle', label: 'Idle' },
+  { value: 'autonomous', label: 'Autonomous' },
+  { value: 'manual', label: 'Manual' },
+]
 
 function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMessage }) {
   const isEdit = mode === 'edit'
@@ -57,22 +68,26 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
 
           {isEdit && (
             <div className="modal-row">
-              <label className="auth-field">
+              <div className="auth-field">
                 <span className="auth-label">Status</span>
-                <select name="status" value={form.status} onChange={onChange}>
-                  <option value="online">online</option>
-                  <option value="offline">offline</option>
-                  <option value="error">error</option>
-                </select>
-              </label>
-              <label className="auth-field">
+                <SelectField
+                  name="status"
+                  value={form.status}
+                  options={ROBOT_STATUS_OPTIONS}
+                  onChange={onChange}
+                  ariaLabel="Robot status"
+                />
+              </div>
+              <div className="auth-field">
                 <span className="auth-label">Mode</span>
-                <select name="mode" value={form.mode} onChange={onChange}>
-                  <option value="idle">idle</option>
-                  <option value="autonomous">autonomous</option>
-                  <option value="manual">manual</option>
-                </select>
-              </label>
+                <SelectField
+                  name="mode"
+                  value={form.mode}
+                  options={ROBOT_MODE_OPTIONS}
+                  onChange={onChange}
+                  ariaLabel="Robot mode"
+                />
+              </div>
             </div>
           )}
 
@@ -233,12 +248,13 @@ function Robots() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Statuses</option>
-          <option value="online">online</option>
-          <option value="offline">offline</option>
-          <option value="error">error</option>
-        </select>
+        <SelectField
+          name="robot-status-filter"
+          value={statusFilter}
+          options={[{ value: 'all', label: 'All statuses' }, ...ROBOT_STATUS_OPTIONS]}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          ariaLabel="Filter robots by status"
+        />
         <span className="results-count">{filteredRobots.length} results</span>
       </div>
 

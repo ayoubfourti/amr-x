@@ -1370,11 +1370,11 @@
   text-transform: uppercase;
 }
 
-.world-selector {
+.world-picker .amrx-select-trigger {
   width: 100%;
   min-width: 0;
   height: 40px;
-  padding: 0 34px 0 13px;
+  padding: 0 13px;
   border: 1px solid rgba(125, 211, 233, .25);
   border-radius: 8px;
   outline: 0;
@@ -1388,12 +1388,6 @@
   text-overflow: ellipsis;
   cursor: pointer;
   pointer-events: auto;
-}
-
-.world-selector option {
-  background: #071722;
-  color: #e5f7fb;
-  font-size: 11px;
 }
 
 .map-controls {
@@ -2216,7 +2210,7 @@ body.teleop-modal-active {
     font-size: 8px;
   }
   .world-picker { min-width: 0; }
-  .world-selector {
+  .world-picker .amrx-select-trigger {
     padding-right: 28px;
     padding-left: 10px;
     font-size: 11px;
@@ -2235,7 +2229,7 @@ body.teleop-modal-active {
     padding: 0 3px;
   }
   .world-picker { width: 100%; }
-  .world-selector { font-size: 10px; }
+  .world-picker .amrx-select-trigger { font-size: 10px; }
   .mission-stats { gap: 2px; }
   .fleet-row {
     grid-template-columns: 39px 1fr 55px 14px;

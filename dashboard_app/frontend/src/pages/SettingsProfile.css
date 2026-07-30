@@ -260,7 +260,7 @@
 }
 
 .settings-field-action input,
-.settings-row-control select,
+.settings-row-control .amrx-select-trigger,
 .profile-field input {
   height: 40px;
   padding: 0 12px;
@@ -279,7 +279,8 @@
 }
 
 .settings-field-action input:focus,
-.settings-row-control select:focus,
+.settings-row-control .amrx-select-trigger:focus-visible,
+.settings-row-control .amrx-select-trigger.is-open,
 .profile-field input:focus {
   border-color: color-mix(in srgb, var(--accent-blue) 55%, var(--input-border));
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent-blue) 8%, transparent);

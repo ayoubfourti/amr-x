@@ -14,6 +14,7 @@ import WarehouseWorld3D from '../components/ui/WarehouseWorld3D'
 import Icon from '../components/ui/Icon'
 import LiveCameraFeed from '../components/ui/LiveCameraFeed'
 import MissionComposer from '../components/MissionComposer'
+import SelectField from '../components/ui/SelectField'
 import Teleoperation from './Teleoperation'
 import { useMapAnnotations } from '../hooks/useMapAnnotations'
 import robotRender from '../../../../docs/assets/images/amr-x-base-render.png'
@@ -514,22 +515,19 @@ function MapPanel({ robots, robot, mission, navigate }) {
             3D World
           </button>
         </div>
-        <label className="world-picker">
+        <div className="world-picker">
           <span>Digital twin</span>
-          <select
-            className="world-selector"
+          <SelectField
+            name="overview-world"
             value={selectedWorld.id}
+            options={worlds.map((world) => ({ value: world.id, label: world.label }))}
             onChange={(event) => {
               setWorldId(event.target.value)
               localStorage.setItem('amrx-world', event.target.value)
             }}
-            aria-label="Select simulation world"
-          >
-            {worlds.map((world) => (
-              <option value={world.id} key={world.id}>{world.label}</option>
-            ))}
-          </select>
-        </label>
+            ariaLabel="Select simulation world"
+          />
+        </div>
       </header>
       <div className="map-visualization">
         {viewMode === 'map' ? (

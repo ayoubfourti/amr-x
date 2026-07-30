@@ -25,7 +25,8 @@
 }
 
 .map-world-select > span,
-.label-editor label > span {
+.label-editor label > span,
+.label-editor-field > span {
   color: var(--text-sub);
   font-size: 7px;
   font-weight: 800;
@@ -33,9 +34,9 @@
   text-transform: uppercase;
 }
 
-.map-world-select select,
+.map-world-select .amrx-select-trigger,
 .label-editor input,
-.label-editor select {
+.label-editor-field .amrx-select-trigger {
   width: 100%;
   min-width: 0;
   height: 38px;
@@ -473,9 +474,11 @@
   gap: 10px;
 }
 
-.label-editor label { min-width: 0; display: grid; gap: 5px; }
+.label-editor label,
+.label-editor-field { min-width: 0; display: grid; gap: 5px; }
 .label-coordinate-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.label-editor input, .label-editor select { height: 35px; padding-right: 9px; }
+.label-editor input,
+.label-editor-field .amrx-select-trigger { height: 35px; padding-right: 9px; }
 
 .label-editor p {
   margin: 0;

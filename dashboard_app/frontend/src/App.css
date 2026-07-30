@@ -1597,7 +1597,6 @@ body[data-sidebar='open'] .sidebar-overlay {
 }
 
 .auth-field input,
-.auth-field select,
 .auth-field textarea {
   padding: 9px 12px;
   border-radius: 8px;
@@ -1614,15 +1613,9 @@ body[data-sidebar='open'] .sidebar-overlay {
   color: var(--input-placeholder);
 }
 
-.auth-field input:focus,
-.auth-field select:focus {
+.auth-field input:focus {
   border-color: var(--accent);
   box-shadow: 0 0 0 3px rgba(0, 212, 170, 0.15);
-}
-
-.auth-field select option {
-  background: var(--input-bg);
-  color: var(--input-text);
 }
 
 .error {
@@ -1768,12 +1761,11 @@ body[data-sidebar='open'] .sidebar-overlay {
   margin-top: 12px;
 }
 
-/* generic fallback for inputs/selects/buttons not covered by a more
+/* Generic fallback for inputs and buttons not covered by a more
    specific rule above (e.g. table checkboxes) — kept before the more
    specific .auth-field/.modal-actions rules so those still win where
    they apply */
 .app-content input,
-.app-content select,
 .app-content button {
   background: var(--input-bg);
   border: 1px solid var(--input-border);
@@ -1787,8 +1779,7 @@ body[data-sidebar='open'] .sidebar-overlay {
   cursor: pointer;
 }
 
-.app-content input:focus,
-.app-content select:focus {
+.app-content input:focus {
   outline: none;
   border-color: var(--accent);
 }
@@ -1889,8 +1880,7 @@ body[data-sidebar='open'] .sidebar-overlay {
   text-align: left;
 }
 
-.auth-card input,
-.auth-card select {
+.auth-card input {
   background: #0d0e1a;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -1899,8 +1889,7 @@ body[data-sidebar='open'] .sidebar-overlay {
   font: inherit;
 }
 
-.auth-card input:focus,
-.auth-card select:focus {
+.auth-card input:focus {
   outline: none;
   border-color: #00d4aa;
   box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.2);

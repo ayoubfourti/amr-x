@@ -3,10 +3,18 @@ import { useSearchParams } from 'react-router-dom'
 import PageTopbar from '../components/ui/PageTopbar'
 import Icon from '../components/ui/Icon'
 import { StatusPill } from '../components/ui/CommandUI'
+import SelectField from '../components/ui/SelectField'
 import { useTheme } from '../hooks/useTheme'
 import { useDemo } from '../hooks/useDemo'
 import { useSidebarPreference } from '../hooks/useSidebarPreference'
 import './SettingsProfile.css'
+
+const TIMEOUT_OPTIONS = [
+  { value: '3', label: '3 seconds' },
+  { value: '5', label: '5 seconds' },
+  { value: '10', label: '10 seconds' },
+  { value: '30', label: '30 seconds' },
+]
 
 function ToggleSwitch({ on, onChange, label }) {
   return (
@@ -262,12 +270,13 @@ export default function Settings() {
               label="Connection timeout"
               subtext="Maximum time allowed for a connection attempt"
               control={
-                <select value={timeout_} onChange={handleTimeoutChange}>
-                  <option value="3">3 seconds</option>
-                  <option value="5">5 seconds</option>
-                  <option value="10">10 seconds</option>
-                  <option value="30">30 seconds</option>
-                </select>
+                <SelectField
+                  name="connection-timeout"
+                  value={timeout_}
+                  options={TIMEOUT_OPTIONS}
+                  onChange={handleTimeoutChange}
+                  ariaLabel="Connection timeout"
+                />
               }
             />
             <div className="connection-test-row">

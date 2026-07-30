@@ -12,6 +12,7 @@ import { useModuleDocking } from '../hooks/useModuleDocking'
 import { useRosConnection } from '../hooks/useRosConnection'
 import { formatDate } from '../utils/format'
 import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
 import dualArmImage from '../../../../docs/assets/images/dual-arm-module-concept-render.png'
 import singleArmImage from '../../../../docs/assets/images/rviz-arm-urdf-model.png'
 import shelfAccessImage from '../../../../docs/assets/images/reference-shelf-climbing-robot-detail.png'
@@ -21,6 +22,12 @@ import compartmentImage from '../../../../docs/assets/images/secure-compartment-
 import './Modules.css'
 
 const FILTERS = ['all', 'active', 'inactive', 'error']
+const MODULE_STATUS_OPTIONS = [
+  { value: 'connected', label: 'Connected' },
+  { value: 'disconnected', label: 'Disconnected' },
+  { value: 'error', label: 'Error' },
+  { value: 'standby', label: 'Standby' },
+]
 
 const MODULE_LIBRARY = [
   {
@@ -133,15 +140,16 @@ function ModuleModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage
             <span className="auth-label">Type</span>
             <input name="type" value={form.type} onChange={onChange} required />
           </label>
-          <label className="auth-field">
+          <div className="auth-field">
             <span className="auth-label">Status</span>
-            <select name="status" value={form.status} onChange={onChange}>
-              <option value="connected">connected</option>
-              <option value="disconnected">disconnected</option>
-              <option value="error">error</option>
-              <option value="standby">standby</option>
-            </select>
-          </label>
+            <SelectField
+              name="status"
+              value={form.status}
+              options={MODULE_STATUS_OPTIONS}
+              onChange={onChange}
+              ariaLabel="Module status"
+            />
+          </div>
 
           {errorMessage && <p className="error">{errorMessage}</p>}
 

@@ -5,6 +5,7 @@ import { useDemo } from '../hooks/useDemo'
 import WarehouseMapSVG from '../components/ui/WarehouseMapSVG'
 import WarehouseWorld3D from '../components/ui/WarehouseWorld3D'
 import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
 import { PageHeader, PageShell, StatusPill } from '../components/ui/CommandUI'
 import {
   annotationWorldPosition,
@@ -137,16 +138,19 @@ export default function Map() {
       />
 
       <section className="map-workspace-toolbar">
-        <label className="map-world-select">
+        <div className="map-world-select">
           <span>Active digital twin</span>
-          <select value={selectedWorld.id} onChange={(event) => selectWorld(event.target.value)}>
-            {worlds.map((world) => (
-              <option value={world.id} key={world.id}>
-                {worldDisplayName(world)} — {world.entities.length} entities
-              </option>
-            ))}
-          </select>
-        </label>
+          <SelectField
+            name="map-world"
+            value={selectedWorld.id}
+            options={worlds.map((world) => ({
+              value: world.id,
+              label: `${worldDisplayName(world)} — ${world.entities.length} entities`,
+            }))}
+            onChange={(event) => selectWorld(event.target.value)}
+            ariaLabel="Active digital twin"
+          />
+        </div>
 
         <div className="map-view-toggle" role="group" aria-label="Map view">
           <button type="button" className={viewMode === '2d' ? 'active' : ''} onClick={() => setViewMode('2d')}>
@@ -303,17 +307,19 @@ export default function Map() {
                     maxLength={48}
                   />
                 </label>
-                <label>
+                <div className="label-editor-field">
                   <span>Label type</span>
-                  <select
+                  <SelectField
+                    name="map-label-type"
                     value={selectedLabel.type}
+                    options={Object.entries(MAP_LABEL_TYPES).map(([value, type]) => ({
+                      value,
+                      label: type.label,
+                    }))}
                     onChange={(event) => updateAnnotation(selectedLabel.id, { type: event.target.value })}
-                  >
-                    {Object.entries(MAP_LABEL_TYPES).map(([value, type]) => (
-                      <option value={value} key={value}>{type.label}</option>
-                    ))}
-                  </select>
-                </label>
+                    ariaLabel="Map label type"
+                  />
+                </div>
                 <div className="label-coordinate-row">
                   <label>
                     <span>World X (m)</span>

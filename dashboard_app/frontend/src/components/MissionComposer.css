@@ -242,8 +242,7 @@ body.mission-composer-open {
   letter-spacing: .04em;
 }
 
-.composer-field input,
-.composer-field select {
+.composer-field input {
   width: 100%;
   height: 40px;
   padding: 0 11px;
@@ -259,8 +258,7 @@ body.mission-composer-open {
   color: #3e5d69;
 }
 
-.composer-field input:focus,
-.composer-field select:focus {
+.composer-field input:focus {
   border-color: rgba(80, 211, 235, .55);
   box-shadow: 0 0 0 3px rgba(55, 185, 216, .07);
 }
@@ -535,8 +533,7 @@ body.mission-composer-open {
 .mission-template-grid button small,
 .mission-template-grid button i { font-size: 8px; }
 .composer-field > span { font-size: 9px; }
-.composer-field input,
-.composer-field select { font-size: 11px; }
+.composer-field input { font-size: 11px; }
 .execution-options strong { font-size: 10px; }
 .execution-options small { font-size: 8px; }
 .mission-composer-summary > p,
@@ -634,8 +631,7 @@ body.mission-composer-open {
   color: var(--text-sub);
 }
 
-[data-theme='light'] .composer-field input,
-[data-theme='light'] .composer-field select {
+[data-theme='light'] .composer-field input {
   border-color: var(--input-border);
   background: var(--input-bg);
   color: var(--input-text);

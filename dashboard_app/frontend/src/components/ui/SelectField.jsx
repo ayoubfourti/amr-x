@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Icon from './Icon'
 import './SelectField.css'
@@ -35,11 +35,12 @@ export default function SelectField({
 }) {
   const triggerRef = useRef(null)
   const menuRef = useRef(null)
+  const instanceId = useId()
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(() => optionIndex(options, value))
   const [menuStyle, setMenuStyle] = useState(null)
   const selected = options.find((option) => String(option.value) === String(value))
-  const listboxId = `${name}-options`
+  const listboxId = `${name || 'select'}-${instanceId}-options`
 
   function close({ restoreFocus = false } = {}) {
     setOpen(false)
@@ -47,7 +48,7 @@ export default function SelectField({
   }
 
   function selectOption(option) {
-    if (option.disabled) return
+    if (!option || option.disabled) return
     onChange({ target: { name, value: String(option.value) } })
     close({ restoreFocus: true })
   }
@@ -131,6 +132,7 @@ export default function SelectField({
         role="combobox"
         aria-label={ariaLabel}
         aria-controls={listboxId}
+        aria-activedescendant={open && activeIndex >= 0 ? `${listboxId}-${activeIndex}` : undefined}
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-required={required}
@@ -153,6 +155,7 @@ export default function SelectField({
             return (
               <button
                 type="button"
+                id={`${listboxId}-${index}`}
                 className={`${isSelected ? 'is-selected' : ''} ${activeIndex === index ? 'is-active' : ''}`}
                 role="option"
                 aria-selected={isSelected}

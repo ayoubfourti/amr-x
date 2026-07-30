@@ -168,13 +168,13 @@
   white-space: nowrap;
 }
 
-.hud-unit-panel label {
+.hud-unit-select {
   margin-top: 10px;
   display: grid;
   gap: 5px;
 }
 
-.hud-unit-panel label > span,
+.hud-unit-select > span,
 .hud-drive-panel small {
   color: #779dac;
   font-size: 8px;
@@ -183,7 +183,7 @@
   text-transform: uppercase;
 }
 
-.hud-unit-panel select {
+.hud-unit-select .amrx-select-trigger {
   height: 39px;
   padding: 0 11px;
   border: 1px solid rgba(90, 205, 231, .17);
@@ -193,11 +193,6 @@
   font-size: 11px;
   font-weight: 700;
   line-height: 39px;
-}
-
-.hud-unit-panel select option {
-  background: #092234;
-  color: #f2fcff;
 }
 
 .hud-unit-state {

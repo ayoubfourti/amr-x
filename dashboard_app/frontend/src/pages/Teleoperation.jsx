@@ -6,6 +6,7 @@ import { useTeleopControl } from '../hooks/useTeleopControl'
 import { useDemo } from '../hooks/useDemo'
 import { useRosConnection } from '../hooks/useRosConnection'
 import LiveCameraFeed from '../components/ui/LiveCameraFeed'
+import SelectField from '../components/ui/SelectField'
 import WarehouseMapSVG from '../components/ui/WarehouseMapSVG'
 import Icon from '../components/ui/Icon'
 import { PageShell, PageHeader, Surface, StatusPill } from '../components/ui/CommandUI'
@@ -242,12 +243,17 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
             <span><i /> Active unit</span>
             <strong>{robot?.name || 'No robot selected'}</strong>
           </div>
-          <label>
+          <div className="hud-unit-select">
             <span>Controlled robot</span>
-            <select value={robot?.id || ''} onChange={(event) => setSelectedRobotId(event.target.value)}>
-              {robots.map((item) => <option value={item.id} key={item.id}>{item.name}</option>)}
-            </select>
-          </label>
+            <SelectField
+              name="teleoperation-robot"
+              value={robot?.id || ''}
+              options={robots.map((item) => ({ value: item.id, label: item.name }))}
+              onChange={(event) => setSelectedRobotId(event.target.value)}
+              ariaLabel="Controlled robot"
+              disabled={!robots.length}
+            />
+          </div>
           <div className="hud-unit-state">
             <span><Icon name="shield" size={14} /> Safety field clear</span>
             <b>{robot?.status || 'standby'}</b>
