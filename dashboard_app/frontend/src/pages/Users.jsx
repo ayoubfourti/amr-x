@@ -2,13 +2,15 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getUsers, createUser, updateUser, deleteUser, patchUser } from '../api/users'
 import { getRobots } from '../api/robots'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import Badge from '../components/ui/Badge'
 import PageTopbar from '../components/ui/PageTopbar'
-import { useToast } from '../components/ui/Toast'
+import { useToast } from '../hooks/useToast'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import { formatDate } from '../utils/format'
 import { initials, avatarColor } from '../utils/avatar'
+import Icon from '../components/ui/Icon'
+import { StatGrid } from '../components/ui/CommandUI'
 
 const ROLE_COLORS = {
   admin: '#dc2626',
@@ -38,7 +40,7 @@ function UserModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMes
             </p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>
-            ✕
+            <Icon name="close" size={16} />
           </button>
         </div>
 
@@ -294,38 +296,23 @@ function Users() {
 
   return (
     <div className="users-page">
-      <PageTopbar title="Users" latency={latency} />
+      <PageTopbar
+        title="Users"
+        latency={latency}
+        subtitle={`${stats.total} identities · ${stats.approved} active`}
+        action={
+          <button type="button" className="primary-action" onClick={openCreateModal}>
+            <Icon name="users" size={16} /> New user
+          </button>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>User Management</h3>
-          <p className="topbar-subtext">
-            {stats.total} members · {stats.approved} active
-          </p>
-        </div>
-        <button type="button" className="primary-button" onClick={openCreateModal}>
-          + New User
-        </button>
-      </div>
-
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Total Users</span>
-          <strong>{stats.total}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Approved</span>
-          <strong>{stats.approved}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Pending</span>
-          <strong>{stats.pending}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Rejected</span>
-          <strong>{stats.rejected}</strong>
-        </div>
-      </div>
+      <StatGrid items={[
+        { label: 'Total users', value: stats.total, icon: 'users', detail: 'Directory', tone: 'cyan' },
+        { label: 'Approved', value: stats.approved, icon: 'shield', detail: 'Active access', tone: 'green' },
+        { label: 'Pending', value: stats.pending, icon: 'clock', detail: 'Review queue', tone: 'amber' },
+        { label: 'Rejected', value: stats.rejected, icon: 'close', detail: 'Access denied', tone: 'red' },
+      ]} />
 
       {showForm && (
         <UserModal
@@ -342,7 +329,7 @@ function Users() {
       <div className="filter-bar">
         <input
           className="search-input"
-          placeholder="🔍 Search name or email…"
+          placeholder="Search name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -417,7 +404,7 @@ function Users() {
                         disabled={approveMutation.isPending}
                         onClick={() => approveMutation.mutate(user.id)}
                       >
-                        {approveMutation.isPending ? '…' : '✅ Approve'}
+                        {approveMutation.isPending ? '…' : <><Icon name="shield" size={15} /> Approve</>}
                       </button>
                       <button
                         type="button"
@@ -425,15 +412,15 @@ function Users() {
                         disabled={rejectMutation.isPending}
                         onClick={() => rejectMutation.mutate(user.id)}
                       >
-                        {rejectMutation.isPending ? '…' : '⛔ Reject'}
+                        {rejectMutation.isPending ? '…' : <><Icon name="close" size={15} /> Reject</>}
                       </button>
                     </>
                   )}
                   <button type="button" className="icon-button" onClick={() => openEditModal(user)}>
-                    ✏️
+                    <Icon name="settings" size={16} />
                   </button>
                   <button type="button" className="icon-button" onClick={() => setConfirmDelete(user)}>
-                    🗑️
+                    <Icon name="close" size={16} />
                   </button>
                 </td>
               </tr>

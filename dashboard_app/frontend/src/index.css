@@ -1,3 +1,17 @@
+@font-face {
+  font-family: 'AMRX Inter';
+  src: url('../../../website/public/fonts/inter-regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AMRX Inter';
+  src: url('../../../website/public/fonts/inter-semibold.otf') format('opentype');
+  font-weight: 600 800;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -30,8 +44,14 @@ body,
   overflow: hidden;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   font-family:
+    'AMRX Inter',
     'Inter',
     'Segoe UI',
     sans-serif;

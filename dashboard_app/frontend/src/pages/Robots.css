@@ -1,0 +1,80 @@
+.robots-page .data-table {
+  min-width: 1040px;
+}
+
+.robots-page .data-table th {
+  padding-top: 15px;
+  padding-bottom: 15px;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: .08em;
+}
+
+.robots-page .data-table td {
+  padding-top: 19px;
+  padding-bottom: 19px;
+  font-size: 14px;
+}
+
+.robot-name-cell {
+  color: var(--text) !important;
+  font-size: 15px !important;
+  font-weight: 750;
+  letter-spacing: .01em;
+}
+
+.robot-ip-cell,
+.robot-last-seen {
+  color: color-mix(in srgb, var(--text) 82%, var(--text-sub)) !important;
+  font-size: 14px !important;
+}
+
+.robot-state-badge {
+  min-height: 29px;
+  padding: 5px 13px !important;
+  display: inline-flex;
+  align-items: center;
+  font-size: 14px !important;
+  line-height: 1;
+}
+
+.robot-battery-cell {
+  min-width: 130px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.robot-battery-cell .progress-bar {
+  height: 8px;
+  min-width: 72px;
+}
+
+.robot-battery-cell strong,
+.robot-live-value strong {
+  color: var(--text);
+  font: 750 16px/1 var(--font-mono, monospace);
+  white-space: nowrap;
+}
+
+.robot-live-value {
+  white-space: nowrap;
+}
+
+.robot-live-value span {
+  margin-left: 5px;
+  color: var(--text-sub);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+@media (max-width: 700px) {
+  .robots-page .data-table th {
+    font-size: 11px;
+  }
+
+  .robots-page .data-table td {
+    padding-top: 16px;
+    padding-bottom: 16px;
+  }
+}

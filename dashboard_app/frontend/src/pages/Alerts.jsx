@@ -4,10 +4,12 @@ import { getAlerts, resolveAlert } from '../api/alerts'
 import { getRobots } from '../api/robots'
 import Badge from '../components/ui/Badge'
 import PageTopbar from '../components/ui/PageTopbar'
+import { StatGrid } from '../components/ui/CommandUI'
 import EmptyState from '../components/ui/EmptyState'
-import { useToast } from '../components/ui/Toast'
+import { useToast } from '../hooks/useToast'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import { formatDate } from '../utils/format'
+import Icon from '../components/ui/Icon'
 
 const TYPE_COLORS = {
   critical: '#dc2626',
@@ -69,41 +71,38 @@ function Alerts() {
 
   return (
     <div className="users-page">
-      <PageTopbar title="Alerts" latency={latency} />
+      <PageTopbar
+        title="Alerts"
+        latency={latency}
+        subtitle={`${unresolved.length} unresolved · Fleet event monitoring`}
+        action={
+          <button
+            type="button"
+            className={`command-icon-action tone-amber ${unresolvedOnly ? 'is-active' : ''}`}
+            onClick={() => setUnresolvedOnly((v) => !v)}
+          >
+            <Icon name="alert" size={15} /> Unresolved only
+          </button>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>Fleet Alerts</h3>
-          <p className="topbar-subtext">{unresolved.length} unresolved</p>
-        </div>
-        <button
-          type="button"
-          className={`filter-btn ${unresolvedOnly ? 'active' : ''}`}
-          onClick={() => setUnresolvedOnly((v) => !v)}
-        >
-          Clear resolved
-        </button>
-      </div>
-
-      <div className="stat-cards">
-        {TYPES.map((type) => (
-          <div className="stat-card" key={type}>
-            <span>{type}</span>
-            <strong>{stats[type]}</strong>
-          </div>
-        ))}
-      </div>
+      <StatGrid items={[
+        { label: 'Critical', value: stats.critical, icon: 'alert', detail: 'Immediate action', tone: 'red' },
+        { label: 'Error', value: stats.error, icon: 'close', detail: 'Needs review', tone: 'red' },
+        { label: 'Warning', value: stats.warning, icon: 'clock', detail: 'Monitor', tone: 'amber' },
+        { label: 'Info', value: stats.info, icon: 'shield', detail: 'Informational', tone: 'blue' },
+      ]} />
 
       {isLoading && <p>Loading alerts…</p>}
       {isError && <p className="error">Failed to load alerts: {error.message}</p>}
 
       {!isLoading && !isError && alertList.length === 0 && (
-        <EmptyState icon="✅" title="All clear" subtitle="No alerts have been triggered" />
+        <EmptyState icon={<Icon name="shield" size={40} />} title="All clear" subtitle="No alerts have been triggered" />
       )}
 
       {!isLoading && !isError && alertList.length > 0 && visibleAlerts.length === 0 && (
         <EmptyState
-          icon="🔍"
+          icon={<Icon name="search" size={40} />}
           title="No alerts match this filter"
           subtitle="Try a different alert type"
         />

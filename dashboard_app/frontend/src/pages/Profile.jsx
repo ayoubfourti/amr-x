@@ -1,39 +1,40 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageTopbar from '../components/ui/PageTopbar'
-import Badge from '../components/ui/Badge'
-import { useAuth } from '../context/AuthContext'
-import { useToast } from '../components/ui/Toast'
+import Icon from '../components/ui/Icon'
+import { StatusPill } from '../components/ui/CommandUI'
+import { useAuth } from '../hooks/useAuth'
+import { useToast } from '../hooks/useToast'
 import { initials, avatarColor } from '../utils/avatar'
+import './SettingsProfile.css'
 
-const ROLE_COLORS = {
-  admin: '#dc2626',
-  operator: '#2563eb',
-  client: '#16a34a',
+const STATUS_TONES = {
+  approved: 'green',
+  pending: 'amber',
+  rejected: 'red',
 }
 
-const STATUS_COLORS = {
-  approved: '#16a34a',
-  pending: '#d97706',
-  rejected: '#dc2626',
-}
-
-function SettingsRow({ label, subtext, control }) {
+function ProfileSection({ icon, eyebrow, title, description, children, className = '' }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '14px 0',
-        borderBottom: '1px solid var(--border)',
-      }}
-    >
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{label}</div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{subtext}</div>
-      </div>
-      <div>{control}</div>
+    <section className={`command-surface settings-section profile-section ${className}`}>
+      <header className="settings-section-header">
+        <span className="settings-section-icon"><Icon name={icon} size={18} /></span>
+        <span>
+          <small>{eyebrow}</small>
+          <strong>{title}</strong>
+          {description && <p>{description}</p>}
+        </span>
+      </header>
+      <div className="settings-section-body">{children}</div>
+    </section>
+  )
+}
+
+function ProfileFact({ icon, label, value, children }) {
+  return (
+    <div className="profile-fact">
+      <span><Icon name={icon} size={16} /></span>
+      <div><small>{label}</small>{children || <strong>{value}</strong>}</div>
     </div>
   )
 }
@@ -42,7 +43,6 @@ export default function Profile() {
   const { currentUser, logout } = useAuth()
   const { showToast } = useToast()
   const navigate = useNavigate()
-
   const [displayName, setDisplayName] = useState('')
   const [sessionStart] = useState(() => new Date().toLocaleString())
 
@@ -51,8 +51,6 @@ export default function Profile() {
   }, [currentUser])
 
   function handleSaveName() {
-    // Note: this only persists locally. A real implementation would call
-    // PATCH /users/me with the new display name.
     localStorage.setItem('amrx-display-name', displayName)
     showToast('Profile updated', 'success')
   }
@@ -62,84 +60,99 @@ export default function Profile() {
     navigate('/login')
   }
 
-  return (
-    <div className="users-page">
-      <PageTopbar title="Profile" />
+  const status = currentUser?.status || 'unknown'
+  const role = currentUser?.role || 'operator'
 
-      <div className="modal-card" style={{ marginBottom: 20 }}>
-        <h3>Profile</h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, padding: '12px 0' }}>
+  return (
+    <div className="users-page profile-command-page">
+      <PageTopbar
+        title="Profile"
+        subtitle="Operator identity, access level, and active session"
+      />
+
+      <div className="profile-layout">
+        <aside className="command-surface identity-card">
+          <div className="identity-accent" />
           <div
-            className="avatar-chip"
-            style={{
-              width: 64,
-              height: 64,
-              fontSize: 24,
-              flexShrink: 0,
-              backgroundColor: avatarColor(currentUser?.name),
-            }}
+            className="identity-avatar"
+            style={{ backgroundColor: avatarColor(currentUser?.name) }}
           >
             {initials(currentUser?.name)}
+            <i />
           </div>
-          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 10 }}>
-            <label className="auth-field">
-              <span className="auth-label">Name</span>
-              <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+          <div className="identity-copy">
+            <small>Authenticated operator</small>
+            <h2>{displayName || currentUser?.name || 'Operator'}</h2>
+            <p>{currentUser?.email}</p>
+          </div>
+          <div className="identity-status">
+            <StatusPill tone={STATUS_TONES[status] || 'neutral'}>{status}</StatusPill>
+            <StatusPill tone="blue">{role}</StatusPill>
+          </div>
+          <div className="identity-meta">
+            <span><small>Workspace</small><strong>Tunis Lab 01</strong></span>
+            <span><small>Access</small><strong>{role === 'admin' ? 'Full control' : 'Operational'}</strong></span>
+          </div>
+        </aside>
+
+        <div className="profile-main-column">
+          <ProfileSection
+            icon="users"
+            eyebrow="Identity"
+            title="Operator details"
+            description="Information displayed across the command workspace."
+          >
+            <label className="profile-field">
+              <span>Display name</span>
+              <div>
+                <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+                <button type="button" className="primary-action" onClick={handleSaveName}>
+                  Save changes
+                </button>
+              </div>
+              <small>This preference is stored for the current browser.</small>
             </label>
-            <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{currentUser?.email}</div>
-            <div>
-              <Badge text={currentUser?.role || 'user'} color={ROLE_COLORS[currentUser?.role] || '#6b7280'} />
-            </div>
+          </ProfileSection>
+
+          <div className="profile-detail-grid">
+            <ProfileSection
+              icon="shield"
+              eyebrow="Authorization"
+              title="Access and security"
+              description="Account controls managed by your organization."
+            >
+              <div className="profile-facts">
+                <ProfileFact icon="shield" label="Account status">
+                  <StatusPill tone={STATUS_TONES[status] || 'neutral'}>{status}</StatusPill>
+                </ProfileFact>
+                <ProfileFact icon="users" label="Assigned role">
+                  <StatusPill tone="blue">{role}</StatusPill>
+                </ProfileFact>
+                <ProfileFact icon="settings" label="Password">
+                  <button type="button" className="command-icon-action" disabled>Admin managed</button>
+                </ProfileFact>
+              </div>
+            </ProfileSection>
+
+            <ProfileSection
+              icon="clock"
+              eyebrow="Session"
+              title="Current sign-in"
+              description="Browser session and authentication context."
+            >
+              <div className="profile-facts">
+                <ProfileFact icon="wifi" label="Session state">
+                  <StatusPill tone="green">Active</StatusPill>
+                </ProfileFact>
+                <ProfileFact icon="clock" label="Started" value={sessionStart} />
+                <ProfileFact icon="command" label="Identity" value={currentUser?.email || '—'} />
+              </div>
+              <button type="button" className="profile-signout" onClick={handleSignOut}>
+                <Icon name="logout" size={15} /> Sign out of this session
+              </button>
+            </ProfileSection>
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
-          <button className="primary-button" type="button" onClick={handleSaveName}>
-            Save changes
-          </button>
-        </div>
-      </div>
-
-      <div className="modal-card" style={{ marginBottom: 20 }}>
-        <h3>Security</h3>
-        <SettingsRow
-          label="Change Password"
-          subtext="Contact your admin to reset password"
-          control={
-            <button className="primary-button" type="button" disabled>
-              Request Reset
-            </button>
-          }
-        />
-        <SettingsRow
-          label="Account Status"
-          subtext={currentUser?.status || 'unknown'}
-          control={
-            <Badge text={currentUser?.status || 'unknown'} color={STATUS_COLORS[currentUser?.status] || '#6b7280'} />
-          }
-        />
-        <SettingsRow
-          label="Role"
-          subtext="Your access level"
-          control={<Badge text={currentUser?.role || 'user'} color={ROLE_COLORS[currentUser?.role] || '#6b7280'} />}
-        />
-      </div>
-
-      <div className="modal-card">
-        <h3>Session</h3>
-        <SettingsRow
-          label="Current Session"
-          subtext={`Logged in as ${currentUser?.email || ''}`}
-          control={
-            <button className="primary-button" type="button" onClick={handleSignOut}>
-              Sign Out
-            </button>
-          }
-        />
-        <SettingsRow
-          label="Last Login"
-          subtext="Session started this browser session"
-          control={<span style={{ fontSize: 12, color: 'var(--text)' }}>{sessionStart}</span>}
-        />
       </div>
     </div>
   )

@@ -3,10 +3,13 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getRobots, createRobot, updateRobotStatus } from '../api/robots'
 import Badge from '../components/ui/Badge'
 import PageTopbar from '../components/ui/PageTopbar'
+import { StatGrid } from '../components/ui/CommandUI'
 import EmptyState from '../components/ui/EmptyState'
-import { useToast } from '../components/ui/Toast'
-import { useDemo } from '../context/DemoContext'
+import { useToast } from '../hooks/useToast'
+import { useDemo } from '../hooks/useDemo'
 import { formatDate } from '../utils/format'
+import Icon from '../components/ui/Icon'
+import './Robots.css'
 
 const STATUS_COLORS = {
   online: '#16a34a',
@@ -29,7 +32,7 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
             </p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>
-            ✕
+            <Icon name="close" size={16} />
           </button>
         </div>
 
@@ -192,37 +195,24 @@ function Robots() {
   const latency = displayRobots.find((r) => r.status === 'online')?.wifi_latency ?? null
 
   return (
-    <div className="users-page">
-      <PageTopbar title="Robots" latency={latency} />
+    <div className="users-page robots-page">
+      <PageTopbar
+        title="Robots"
+        latency={latency}
+        subtitle={`${stats.total} registered · ${stats.online} online`}
+        action={
+          <button type="button" className="primary-action" onClick={openCreateModal}>
+            <Icon name="robot" size={16} /> Register robot
+          </button>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>Fleet Management</h3>
-          <p className="topbar-subtext">{stats.total} robots · {stats.online} online</p>
-        </div>
-        <button type="button" className="primary-button" onClick={openCreateModal}>
-          + Register Robot
-        </button>
-      </div>
-
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Total Robots</span>
-          <strong>{stats.total}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Online</span>
-          <strong>{stats.online}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Offline</span>
-          <strong>{stats.offline}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Error</span>
-          <strong>{stats.error}</strong>
-        </div>
-      </div>
+      <StatGrid items={[
+        { label: 'Total robots', value: stats.total, icon: 'robot', detail: 'Fleet inventory', tone: 'cyan' },
+        { label: 'Online', value: stats.online, icon: 'wifi', detail: 'Connected now', tone: 'green' },
+        { label: 'Offline', value: stats.offline, icon: 'pause', detail: 'Unavailable', tone: 'blue' },
+        { label: 'Error', value: stats.error, icon: 'alert', detail: 'Needs attention', tone: 'red' },
+      ]} />
 
       {showForm && (
         <RobotModal
@@ -239,7 +229,7 @@ function Robots() {
       <div className="filter-bar">
         <input
           className="search-input"
-          placeholder="🔍 Search name or IP…"
+          placeholder="Search name or IP…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
@@ -257,12 +247,12 @@ function Robots() {
 
       {!isLoading && !isError && displayRobots.length === 0 && (
         <EmptyState
-          icon="🤖"
+          icon={<Icon name="robot" size={40} />}
           title="No robots registered yet"
           subtitle="Add your first robot to start managing your fleet"
           action={
             <button type="button" className="primary-button" onClick={openCreateModal}>
-              + Register Robot
+              <Icon name="robot" size={16} /> Register robot
             </button>
           }
         />
@@ -270,7 +260,7 @@ function Robots() {
 
       {!isLoading && !isError && displayRobots.length > 0 && filteredRobots.length === 0 && (
         <EmptyState
-          icon="🔍"
+          icon={<Icon name="search" size={40} />}
           title="No robots match your search"
           subtitle="Try a different name or status filter"
         />
@@ -295,30 +285,40 @@ function Robots() {
           <tbody>
             {filteredRobots.map((robot) => (
               <tr key={robot.id}>
-                <td>{robot.name}</td>
-                <td>{robot.ip_address || '—'}</td>
+                <td className="robot-name-cell">{robot.name}</td>
+                <td className="robot-ip-cell">{robot.ip_address || '—'}</td>
                 <td>
-                  <Badge text={robot.status} color={STATUS_COLORS[robot.status] || '#6b7280'} />
+                  <Badge
+                    className="robot-state-badge"
+                    text={robot.status}
+                    color={STATUS_COLORS[robot.status] || '#6b7280'}
+                  />
                 </td>
                 <td>
-                  <Badge text={robot.mode} color="#2563eb" />
+                  <Badge className="robot-state-badge" text={robot.mode} color="#2563eb" />
                 </td>
                 <td>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${robot.battery ?? 0}%` }} />
-                  </div>{' '}
-                  {robot.battery ?? '—'}%
+                  <div className="robot-battery-cell">
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${robot.battery ?? 0}%` }} />
+                    </div>
+                    <strong>{robot.battery ?? '—'}%</strong>
+                  </div>
                 </td>
-                <td>{robot.speed ?? '—'} m/s</td>
-                <td>{robot.wifi_latency ?? '—'} ms</td>
-                <td>{formatDate(robot.last_seen)}</td>
+                <td className="robot-live-value">
+                  <strong>{robot.speed ?? '—'}</strong><span>m/s</span>
+                </td>
+                <td className="robot-live-value">
+                  <strong>{robot.wifi_latency ?? '—'}</strong><span>ms</span>
+                </td>
+                <td className="robot-last-seen">{formatDate(robot.last_seen)}</td>
                 <td>
                   <button
                     type="button"
                     className="icon-button"
                     onClick={() => openEditModal(robot)}
                   >
-                    ✏️
+                    <Icon name="settings" size={16} />
                   </button>
                 </td>
               </tr>

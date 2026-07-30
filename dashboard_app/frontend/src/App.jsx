@@ -1,33 +1,28 @@
-import { useEffect } from 'react'
+import { lazy, Suspense, useEffect } from 'react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom'
+import { BrowserRouter, Outlet, Route, Routes, useLocation } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Sidebar from './components/Sidebar'
-import Login from './pages/Login'
-import Register from './pages/Register'
-import PendingApproval from './pages/PendingApproval'
-import Users from './pages/Users'
-import Dashboard from './pages/Dashboard'
-import Robots from './pages/Robots'
-import Missions from './pages/Missions'
-import Alerts from './pages/Alerts'
-import Modules from './pages/Modules'
-import Teleoperation from './pages/Teleoperation'
-import Map from './pages/Map'
-import Settings from './pages/Settings'
-import Profile from './pages/Profile'
-import NotFound from './pages/NotFound'
 import ErrorBoundary from './components/ui/ErrorBoundary'
 import './App.css'
-import { useDockingStatus } from './hooks/useDockingStatus'
-import { useModuleDocking } from './hooks/useModuleDocking'
-import DockingPanel from './components/DockingPanel'
-
-import { useRos } from './hooks/useRos'
-import { useTeleopControl } from './hooks/useTeleopControl'
 
 const queryClient = new QueryClient()
+
+const Alerts = lazy(() => import('./pages/Alerts'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Login = lazy(() => import('./pages/Login'))
+const Map = lazy(() => import('./pages/Map'))
+const Missions = lazy(() => import('./pages/Missions'))
+const Modules = lazy(() => import('./pages/Modules'))
+const NotFound = lazy(() => import('./pages/NotFound'))
+const PendingApproval = lazy(() => import('./pages/PendingApproval'))
+const Profile = lazy(() => import('./pages/Profile'))
+const Register = lazy(() => import('./pages/Register'))
+const Robots = lazy(() => import('./pages/Robots'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Teleoperation = lazy(() => import('./pages/Teleoperation'))
+const Users = lazy(() => import('./pages/Users'))
 
 const PAGE_TITLES = {
   '/': 'Dashboard',
@@ -55,12 +50,16 @@ function TitleUpdater() {
   return null
 }
 
-function AppLayout({ children }) {
+function AppLayout() {
+  const location = useLocation()
+
   return (
     <div className="app-layout">
       <Sidebar />
-      <div
+      <button
+        type="button"
         className="sidebar-overlay"
+        aria-label="Close navigation"
         onClick={() => {
           document.body.removeAttribute('data-sidebar')
           window.dispatchEvent(new CustomEvent('closeSidebar'))
@@ -68,6 +67,7 @@ function AppLayout({ children }) {
       />
       <main className="app-content">
         <ErrorBoundary
+          key={location.pathname}
           fallback={
             <div
               style={{
@@ -110,18 +110,31 @@ function AppLayout({ children }) {
             </div>
           }
         >
-          {children}
+          <Outlet />
         </ErrorBoundary>
       </main>
     </div>
   )
 }
 
+function ProtectedLayout() {
+  return (
+    <ProtectedRoute>
+      <AppLayout />
+    </ProtectedRoute>
+  )
+}
+
+function RouteLoader() {
+  return (
+    <div className="route-loader" role="status">
+      <span className="loading-orbit" />
+      <p>Loading command surface…</p>
+    </div>
+  )
+}
+
 function App() {
-  const { ros, connected } = useRos('ws://localhost:9090');
-  const { sendCommand, emergencyStop } = useTeleopControl(ros);
-  const docking = useDockingStatus(ros);
-  const { dock, undock, progress, result } = useModuleDocking(ros);
   return (
     <ErrorBoundary
       fallback={
@@ -163,125 +176,28 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <BrowserRouter>
-          <TitleUpdater />
-          <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/pending" element={<PendingApproval />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Dashboard />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/robots"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Robots />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/missions"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Missions />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/map"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Map />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/alerts"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Alerts />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/modules"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Modules />
-                    <DockingPanel
-                      docking={docking}
-                      progress={progress}
-                      result={result}
-                      onDock={() => dock()}
-                      onUndock={undock}
-                    />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/teleoperation"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Teleoperation
-                      unitOnline={connected}
-                      onSendCommand={sendCommand}
-                      onEmergencyStop={emergencyStop}
-                    />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Settings />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Users />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <AppLayout>
-                    <Profile />
-                  </AppLayout>
-                </ProtectedRoute>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
+            <TitleUpdater />
+            <Suspense fallback={<RouteLoader />}>
+              <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/pending" element={<PendingApproval />} />
+                <Route element={<ProtectedLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="/robots" element={<Robots />} />
+                  <Route path="/missions" element={<Missions />} />
+                  <Route path="/map" element={<Map />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/modules" element={<Modules />} />
+                  <Route path="/teleoperation" element={<Teleoperation />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/users" element={<Users />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
         </AuthProvider>
       </QueryClientProvider>
     </ErrorBoundary>
