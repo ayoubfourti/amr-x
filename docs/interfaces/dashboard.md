@@ -50,6 +50,13 @@ FastAPI backend :8000
 
 ## Current operator experience
 
+The public login route uses the same blue-black, cyan, and teal command-center
+language as the authenticated application. Its desktop fleet illustration is
+decorative—not live telemetry—and collapses to a focused single-column access
+form on smaller screens. Login keeps the existing API/session behavior while
+providing labeled fields, autocomplete metadata, keyboard-visible focus,
+announced errors, and an accessible password-visibility control.
+
 The Overview provides fleet and mission KPIs, a synchronized 2D/3D SDF world
 panel, selected-robot health, live camera context, recent activity, and a latest
 notifications menu. Selecting a notification opens an in-application detail

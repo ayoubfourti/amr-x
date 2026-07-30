@@ -26,6 +26,10 @@ const paths = {
   logout: <><path d="M10 17l5-5-5-5M15 12H3"/><path d="M14 3h7v18h-7"/></>,
   command: <><path d="M18 8A6 6 0 0 0 6 8v8a6 6 0 0 0 12 0Z"/><path d="M9 8h6M9 12h6M9 16h3"/></>,
   camera: <><path d="M14.5 5 13 3h-2L9.5 5H5a3 3 0 0 0-3 3v9a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V8a3 3 0 0 0-3-3Z"/><circle cx="12" cy="12.5" r="4"/></>,
+  mail: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></>,
+  lock: <><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></>,
+  eye: <><path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z"/><circle cx="12" cy="12" r="2.5"/></>,
+  eyeOff: <><path d="m3 3 18 18M10.6 6.1A10.7 10.7 0 0 1 12 6c6.5 0 10 6 10 6a17.4 17.4 0 0 1-2.2 2.9M6.6 6.6C3.6 8.3 2 12 2 12s3.5 6 10 6a10.6 10.6 0 0 0 4.2-.8M10.3 10.3a2.5 2.5 0 0 0 3.4 3.4"/></>,
   close: <path d="M6 6l12 12M18 6 6 18"/>,
   check: <path d="m5 12 4 4L19 6"/>,
 }

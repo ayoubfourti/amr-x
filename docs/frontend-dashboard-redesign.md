@@ -47,6 +47,23 @@ activity feed.
 - Cards include hover elevation and illuminated border feedback.
 - Controls maintain tablet-friendly hit areas and reduced-motion support.
 
+## Secure entry experience
+
+The `/login` route now extends the command-center visual system to the first
+operator touchpoint instead of presenting a separate generic authentication
+card. On desktop it pairs the access form with an illustrative live-fleet
+preview, mission route, connection state, and AMR-X product identity. On
+tablet and phone it collapses to a focused single-column form with the same
+branding.
+
+The form preserves the existing `/api/auth/login` contract and session flow.
+It adds explicit labels, email and password autocomplete hints, invalid-field
+relationships, an announced error region, visible keyboard focus, and an
+accessible password-visibility control. Motion is decorative and disabled when
+the operating system requests reduced motion. The operational preview is
+illustrative only; unlike authenticated dashboard data, it is hidden from
+assistive technology and cannot be mistaken for live telemetry.
+
 ## Map and 3D world
 
 The Overview and dedicated Live Map workspace have two synchronized modes:
@@ -197,6 +214,8 @@ fleet and team filters, settings, and administrative forms.
 
 - `dashboard_app/frontend/src/pages/Dashboard.jsx`
 - `dashboard_app/frontend/src/pages/Dashboard.css`
+- `dashboard_app/frontend/src/pages/Login.jsx`
+- `dashboard_app/frontend/src/pages/Login.css`
 - `dashboard_app/frontend/src/components/Sidebar.jsx`
 - `dashboard_app/frontend/src/components/ui/Icon.jsx`
 - `dashboard_app/frontend/src/components/ui/WarehouseWorld3D.jsx`
