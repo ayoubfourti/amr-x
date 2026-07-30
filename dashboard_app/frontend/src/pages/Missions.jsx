@@ -14,6 +14,7 @@ import { useToast } from '../hooks/useToast'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import MissionComposer from '../components/MissionComposer'
 import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
 import {
   PageShell,
   PageHeader,
@@ -29,6 +30,29 @@ import { formatDate } from '../utils/format'
 import './Missions.css'
 
 const FILTERS = ['all', 'pending', 'running', 'paused', 'completed', 'failed']
+
+const PRIORITY_OPTIONS = [
+  { value: 'all', label: 'All priorities' },
+  { value: 'critical', label: 'Critical' },
+  { value: 'high', label: 'High' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'low', label: 'Low' },
+]
+
+const WORKFLOW_OPTIONS = [
+  { value: 'all', label: 'All workflows' },
+  { value: 'delivery', label: 'Delivery' },
+  { value: 'pickup', label: 'Pickup' },
+  { value: 'inspection', label: 'Inspection' },
+  { value: 'patrol', label: 'Patrol' },
+]
+
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'priority', label: 'Priority' },
+  { value: 'progress', label: 'Progress' },
+  { value: 'name', label: 'Mission name' },
+]
 
 const STATUS_TONES = {
   pending: 'neutral',
@@ -167,7 +191,17 @@ function Missions() {
   }, [displayMissions, filter, priorityFilter, search, sortBy, typeFilter, unitFilter])
 
   const detailMission = missionList.find((m) => m.id === detailOpenId)
-  const displayRobots = demo ? DEMO_ROBOTS : (robots || [])
+  const displayRobots = useMemo(
+    () => (demo ? DEMO_ROBOTS : robots || []),
+    [demo, DEMO_ROBOTS, robots],
+  )
+  const unitOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All units' },
+      ...displayRobots.map((robot) => ({ value: String(robot.id), label: robot.name })),
+    ],
+    [displayRobots],
+  )
   const robotName = (id) => displayRobots.find((robot) => robot.id === id)?.name || `Unit ${id}`
 
   const latency = (robots || []).find((r) => r.status === 'online')?.wifi_latency ?? null
@@ -239,44 +273,46 @@ function Missions() {
           </div>
         </div>
         <div className="mission-toolbar-secondary">
-          <label className="mission-select">
+          <div className="mission-select">
             <span>Priority</span>
-            <select value={priorityFilter} onChange={(event) => setPriorityFilter(event.target.value)}>
-              <option value="all">All priorities</option>
-              <option value="critical">Critical</option>
-              <option value="high">High</option>
-              <option value="normal">Normal</option>
-              <option value="low">Low</option>
-            </select>
-          </label>
-          <label className="mission-select">
+            <SelectField
+              name="mission-priority-filter"
+              value={priorityFilter}
+              options={PRIORITY_OPTIONS}
+              onChange={(event) => setPriorityFilter(event.target.value)}
+              ariaLabel="Filter missions by priority"
+            />
+          </div>
+          <div className="mission-select">
             <span>Workflow</span>
-            <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)}>
-              <option value="all">All workflows</option>
-              <option value="delivery">Delivery</option>
-              <option value="pickup">Pickup</option>
-              <option value="inspection">Inspection</option>
-              <option value="patrol">Patrol</option>
-            </select>
-          </label>
-          <label className="mission-select">
+            <SelectField
+              name="mission-workflow-filter"
+              value={typeFilter}
+              options={WORKFLOW_OPTIONS}
+              onChange={(event) => setTypeFilter(event.target.value)}
+              ariaLabel="Filter missions by workflow"
+            />
+          </div>
+          <div className="mission-select">
             <span>Assigned unit</span>
-            <select value={unitFilter} onChange={(event) => setUnitFilter(event.target.value)}>
-              <option value="all">All units</option>
-              {displayRobots.map((robot) => (
-                <option value={String(robot.id)} key={robot.id}>{robot.name}</option>
-              ))}
-            </select>
-          </label>
-          <label className="mission-select">
+            <SelectField
+              name="mission-unit-filter"
+              value={unitFilter}
+              options={unitOptions}
+              onChange={(event) => setUnitFilter(event.target.value)}
+              ariaLabel="Filter missions by assigned unit"
+            />
+          </div>
+          <div className="mission-select">
             <span>Sort</span>
-            <select value={sortBy} onChange={(event) => setSortBy(event.target.value)}>
-              <option value="newest">Newest first</option>
-              <option value="priority">Priority</option>
-              <option value="progress">Progress</option>
-              <option value="name">Mission name</option>
-            </select>
-          </label>
+            <SelectField
+              name="mission-sort"
+              value={sortBy}
+              options={SORT_OPTIONS}
+              onChange={(event) => setSortBy(event.target.value)}
+              ariaLabel="Sort missions"
+            />
+          </div>
           <div className="mission-toolbar-meta">
             <strong>{filteredMissions.length}</strong>
             <span>of {stats.total} missions</span>
