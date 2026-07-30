@@ -1,7 +1,6 @@
 .login-page {
   --login-cyan: #4cc9ff;
   --login-teal: #16f0d0;
-  --login-ink: #03101a;
   min-height: 100vh;
   min-height: 100svh;
   display: grid;

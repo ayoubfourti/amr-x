@@ -1806,7 +1806,7 @@ body[data-sidebar='open'] .sidebar-overlay {
 }
 
 /* ================================================
-   AUTH PAGES (Login / Register / PendingApproval)
+   AUTH PAGES (Register / PendingApproval)
 ================================================ */
 .auth-page {
   position: fixed;
@@ -1818,7 +1818,6 @@ body[data-sidebar='open'] .sidebar-overlay {
     radial-gradient(circle at 20% 20%, rgba(94, 234, 212, 0.08), transparent 40%),
     radial-gradient(circle at 80% 80%, rgba(192, 132, 252, 0.1), transparent 40%),
     #07080f;
-  background-color: #07080f;
   overflow: auto;
   z-index: 1000;
 }
@@ -1835,42 +1834,7 @@ body[data-sidebar='open'] .sidebar-overlay {
   text-align: center;
   background: #0f1020;
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   color: #e8eaf6;
-}
-
-.auth-logo {
-  width: 64px;
-  height: 64px;
-  margin: 0 auto;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 800;
-  font-size: 1.5rem;
-  color: #000000;
-  background: linear-gradient(135deg, #00d4aa, #38bdf8);
-  box-shadow: 0 0 30px rgba(0, 212, 170, 0.35);
-}
-
-.auth-title {
-  font-size: 1.4rem;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  background: linear-gradient(135deg, #00d4aa, #38bdf8);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin: 4px 0 0;
-}
-
-.auth-subtitle {
-  font-size: 0.75rem;
-  letter-spacing: 2px;
-  text-transform: uppercase;
-  color: #3d4060;
-  margin-bottom: 8px;
 }
 
 .auth-card form {
@@ -1893,29 +1857,6 @@ body[data-sidebar='open'] .sidebar-overlay {
   outline: none;
   border-color: #00d4aa;
   box-shadow: 0 0 0 2px rgba(0, 212, 170, 0.2);
-}
-
-.auth-submit {
-  margin-top: 4px;
-  padding: 12px;
-  border: none;
-  border-radius: 8px;
-  background: linear-gradient(135deg, #00d4aa, #38bdf8);
-  color: #000000;
-  font-weight: 700;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  cursor: pointer;
-  transition: box-shadow 0.15s;
-}
-
-.auth-submit:hover {
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.3);
-}
-
-.auth-submit:disabled {
-  opacity: 0.6;
-  cursor: default;
 }
 
 .auth-card p {
