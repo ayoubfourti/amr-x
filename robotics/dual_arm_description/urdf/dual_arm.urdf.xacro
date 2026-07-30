@@ -269,7 +269,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_2">
@@ -324,7 +324,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_3">
@@ -379,7 +379,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="250" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_4">
@@ -434,7 +434,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="200" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_5">
@@ -489,7 +489,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_6">
@@ -544,7 +544,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
     name="wrist">
@@ -654,7 +654,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
     name="shoulderR_2">
@@ -709,7 +709,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
     name="shoulderR_3">
@@ -764,7 +764,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="250" velocity="1.0"/>
   </joint>
   <link
     name="shoulderR_4">
@@ -819,7 +819,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="200" velocity="1.0"/>
   </joint>
   <link
     name="shoulderR_5">
@@ -874,7 +874,7 @@
     <axis
       xyz="0 1 0" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
     name="shoulderR_6">
@@ -929,7 +929,7 @@
     <axis
       xyz="0 0 1" />
   
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+    <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
     name="wristR">
@@ -991,73 +991,133 @@
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
+
+    <!-- Left arm: heavy shoulder joints get stronger gains -->
     <joint name="shoulder1_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder2_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder3_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder4_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder5_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder6_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="wrist_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">80.0</param>
+        <param name="i">0.0</param>
+        <param name="d">8.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
+
+    <!-- Right arm: same tiered gains, mirrored -->
     <joint name="shoulderR_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_2_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_3joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">200.0</param>
+        <param name="i">0.0</param>
+        <param name="d">20.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_4joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_5joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_6joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">100.0</param>
+        <param name="i">0.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="wristR_joint">
-      <command_interface name="position"/>
+      <command_interface name="position">
+        <param name="p">80.0</param>
+        <param name="i">0.0</param>
+        <param name="d">8.0</param>
+      </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
