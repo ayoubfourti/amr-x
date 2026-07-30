@@ -13,8 +13,7 @@ The repository contains three dashboard components with different roles:
    mission, module, alert, and user endpoints.
 3. `dashboard_app/frontend/` is an implemented React/Vite operator application
    with authentication, dashboard, robot, mission, alert, module,
-   teleoperation, and user-management pages. Map and settings pages are still
-   placeholders.
+   teleoperation, digital-twin map, settings, and user-management pages.
 
 ## Data path
 
@@ -47,7 +46,25 @@ FastAPI backend :8000
 | FastAPI backend | CRUD-style API for robots, missions, modules, alerts, and users | Implemented backend |
 | ROS database updater | Subscribes to `/robot_state` and updates a pre-registered robot | Implemented, currently one hard-coded robot identity |
 | PostgreSQL | Persistent backend database in Docker | Implemented local service |
-| React/Vite frontend | Authentication plus dashboard, robot, mission, alert, module, teleoperation, and user pages | Implemented; map and settings remain placeholders |
+| React/Vite frontend | Authentication plus dashboard, robot, mission, alert, module, teleoperation, digital-twin map, settings, and user pages | Implemented operator application |
+
+## Current operator experience
+
+The Overview provides fleet and mission KPIs, a synchronized 2D/3D SDF world
+panel, selected-robot health, live camera context, recent activity, and a latest
+notifications menu. Selecting a notification opens an in-application detail
+dialog with severity, time, robot/event identifiers, and a recommended action.
+
+Selecting the Overview camera opens teleoperation as a full-screen
+in-application control overlay for the selected robot. Closing the overlay
+unmounts teleoperation and publishes the existing zero-velocity cleanup command.
+
+The dedicated Live Map page exposes every generated SDF world, synchronized 2D
+and 3D views, fleet focus controls, and locally persistent metric-coordinate
+labels. Labels also appear in the Overview digital twin for the selected world
+and can be reset independently per world.
+See [Digital Twin Maps](digital-twin-maps.md) for the generator, schema,
+renderers, and label-editing workflow.
 
 ## Run the browser teleoperation path
 
@@ -180,8 +197,10 @@ Vite together. Press `Ctrl+C` to stop the two development servers, then use
 
 ## Important limitations
 
-- The React frontend is under active development; map and settings are
-  placeholders, and the standalone ROS HTML page remains a development tool.
+- The React frontend is under active development, and the standalone ROS HTML
+  page remains a development tool.
+- Live Map labels are stored in the current browser profile and are not yet
+  synchronized through the backend or written into SDF.
 - The FastAPI service assumes rosbridge at `localhost:9090` and robot name
   `amr_x`; both are hard-coded in the current client.
 - Teleoperation is not authenticated, rate-limited, or protected by a complete
