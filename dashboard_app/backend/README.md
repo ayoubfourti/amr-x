@@ -48,9 +48,20 @@ Open:
 - API: <http://127.0.0.1:8000/>
 - Swagger documentation: <http://127.0.0.1:8000/docs>
 
-The API creates its database tables automatically on first startup. A
+The backend runs versioned Alembic migrations before every API startup. The
+initial migration creates all database tables on first startup, and later
+migrations update existing databases without deleting their data. A
 rosbridge connection error is expected if the ROS bridge is not running; it
 does not prevent the REST API and dashboard database features from starting.
+
+To inspect or apply migrations manually, run these commands from
+`dashboard_app/backend/`:
+
+```bash
+../../.venv/bin/python -m alembic current
+../../.venv/bin/python -m alembic upgrade head
+../../.venv/bin/python -m alembic check
+```
 
 ## Daily startup
 
