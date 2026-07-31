@@ -237,8 +237,8 @@ For dashboard changes, run `npm run check:dashboard`. Generated `site/`,
 `website/.next/`, and dashboard `dist/` output must not be committed.
 
 If a server reports that its port is busy, stop the process using port 3000,
-3001, or 8000 and retry. In combined mode, the local gateway owns port 3000,
-Next.js runs internally on port 3001, and MkDocs runs internally on port 8000.
+3001, or 8001 and retry. In combined mode, the local gateway owns port 3000,
+Next.js runs internally on port 3001, and MkDocs runs internally on port 8001.
 If a command reports missing dependencies, run the matching setup command
 again. If virtual-environment creation is unavailable on Ubuntu, install the
 OS package that provides `python3-venv` for your Python version.

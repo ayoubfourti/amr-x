@@ -69,7 +69,7 @@
     npm run docs
     ```
 
-    Ouvrez <http://127.0.0.1:8000/>.
+    Ouvrez <http://127.0.0.1:8001/>.
 
 === "Site web et documentation"
 

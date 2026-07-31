@@ -10,19 +10,19 @@ const nextConfig = {
     return [
       {
         source: "/docs",
-        destination: "http://127.0.0.1:8000/docs/",
+        destination: "http://127.0.0.1:8001/docs/",
       },
       {
         source: "/docs/:path*/",
-        destination: "http://127.0.0.1:8000/docs/:path*/",
+        destination: "http://127.0.0.1:8001/docs/:path*/",
       },
       {
         source: "/docs/:path*",
-        destination: "http://127.0.0.1:8000/docs/:path*",
+        destination: "http://127.0.0.1:8001/docs/:path*",
       },
       {
         source: "/livereload/:path*",
-        destination: "http://127.0.0.1:8000/livereload/:path*",
+        destination: "http://127.0.0.1:8001/livereload/:path*",
       },
     ];
   },
