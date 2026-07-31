@@ -1,0 +1,49 @@
+controller_manager:
+  ros__parameters:
+    update_rate: 100
+    joint_state_broadcaster:
+      type: joint_state_broadcaster/JointStateBroadcaster
+    left_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+    right_arm_controller:
+      type: joint_trajectory_controller/JointTrajectoryController
+
+joint_state_broadcaster:
+  ros__parameters:
+    use_local_topics: false
+
+left_arm_controller:
+  ros__parameters:
+    joints:
+      - shoulder1_joint
+      - shoulder2_joint
+      - shoulder3_joint
+      - shoulder4_joint
+      - shoulder5_joint
+      - shoulder6_joint
+      - wrist_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    open_loop_control: false
+    allow_integration_in_goal_trajectories: true
+
+right_arm_controller:
+  ros__parameters:
+    joints:
+      - shoulderR_joint
+      - shoulderR_2_joint
+      - shoulderR_3joint
+      - shoulderR_4joint
+      - shoulderR_5joint
+      - shoulderR_6joint
+      - wristR_joint
+    command_interfaces:
+      - position
+    state_interfaces:
+      - position
+      - velocity
+    open_loop_control: false
+    allow_integration_in_goal_trajectories: true

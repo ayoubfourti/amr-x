@@ -66,6 +66,7 @@ plugins:
             Overview: Vue d'ensemble
             ROS 2 Workspace: Espace de travail ROS 2
             Simulation Guide: Guide de simulation
+            Dual-arm Simulation: Simulation à deux bras
             Navigation and Perception: Navigation et perception
             Mapping and Nav2 Guide: Guide de cartographie et Nav2
             Operator Interfaces: Interfaces opérateur
@@ -99,6 +100,7 @@ plugins:
             Overview: Übersicht
             ROS 2 Workspace: ROS-2-Arbeitsbereich
             Simulation Guide: Simulationsanleitung
+            Dual-arm Simulation: Doppelarm-Simulation
             Navigation and Perception: Navigation und Wahrnehmung
             Mapping and Nav2 Guide: Kartierungs- und Nav2-Anleitung
             Operator Interfaces: Bedienoberflächen
@@ -132,6 +134,7 @@ plugins:
             Overview: نظرة عامة
             ROS 2 Workspace: مساحة عمل ROS 2
             Simulation Guide: دليل المحاكاة
+            Dual-arm Simulation: محاكاة الذراعين
             Navigation and Perception: الملاحة والإدراك
             Mapping and Nav2 Guide: دليل رسم الخرائط وNav2
             Operator Interfaces: واجهات المشغّل
@@ -162,6 +165,7 @@ nav:
           - Overview: workstreams/ros2-digital-twin.md
           - ROS 2 Workspace: robotics/ros-workspace.md
           - Simulation Guide: robotics/simulation.md
+          - Dual-arm Simulation: robotics/dual-arm-simulation.md
       - Navigation and Perception:
           - Overview: workstreams/navigation-perception.md
           - Mapping and Nav2 Guide: robotics/navigation.md
