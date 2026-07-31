@@ -2,6 +2,16 @@
 
 AMR-X is an Autonomous Modular Robot - Extended project for a modular mobile robot platform and interchangeable functional modules.
 
+To see the common commands for the website, MkDocs, dashboard, robot,
+Gazebo worlds, navigation, and reports, run:
+
+```bash
+npm run commands
+```
+
+Filter the guide by category with commands such as `npm run commands -- robot`
+or `npm run commands -- worlds`. `make help` shows the complete guide too.
+
 This repository is structured for internship team work through GitHub issues, controlled CSV tables, LaTeX reports, and pull request review.
 
 ## Final Reports
@@ -136,7 +146,7 @@ npm run setup:docs
 npm run docs
 ```
 
-Open <http://127.0.0.1:8000/>. You do not need to install anything under
+Open <http://127.0.0.1:8001/>. You do not need to install anything under
 `website/`. The setup script creates or reuses the single root `.venv`; do not
 create another environment for documentation or the dashboard.
 
