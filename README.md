@@ -2,6 +2,16 @@
 
 AMR-X is an Autonomous Modular Robot - Extended project for a modular mobile robot platform and interchangeable functional modules.
 
+To see the common commands for the website, MkDocs, dashboard, robot,
+Gazebo worlds, navigation, and reports, run:
+
+```bash
+npm run commands
+```
+
+Filter the guide by category with commands such as `npm run commands -- robot`
+or `npm run commands -- worlds`. `make help` shows the complete guide too.
+
 This repository is structured for internship team work through GitHub issues, controlled CSV tables, LaTeX reports, and pull request review.
 
 ## Final Reports
@@ -136,7 +146,7 @@ npm run setup:docs
 npm run docs
 ```
 
-Open <http://127.0.0.1:8000/>. You do not need to install anything under
+Open <http://127.0.0.1:8001/>. You do not need to install anything under
 `website/`. The setup script creates or reuses the single root `.venv`; do not
 create another environment for documentation or the dashboard.
 
@@ -227,8 +237,8 @@ For dashboard changes, run `npm run check:dashboard`. Generated `site/`,
 `website/.next/`, and dashboard `dist/` output must not be committed.
 
 If a server reports that its port is busy, stop the process using port 3000,
-3001, or 8000 and retry. In combined mode, the local gateway owns port 3000,
-Next.js runs internally on port 3001, and MkDocs runs internally on port 8000.
+3001, or 8001 and retry. In combined mode, the local gateway owns port 3000,
+Next.js runs internally on port 3001, and MkDocs runs internally on port 8001.
 If a command reports missing dependencies, run the matching setup command
 again. If virtual-environment creation is unavailable on Ubuntu, install the
 OS package that provides `python3-venv` for your Python version.

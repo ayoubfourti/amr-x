@@ -9,6 +9,8 @@
     "npm": ">=10.0.0"
   },
   "scripts": {
+    "commands": "bash scripts/commands.sh",
+    "help": "bash scripts/commands.sh",
     "setup": "bash scripts/setup.sh",
     "setup:docs": "bash scripts/setup-docs.sh",
     "setup:dashboard": "bash scripts/setup-dashboard.sh",
