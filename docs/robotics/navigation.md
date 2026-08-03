@@ -60,6 +60,29 @@ AMCL + planner/controller + optional keepout + mission server).
 
 ---
 
+## Dependencies
+
+Standard ROS 2 Jazzy + Nav2 + SLAM Toolbox packages, plus the following that are
+**not** bundled in this repo:
+
+- **`m-explore-ros2`** (autonomous exploration, provides `explore_lite`). It is
+  not committed here; clone and build it once into the workspace:
+
+  ```bash
+  cd ~/amr-x/robotics
+  git clone https://github.com/robo-friends/m-explore-ros2.git
+  colcon build --symlink-install
+  source install/setup.bash
+  ```
+
+- **`teleop_twist_keyboard`** (manual driving), if not already installed:
+
+  ```bash
+  sudo apt install ros-jazzy-teleop-twist-keyboard
+  ```
+
+---
+
 ## Build and source
 
 Every terminal needs base ROS and the workspace sourced. The `.bashrc` already
@@ -85,6 +108,10 @@ source install/setup.bash
 ---
 
 ## The scan pipeline
+
+The simulation publishes `/scan` (LiDAR 1), `/scan_2` (LiDAR 2), `/odom`, and the
+`odom -> base_footprint` TF. The robot's base frame is `base_footprint` and its
+body frame is `base_link` (the merged scan is produced in `base_link`).
 
 The robot has two LiDARs on **diagonally opposite corners**. Together they cover
 360 degrees, but each one also sees part of the robot's own chassis. The scan
@@ -450,6 +477,71 @@ Primary configuration: `config/nav2_params.yaml` (navigation) and
 
 ---
 
+## Spawning obstacles and actors (hospital simulation)
+
+The hospital world can be populated with 19 static "unmapped" obstacles
+(furniture the SLAM map does not know about, to stress-test local obstacle
+avoidance) and 16 dynamic pedestrian actors (local wander loops). These are
+spawned into an already-running simulation with two scripts, not baked into the
+world file.
+
+### Expected layout
+
+```
+navigation/test/
+├── scripts/
+│   ├── fetch_assets.sh
+│   ├── spawn_obstacles.sh
+│   └── spawn_actors.sh
+├── actors/
+│   └── actor_wanderer_1.sdf ... actor_wanderer_16.sdf
+└── assets/                # created by fetch_assets.sh - gitignored, NOT committed
+    └── hospital_assets/
+        └── fuel_models/
+```
+
+`scripts/` and `actors/` are committed (plain text, small). `assets/` is fetched
+by each teammate and should be in `.gitignore` - the Fuel model meshes/textures
+live there and are pulled from an external repo, not stored in this one.
+
+### First time only (after cloning)
+
+```bash
+cd ~/amr-x/robotics/navigation/test/scripts
+chmod +x fetch_assets.sh spawn_obstacles.sh spawn_actors.sh
+./fetch_assets.sh
+```
+
+This clones the AWS RoboMaker hospital asset pack and downloads the 20 Fuel
+models the obstacles use, into `../assets/hospital_assets/fuel_models`. Only
+needs to run once per machine - it does not need to repeat for every sim launch,
+and does not need to run again after a normal `git pull` unless the model list
+itself changes.
+
+### Every time you want obstacles/actors in a running sim
+
+With the `hospital` world already launched (`ros2 launch bringup
+simulation.launch.py environment:=hospital`), open a new terminal:
+
+```bash
+cd ~/amr-x/robotics/navigation/test/scripts
+./spawn_obstacles.sh
+./spawn_actors.sh
+```
+
+Each `.sh` calls `ros2 run ros_gz_sim create` once per entity (one obstacle or
+actor per call - there is no single command that spawns all of them at once).
+Both scripts locate their own directory automatically
+(`$(dirname "${BASH_SOURCE[0]}")`), so they work regardless of where the repo is
+cloned or which machine runs them - no hardcoded paths or usernames to edit.
+
+Spawning is **not persistent**: closing or restarting the Gazebo world clears
+everything spawned this way, and both scripts must be rerun. This is a deliberate
+tradeoff versus baking the obstacles into the world file - faster to iterate on,
+but must be re-run per session.
+
+---
+
 ## Troubleshooting
 
 **You changed something and behaviour did not change.** Check the *installed*
@@ -506,6 +598,10 @@ scan. If it happens at any speed and does not recover, check `wheel_separation`
 (see Odometry). If it only happens during motion and snaps back at rest, lower
 AMCL's `update_min_d` / `update_min_a` (both 0.05 here).
 
+**Map drifts or rebuilds itself rotated during mapping.** Usually turning too
+fast for the scan matcher. `wz_max` in the controller parameters caps rotation
+speed; 0.5 rad/s maps reliably. Also confirm the merged scan has no self-hits.
+
 **Planner routes through walls it has not driven past.** The global costmap has
 no `static_layer` - you are running navigation with the mapping parameter file.
 
@@ -534,6 +630,15 @@ package). Either you did not re-source, or it built as ROS 1 catkin instead of
 ament. Check `colcon list | grep <pkg>` - it must say `ros.ament_cmake`, not
 `ros.catkin`. If catkin, the `package.xml` is missing its
 `<export><build_type>ament_cmake</build_type></export>`.
+
+**A change is ignored no matter what you do - check which copy you are running.**
+More than one workspace on the path means you cannot know which copy of a package
+a command resolves to. A 5-second check that catches a whole class of problems:
+
+```bash
+echo $AMENT_PREFIX_PATH | tr ':' '\n'    # should be ONLY this workspace + /opt/ros/jazzy
+ros2 pkg prefix navigation                # which copy is being used
+```
 
 ---
 
