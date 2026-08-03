@@ -1,0 +1,3549 @@
+{
+  "schemaVersion": 2,
+  "generator": "dashboard_app/frontend/scripts/extract-sdf-worlds.mjs",
+  "sourceRoots": [
+    "robotics/simulation/worlds",
+    "robotics/navigation/maps"
+  ],
+  "supportedExtensions": [
+    ".sdf",
+    ".world"
+  ],
+  "worlds": [
+    {
+      "id": "my-warehouse",
+      "name": "my_warehouse",
+      "label": "My Warehouse",
+      "source": "robotics/navigation/maps/my_warehouse.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -6.15,
+        "maxX": 6.15,
+        "minY": -4.15,
+        "maxY": 4.15,
+        "width": 12.3,
+        "height": 8.3
+      },
+      "counts": {
+        "floor": 1,
+        "wall": 4,
+        "rack": 2,
+        "obstacle": 1,
+        "light": 1
+      },
+      "entities": [
+        {
+          "id": "ground_plane",
+          "name": "ground_plane",
+          "category": "floor",
+          "pose": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "plane",
+            "size": [
+              100,
+              100,
+              0.02
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_north",
+          "name": "wall_north",
+          "category": "wall",
+          "pose": [
+            0,
+            4.075,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              12.3,
+              0.15,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_south",
+          "name": "wall_south",
+          "category": "wall",
+          "pose": [
+            0,
+            -4.075,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              12.3,
+              0.15,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_east",
+          "name": "wall_east",
+          "category": "wall",
+          "pose": [
+            6.075,
+            0,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.15,
+              8.3,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_west",
+          "name": "wall_west",
+          "category": "wall",
+          "pose": [
+            -6.075,
+            0,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.15,
+              8.3,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "shelf_block_1",
+          "name": "shelf_block_1",
+          "category": "rack",
+          "pose": [
+            -2,
+            1.5,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              0.6,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "shelf_block_2",
+          "name": "shelf_block_2",
+          "category": "rack",
+          "pose": [
+            2,
+            -1.5,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              0.6,
+              1
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "pillar",
+          "name": "pillar",
+          "category": "obstacle",
+          "pose": [
+            3.5,
+            2,
+            0.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "cylinder",
+            "radius": 0.3,
+            "length": 1,
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "sun",
+          "name": "sun",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 8,
+            "lightType": "directional",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    },
+    {
+      "id": "hospital-fortress",
+      "name": "hospital",
+      "label": "Hospital",
+      "source": "robotics/simulation/worlds/hospital_fortress.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -11.18,
+        "maxX": 11.29,
+        "minY": -30.72,
+        "maxY": 20.35,
+        "width": 22.47,
+        "height": 51.07
+      },
+      "counts": {
+        "floor": 2,
+        "wall": 1,
+        "actor": 1,
+        "partition": 20,
+        "landmark": 2,
+        "included": 1,
+        "light": 6
+      },
+      "entities": [
+        {
+          "id": "aws_robomaker_hospital_floor_01_floor_1",
+          "name": "aws_robomaker_hospital_floor_01_floor_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_floor",
+          "category": "floor",
+          "pose": [
+            -0.001425,
+            -0.014447,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              28,
+              50,
+              0.05
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_floor_01_walls_1",
+          "name": "aws_robomaker_hospital_floor_01_walls_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_walls",
+          "category": "wall",
+          "pose": [
+            -0.013823,
+            -0.013783,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              5,
+              0.2,
+              2.5
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_nursesstation_01_1",
+          "name": "aws_robomaker_hospital_nursesstation_01_1",
+          "uri": "model://aws_robomaker_hospital_nursesstation_01",
+          "category": "actor",
+          "pose": [
+            0,
+            1.5,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.7,
+              0.7,
+              1.7
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_portal_1",
+          "name": "aws_robomaker_hospital_elevator_01_portal_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_portal",
+          "category": "partition",
+          "pose": [
+            -1.50654,
+            19.4813,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_portal_2",
+          "name": "aws_robomaker_hospital_elevator_01_portal_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_portal",
+          "category": "partition",
+          "pose": [
+            1.51134,
+            19.487,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_car_1",
+          "name": "aws_robomaker_hospital_elevator_01_car_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_car",
+          "category": "landmark",
+          "pose": [
+            -1.49587,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_car_2",
+          "name": "aws_robomaker_hospital_elevator_01_car_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_car",
+          "category": "landmark",
+          "pose": [
+            1.5407,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_door_1",
+          "name": "aws_robomaker_hospital_elevator_01_door_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_door",
+          "category": "partition",
+          "pose": [
+            -1.51,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_door_2",
+          "name": "aws_robomaker_hospital_elevator_01_door_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_door",
+          "category": "partition",
+          "pose": [
+            1.52843,
+            19.3627,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_1",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0216,
+            -13.8069,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_1",
+          "name": "aws_robomaker_hospital_curtain_closed_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            -11.022,
+            -7.27757,
+            0,
+            0,
+            0,
+            1.57907
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_2",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_2",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1417,
+            -21.4039,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_3",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_3",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1068,
+            -17.8472,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_4",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_4",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1374,
+            -14.1551,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_5",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_5",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0332,
+            -17.61,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_6",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_6",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0086,
+            -21.7566,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_7",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_7",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0426,
+            0.066126,
+            0,
+            0,
+            0,
+            1.56614
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_8",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_8",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0309,
+            -3.75145,
+            0,
+            0,
+            0,
+            1.56614
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_floor_01_ceiling_1",
+          "name": "aws_robomaker_hospital_floor_01_ceiling_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_ceiling",
+          "category": "floor",
+          "pose": [
+            0.016552,
+            0.050728,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              28,
+              50,
+              0.05
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_ramp_01_1",
+          "name": "aws_robomaker_hospital_ramp_01_1",
+          "uri": "model://aws_robomaker_hospital_ramp_01",
+          "category": "included",
+          "pose": [
+            -1.70996,
+            16.3685,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_open_01_1",
+          "name": "aws_robomaker_hospital_curtain_open_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_open_01",
+          "category": "partition",
+          "pose": [
+            11.0051,
+            -6.91002,
+            0,
+            0,
+            0,
+            -1.58737
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_2",
+          "name": "aws_robomaker_hospital_curtain_closed_01_2",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            11.0303,
+            -3.70124,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_3",
+          "name": "aws_robomaker_hospital_curtain_closed_01_3",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            10.9586,
+            0.159483,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_4",
+          "name": "aws_robomaker_hospital_curtain_closed_01_4",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            10.9819,
+            -26.2149,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_5",
+          "name": "aws_robomaker_hospital_curtain_closed_01_5",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            1.31506,
+            -30.5771,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_6",
+          "name": "aws_robomaker_hospital_curtain_closed_01_6",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            5.49659,
+            -30.5364,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_7",
+          "name": "aws_robomaker_hospital_curtain_closed_01_7",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            9.80048,
+            -30.5918,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "sun",
+          "name": "sun",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 8,
+            "lightType": "directional",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "lobby_light",
+          "name": "lobby_light",
+          "category": "light",
+          "pose": [
+            0,
+            7,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "north_corridor_light",
+          "name": "north_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            17,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 15,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "central_corridor_light",
+          "name": "central_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            -3,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "south_corridor_light",
+          "name": "south_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            -13,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "ward_light",
+          "name": "ward_light",
+          "category": "light",
+          "pose": [
+            0,
+            -23,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    },
+    {
+      "id": "hospital-harmonic",
+      "name": "hospital",
+      "label": "Hospital",
+      "source": "robotics/simulation/worlds/hospital_harmonic.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -11.18,
+        "maxX": 11.29,
+        "minY": -30.72,
+        "maxY": 20.35,
+        "width": 22.47,
+        "height": 51.07
+      },
+      "counts": {
+        "floor": 2,
+        "wall": 1,
+        "actor": 1,
+        "partition": 20,
+        "landmark": 2,
+        "included": 1,
+        "light": 6
+      },
+      "entities": [
+        {
+          "id": "aws_robomaker_hospital_floor_01_floor_1",
+          "name": "aws_robomaker_hospital_floor_01_floor_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_floor",
+          "category": "floor",
+          "pose": [
+            -0.001425,
+            -0.014447,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              28,
+              50,
+              0.05
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_floor_01_walls_1",
+          "name": "aws_robomaker_hospital_floor_01_walls_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_walls",
+          "category": "wall",
+          "pose": [
+            -0.013823,
+            -0.013783,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              5,
+              0.2,
+              2.5
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_nursesstation_01_1",
+          "name": "aws_robomaker_hospital_nursesstation_01_1",
+          "uri": "model://aws_robomaker_hospital_nursesstation_01",
+          "category": "actor",
+          "pose": [
+            0,
+            1.5,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.7,
+              0.7,
+              1.7
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_portal_1",
+          "name": "aws_robomaker_hospital_elevator_01_portal_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_portal",
+          "category": "partition",
+          "pose": [
+            -1.50654,
+            19.4813,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_portal_2",
+          "name": "aws_robomaker_hospital_elevator_01_portal_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_portal",
+          "category": "partition",
+          "pose": [
+            1.51134,
+            19.487,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_car_1",
+          "name": "aws_robomaker_hospital_elevator_01_car_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_car",
+          "category": "landmark",
+          "pose": [
+            -1.49587,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_car_2",
+          "name": "aws_robomaker_hospital_elevator_01_car_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_car",
+          "category": "landmark",
+          "pose": [
+            1.5407,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_door_1",
+          "name": "aws_robomaker_hospital_elevator_01_door_1",
+          "uri": "model://aws_robomaker_hospital_elevator_01_door",
+          "category": "partition",
+          "pose": [
+            -1.51,
+            19.35,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_elevator_01_door_2",
+          "name": "aws_robomaker_hospital_elevator_01_door_2",
+          "uri": "model://aws_robomaker_hospital_elevator_01_door",
+          "category": "partition",
+          "pose": [
+            1.52843,
+            19.3627,
+            0.19,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_1",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0216,
+            -13.8069,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_1",
+          "name": "aws_robomaker_hospital_curtain_closed_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            -11.022,
+            -7.27757,
+            0,
+            0,
+            0,
+            1.57907
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_2",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_2",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1417,
+            -21.4039,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_3",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_3",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1068,
+            -17.8472,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_4",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_4",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            11.1374,
+            -14.1551,
+            0,
+            0,
+            0,
+            -1.55117
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_5",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_5",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0332,
+            -17.61,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_6",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_6",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0086,
+            -21.7566,
+            0,
+            0,
+            0,
+            1.55358
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_7",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_7",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0426,
+            0.066126,
+            0,
+            0,
+            0,
+            1.56614
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_half_open_01_8",
+          "name": "aws_robomaker_hospital_curtain_half_open_01_8",
+          "uri": "model://aws_robomaker_hospital_curtain_half_open_01",
+          "category": "partition",
+          "pose": [
+            -11.0309,
+            -3.75145,
+            0,
+            0,
+            0,
+            1.56614
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_floor_01_ceiling_1",
+          "name": "aws_robomaker_hospital_floor_01_ceiling_1",
+          "uri": "model://aws_robomaker_hospital_floor_01_ceiling",
+          "category": "floor",
+          "pose": [
+            0.016552,
+            0.050728,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              28,
+              50,
+              0.05
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_ramp_01_1",
+          "name": "aws_robomaker_hospital_ramp_01_1",
+          "uri": "model://aws_robomaker_hospital_ramp_01",
+          "category": "included",
+          "pose": [
+            -1.70996,
+            16.3685,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_open_01_1",
+          "name": "aws_robomaker_hospital_curtain_open_01_1",
+          "uri": "model://aws_robomaker_hospital_curtain_open_01",
+          "category": "partition",
+          "pose": [
+            11.0051,
+            -6.91002,
+            0,
+            0,
+            0,
+            -1.58737
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_2",
+          "name": "aws_robomaker_hospital_curtain_closed_01_2",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            11.0303,
+            -3.70124,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_3",
+          "name": "aws_robomaker_hospital_curtain_closed_01_3",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            10.9586,
+            0.159483,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_4",
+          "name": "aws_robomaker_hospital_curtain_closed_01_4",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            10.9819,
+            -26.2149,
+            0,
+            0,
+            0,
+            -1.58306
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_5",
+          "name": "aws_robomaker_hospital_curtain_closed_01_5",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            1.31506,
+            -30.5771,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_6",
+          "name": "aws_robomaker_hospital_curtain_closed_01_6",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            5.49659,
+            -30.5364,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_hospital_curtain_closed_01_7",
+          "name": "aws_robomaker_hospital_curtain_closed_01_7",
+          "uri": "model://aws_robomaker_hospital_curtain_closed_01",
+          "category": "partition",
+          "pose": [
+            9.80048,
+            -30.5918,
+            0,
+            0,
+            0,
+            3.1401
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.5,
+              0.25,
+              2.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "sun",
+          "name": "sun",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 8,
+            "lightType": "directional",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "lobby_light",
+          "name": "lobby_light",
+          "category": "light",
+          "pose": [
+            0,
+            7,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "north_corridor_light",
+          "name": "north_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            17,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 15,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "central_corridor_light",
+          "name": "central_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            -3,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "south_corridor_light",
+          "name": "south_corridor_light",
+          "category": "light",
+          "pose": [
+            0,
+            -13,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        },
+        {
+          "id": "ward_light",
+          "name": "ward_light",
+          "category": "light",
+          "pose": [
+            0,
+            -23,
+            3.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 16,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    },
+    {
+      "id": "warehouse",
+      "name": "amr_warehouse",
+      "label": "AMR Warehouse",
+      "source": "robotics/simulation/worlds/warehouse.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -12.1,
+        "maxX": 12.1,
+        "minY": -8.1,
+        "maxY": 8.1,
+        "width": 24.2,
+        "height": 16.2
+      },
+      "counts": {
+        "floor": 1,
+        "wall": 4,
+        "rack": 4,
+        "payload": 4,
+        "zone": 3,
+        "dock": 1,
+        "light": 1
+      },
+      "entities": [
+        {
+          "id": "floor",
+          "name": "floor",
+          "category": "floor",
+          "pose": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "plane",
+            "size": [
+              100,
+              100,
+              0.02
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_north",
+          "name": "wall_north",
+          "category": "wall",
+          "pose": [
+            0,
+            8,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              24,
+              0.2,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_south",
+          "name": "wall_south",
+          "category": "wall",
+          "pose": [
+            0,
+            -8,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              24,
+              0.2,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_east",
+          "name": "wall_east",
+          "category": "wall",
+          "pose": [
+            12,
+            0,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.2,
+              16,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_west",
+          "name": "wall_west",
+          "category": "wall",
+          "pose": [
+            -12,
+            0,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.2,
+              16,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_N1",
+          "name": "rack_N1",
+          "category": "rack",
+          "pose": [
+            0,
+            1.3,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_N2",
+          "name": "rack_N2",
+          "category": "rack",
+          "pose": [
+            0,
+            3.9,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_S1",
+          "name": "rack_S1",
+          "category": "rack",
+          "pose": [
+            0,
+            -1.3,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_S2",
+          "name": "rack_S2",
+          "category": "rack",
+          "pose": [
+            0,
+            -3.9,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "pallet_1",
+          "name": "pallet_1",
+          "category": "payload",
+          "pose": [
+            -3,
+            0,
+            0.075,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              0.8,
+              0.15
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "box_on_pallet_1",
+          "name": "box_on_pallet_1",
+          "category": "payload",
+          "pose": [
+            -3,
+            0,
+            0.45,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.6,
+              0.6,
+              0.6
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "pallet_2",
+          "name": "pallet_2",
+          "category": "payload",
+          "pose": [
+            4.5,
+            3.9,
+            0.075,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              0.8,
+              0.15
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "box_stray_1",
+          "name": "box_stray_1",
+          "category": "payload",
+          "pose": [
+            1.5,
+            -0.4,
+            0.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.4,
+              0.4,
+              0.4
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_loading",
+          "name": "zone_loading",
+          "category": "zone",
+          "pose": [
+            -9.5,
+            0,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              4,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_delivery",
+          "name": "zone_delivery",
+          "category": "zone",
+          "pose": [
+            9.5,
+            0,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              4,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_docking_future",
+          "name": "zone_docking_future",
+          "category": "zone",
+          "pose": [
+            10,
+            -6,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "dock_post",
+          "name": "dock_post",
+          "category": "dock",
+          "pose": [
+            10,
+            -6,
+            0.25,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.1,
+              0.5,
+              0.5
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "sun",
+          "name": "sun",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 8,
+            "lightType": "directional",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    },
+    {
+      "id": "warehouse-fortress",
+      "name": "amr_warehouse",
+      "label": "AMR Warehouse",
+      "source": "robotics/simulation/worlds/warehouse_fortress.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -12.1,
+        "maxX": 12.1,
+        "minY": -8.1,
+        "maxY": 8.1,
+        "width": 24.2,
+        "height": 16.2
+      },
+      "counts": {
+        "floor": 1,
+        "wall": 4,
+        "rack": 4,
+        "payload": 4,
+        "zone": 3,
+        "dock": 1,
+        "landmark": 1,
+        "light": 1
+      },
+      "entities": [
+        {
+          "id": "floor",
+          "name": "floor",
+          "category": "floor",
+          "pose": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "plane",
+            "size": [
+              100,
+              100,
+              0.02
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_north",
+          "name": "wall_north",
+          "category": "wall",
+          "pose": [
+            0,
+            8,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              24,
+              0.2,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_south",
+          "name": "wall_south",
+          "category": "wall",
+          "pose": [
+            0,
+            -8,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              24,
+              0.2,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_east",
+          "name": "wall_east",
+          "category": "wall",
+          "pose": [
+            12,
+            0,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.2,
+              16,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "wall_west",
+          "name": "wall_west",
+          "category": "wall",
+          "pose": [
+            -12,
+            0,
+            1.5,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.2,
+              16,
+              3
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_N1",
+          "name": "rack_N1",
+          "category": "rack",
+          "pose": [
+            0,
+            1.3,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_N2",
+          "name": "rack_N2",
+          "category": "rack",
+          "pose": [
+            0,
+            3.9,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_S1",
+          "name": "rack_S1",
+          "category": "rack",
+          "pose": [
+            0,
+            -1.3,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "rack_S2",
+          "name": "rack_S2",
+          "category": "rack",
+          "pose": [
+            0,
+            -3.9,
+            1.1,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              9.6,
+              1,
+              2.2
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "pallet_1",
+          "name": "pallet_1",
+          "category": "payload",
+          "pose": [
+            -3,
+            0,
+            0.075,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              0.8,
+              0.15
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "box_on_pallet_1",
+          "name": "box_on_pallet_1",
+          "category": "payload",
+          "pose": [
+            -3,
+            0,
+            0.45,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.6,
+              0.6,
+              0.6
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "pallet_2",
+          "name": "pallet_2",
+          "category": "payload",
+          "pose": [
+            4.5,
+            3.9,
+            0.075,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              0.8,
+              0.15
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "box_stray_1",
+          "name": "box_stray_1",
+          "category": "payload",
+          "pose": [
+            1.5,
+            -0.4,
+            0.2,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.4,
+              0.4,
+              0.4
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_loading",
+          "name": "zone_loading",
+          "category": "zone",
+          "pose": [
+            -9.5,
+            0,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              4,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_delivery",
+          "name": "zone_delivery",
+          "category": "zone",
+          "pose": [
+            9.5,
+            0,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              3,
+              4,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "zone_docking_future",
+          "name": "zone_docking_future",
+          "category": "zone",
+          "pose": [
+            10,
+            -6,
+            0.005,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2,
+              2,
+              0.01
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "dock_post",
+          "name": "dock_post",
+          "category": "dock",
+          "pose": [
+            10,
+            -6,
+            0.25,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.1,
+              0.5,
+              0.5
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "arm_station",
+          "name": "arm_station",
+          "category": "landmark",
+          "pose": [
+            10,
+            -5.4,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              0.105,
+              0.14,
+              0.02
+            ],
+            "approximate": false
+          },
+          "sourceType": "model"
+        },
+        {
+          "id": "sun",
+          "name": "sun",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            10,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 8,
+            "lightType": "directional",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    },
+    {
+      "id": "warehouse-harmonic",
+      "name": "warehouse",
+      "label": "Warehouse",
+      "source": "robotics/simulation/worlds/warehouse_harmonic.sdf",
+      "format": "sdf",
+      "bounds": {
+        "minX": -7,
+        "maxX": 6.31,
+        "minY": -9.93,
+        "maxY": 10.24,
+        "width": 13.3,
+        "height": 20.17
+      },
+      "counts": {
+        "included": 18,
+        "rack": 7,
+        "wall": 1,
+        "floor": 1,
+        "light": 2,
+        "payload": 1
+      },
+      "entities": [
+        {
+          "id": "aws_robomaker_warehouse_RoofB_01_001",
+          "name": "aws_robomaker_warehouse_RoofB_01_001",
+          "uri": "model://aws_robomaker_warehouse_RoofB_01",
+          "category": "included",
+          "pose": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfF_01_001",
+          "name": "aws_robomaker_warehouse_ShelfF_01_001",
+          "uri": "model://aws_robomaker_warehouse_ShelfF_01",
+          "category": "rack",
+          "pose": [
+            -5.795143,
+            -0.956635,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_WallB_01_001",
+          "name": "aws_robomaker_warehouse_WallB_01_001",
+          "uri": "model://aws_robomaker_warehouse_WallB_01",
+          "category": "wall",
+          "pose": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              5,
+              0.2,
+              2.5
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfE_01_001",
+          "name": "aws_robomaker_warehouse_ShelfE_01_001",
+          "uri": "model://aws_robomaker_warehouse_ShelfE_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            0.57943,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfE_01_002",
+          "name": "aws_robomaker_warehouse_ShelfE_01_002",
+          "uri": "model://aws_robomaker_warehouse_ShelfE_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            -4.827049,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfE_01_003",
+          "name": "aws_robomaker_warehouse_ShelfE_01_003",
+          "uri": "model://aws_robomaker_warehouse_ShelfE_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            -8.6651,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfD_01_001",
+          "name": "aws_robomaker_warehouse_ShelfD_01_001",
+          "uri": "model://aws_robomaker_warehouse_ShelfD_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            -1.242668,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfD_01_002",
+          "name": "aws_robomaker_warehouse_ShelfD_01_002",
+          "uri": "model://aws_robomaker_warehouse_ShelfD_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            -3.038551,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ShelfD_01_003",
+          "name": "aws_robomaker_warehouse_ShelfD_01_003",
+          "uri": "model://aws_robomaker_warehouse_ShelfD_01",
+          "category": "rack",
+          "pose": [
+            4.73156,
+            -6.750542,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              2.4,
+              0.8,
+              2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_DeskC_01_001",
+          "name": "aws_robomaker_warehouse_DeskC_01_001",
+          "uri": "model://aws_robomaker_warehouse_DeskC_01",
+          "category": "included",
+          "pose": [
+            -0.061684,
+            6.135864,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_DeskC_01_002",
+          "name": "aws_robomaker_warehouse_DeskC_01_002",
+          "uri": "model://aws_robomaker_warehouse_DeskC_01",
+          "category": "included",
+          "pose": [
+            -0.061684,
+            3.039,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_DeskC_01_003",
+          "name": "aws_robomaker_warehouse_DeskC_01_003",
+          "uri": "model://aws_robomaker_warehouse_DeskC_01",
+          "category": "included",
+          "pose": [
+            -0.061684,
+            -6.6493,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_GroundB_01_001",
+          "name": "aws_robomaker_warehouse_GroundB_01_001",
+          "uri": "model://aws_robomaker_warehouse_GroundB_01",
+          "category": "floor",
+          "pose": [
+            0,
+            0,
+            -0.090092,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              28,
+              50,
+              0.05
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_Lamp_01_005",
+          "name": "aws_robomaker_warehouse_Lamp_01_005",
+          "uri": "model://aws_robomaker_warehouse_Lamp_01",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            -4,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_Bucket_01_020",
+          "name": "aws_robomaker_warehouse_Bucket_01_020",
+          "uri": "model://aws_robomaker_warehouse_Bucket_01",
+          "category": "included",
+          "pose": [
+            0.433449,
+            9.631706,
+            0,
+            0,
+            0,
+            -1.563161
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_Bucket_01_021",
+          "name": "aws_robomaker_warehouse_Bucket_01_021",
+          "uri": "model://aws_robomaker_warehouse_Bucket_01",
+          "category": "included",
+          "pose": [
+            -1.8321,
+            -6.3752,
+            0,
+            0,
+            0,
+            -1.563161
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_Bucket_01_022",
+          "name": "aws_robomaker_warehouse_Bucket_01_022",
+          "uri": "model://aws_robomaker_warehouse_Bucket_01",
+          "category": "included",
+          "pose": [
+            0.433449,
+            8.59,
+            0,
+            0,
+            0,
+            -1.563161
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringA_01_016",
+          "name": "aws_robomaker_warehouse_ClutteringA_01_016",
+          "uri": "model://aws_robomaker_warehouse_ClutteringA_01",
+          "category": "included",
+          "pose": [
+            5.708138,
+            8.616844,
+            -0.017477,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringA_01_017",
+          "name": "aws_robomaker_warehouse_ClutteringA_01_017",
+          "uri": "model://aws_robomaker_warehouse_ClutteringA_01",
+          "category": "included",
+          "pose": [
+            3.408638,
+            8.616844,
+            -0.017477,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringA_01_018",
+          "name": "aws_robomaker_warehouse_ClutteringA_01_018",
+          "uri": "model://aws_robomaker_warehouse_ClutteringA_01",
+          "category": "included",
+          "pose": [
+            -1.491287,
+            5.222435,
+            -0.017477,
+            0,
+            0,
+            -1.583185
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_027",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_027",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            3.324959,
+            3.822449,
+            -0.012064,
+            0,
+            0,
+            1.563871
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_028",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_028",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            5.54171,
+            3.816475,
+            -0.015663,
+            0,
+            0,
+            -1.583191
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_029",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_029",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            5.384239,
+            6.137154,
+            0,
+            0,
+            0,
+            3.15
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_030",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_030",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            3.236,
+            6.137154,
+            0,
+            0,
+            0,
+            3.15
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_031",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_031",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            -1.573677,
+            2.301994,
+            -0.015663,
+            0,
+            0,
+            -3.133191
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringC_01_032",
+          "name": "aws_robomaker_warehouse_ClutteringC_01_032",
+          "uri": "model://aws_robomaker_warehouse_ClutteringC_01",
+          "category": "included",
+          "pose": [
+            -1.2196,
+            9.407,
+            -0.015663,
+            0,
+            0,
+            1.563871
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_ClutteringD_01_005",
+          "name": "aws_robomaker_warehouse_ClutteringD_01_005",
+          "uri": "model://aws_robomaker_warehouse_ClutteringD_01",
+          "category": "included",
+          "pose": [
+            -1.634682,
+            -7.811813,
+            -0.319559,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_TrashCanC_01_002",
+          "name": "aws_robomaker_warehouse_TrashCanC_01_002",
+          "uri": "model://aws_robomaker_warehouse_TrashCanC_01",
+          "category": "included",
+          "pose": [
+            -1.592441,
+            7.71542,
+            0,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              1.2,
+              1.2
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "aws_robomaker_warehouse_PalletJackB_01_001",
+          "name": "aws_robomaker_warehouse_PalletJackB_01_001",
+          "uri": "model://aws_robomaker_warehouse_PalletJackB_01",
+          "category": "payload",
+          "pose": [
+            -0.276098,
+            -9.481944,
+            0.023266,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "box",
+            "size": [
+              1.2,
+              0.9,
+              1
+            ],
+            "approximate": true
+          },
+          "sourceType": "include",
+          "geometrySource": "category-fallback"
+        },
+        {
+          "id": "Warehouse_CeilingLight_003",
+          "name": "Warehouse_CeilingLight_003",
+          "category": "light",
+          "pose": [
+            0,
+            0,
+            9,
+            0,
+            0,
+            0
+          ],
+          "geometry": {
+            "type": "light",
+            "range": 80,
+            "lightType": "point",
+            "approximate": false
+          },
+          "sourceType": "light"
+        }
+      ]
+    }
+  ]
+}

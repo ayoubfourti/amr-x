@@ -1,12 +1,29 @@
 import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../context/AuthContext'
-import { useTheme } from '../../context/ThemeContext'
+import { useAuth } from '../../hooks/useAuth'
 import AvatarChip from './AvatarChip'
+import Icon from './Icon'
+import { PageHeader, StatusPill } from './CommandUI'
 
-export default function PageTopbar({ title, latency = null, subtitle }) {
+const PAGE_ICONS = {
+  Robots: 'robot',
+  Missions: 'mission',
+  Alerts: 'alert',
+  Modules: 'module',
+  Users: 'users',
+  Settings: 'settings',
+  Profile: 'users',
+}
+
+export default function PageTopbar({
+  title,
+  latency = null,
+  subtitle,
+  eyebrow = 'AMR-X operations',
+  icon,
+  action,
+}) {
   const { currentUser, logout } = useAuth()
-  const { theme, toggleTheme } = useTheme()
   const navigate = useNavigate()
   const [open, setOpen] = useState(false)
   const dropdownRef = useRef(null)
@@ -29,15 +46,12 @@ export default function PageTopbar({ title, latency = null, subtitle }) {
     setOpen(false)
   }
 
-  return (
-    <div className="page-topbar">
-      <div>
-        <h2>{title}</h2>
-        <p className="topbar-subtext">{subtitle ?? new Date().toLocaleString()}</p>
-      </div>
-      <div className="topbar-right">
-        <span className="connection-pill">📶 Connected · {latency ? `${latency}ms` : 'N/A'}</span>
-
+  const actions = (
+    <>
+        <StatusPill tone={latency ? 'green' : 'neutral'}>
+          {latency ? `Fleet link · ${latency} ms` : 'Fleet link · standby'}
+        </StatusPill>
+        {action}
         <div ref={dropdownRef} style={{ position: 'relative' }}>
           <AvatarChip
             name={currentUser?.name}
@@ -72,7 +86,7 @@ export default function PageTopbar({ title, latency = null, subtitle }) {
                     setOpen(false)
                   }}
                 >
-                  <span className="profile-menu-icon">⚙</span>
+                  <span className="profile-menu-icon"><Icon name="settings" size={16} /></span>
                   <span>Settings</span>
                 </button>
 
@@ -84,15 +98,10 @@ export default function PageTopbar({ title, latency = null, subtitle }) {
                     setOpen(false)
                   }}
                 >
-                  <span className="profile-menu-icon">👤</span>
+                  <span className="profile-menu-icon"><Icon name="users" size={16} /></span>
                   <span>Profile</span>
                 </button>
 
-                <button className="profile-menu-item" type="button" onClick={toggleTheme}>
-                  <span className="profile-menu-icon">{theme === 'dark' ? '☀️' : '🌙'}</span>
-                  <span>Switch to {theme === 'dark' ? 'Light' : 'Dark'} Mode</span>
-                  <span className="profile-menu-badge">{theme === 'dark' ? 'DARK' : 'LIGHT'}</span>
-                </button>
               </div>
 
               <div className="profile-dropdown-divider" />
@@ -106,7 +115,16 @@ export default function PageTopbar({ title, latency = null, subtitle }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </>
+  )
+
+  return (
+    <PageHeader
+      eyebrow={eyebrow}
+      title={title}
+      description={subtitle ?? 'Live operational workspace'}
+      icon={icon || PAGE_ICONS[title] || 'overview'}
+      actions={actions}
+    />
   )
 }

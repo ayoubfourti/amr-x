@@ -115,7 +115,7 @@
         <box size="0.105 0.14 0.008"/>
       </geometry>
       <material name="dark_grey">
-        <color rgba="0.3 0.3 0.3 1.0"/>
+        <color rgba="1 0 0 1.0"/>
       </material>
     </visual>
     <collision>

@@ -1,6 +1,7 @@
-export default function Badge({ text, color }) {
+export default function Badge({ text, color, className = '' }) {
   return (
     <span
+      className={className}
       style={{
         backgroundColor: color,
         color: '#fff',

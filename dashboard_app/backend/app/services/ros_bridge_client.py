@@ -1,11 +1,8 @@
-"""
-Background service that connects to rosbridge_server and keeps registered
-robots' live state (position, speed, mode) updated in the database.
+"""Synchronize registered robot state from rosbridge into the database."""
 
-Robots must already exist in the database (registered via POST /api/robots)
-before this service will update them - it does not auto-create robots.
-"""
+import logging
 import math
+import os
 
 import roslibpy
 
@@ -13,9 +10,11 @@ from app.controllers.robot import update_robot_status
 from app.db.database import SessionLocal
 from app.models.robot import Robot
 
-ROSBRIDGE_HOST = "localhost"
-ROSBRIDGE_PORT = 9090
-ROBOT_NAME = "amr_x" #hardcoded for now, but should be dynamic in the future
+logger = logging.getLogger(__name__)
+
+ROSBRIDGE_HOST = os.getenv("ROSBRIDGE_HOST", "localhost")
+ROSBRIDGE_PORT = int(os.getenv("ROSBRIDGE_PORT", "9090"))
+ROBOT_NAME = os.getenv("ROSBRIDGE_ROBOT_NAME", "amr_x")
 
 MODE_NAMES = {
     0: "idle",
@@ -24,77 +23,91 @@ MODE_NAMES = {
     3: "combined",
 }
 
+
 def quaternion_to_yaw(x, y, z, w):
-    # Converts a quaternion (x, y, z, w) into a yaw angle in degrees
+    """Convert a quaternion into a yaw angle in degrees."""
     siny_cosp = 2 * (w * z + x * y)
     cosy_cosp = 1 - 2 * (y * y + z * z)
-    yaw = math.atan2(siny_cosp, cosy_cosp)
-    return math.degrees(yaw)
+    return math.degrees(math.atan2(siny_cosp, cosy_cosp))
+
 
 def get_robot_or_none(db, name):
     return db.query(Robot).filter(Robot.name == name).first()
+
 
 def handle_robot_state(message):
     db = SessionLocal()
     try:
         robot = get_robot_or_none(db, ROBOT_NAME)
-
         if robot is None:
-            print(
-                f"[ros_bridge_client] No registered robot named "
-                f"'{ROBOT_NAME}' - skipping update. Register it via "
-                f"POST /api/robots first."
+            logger.warning(
+                "No registered robot named %s; register it through POST /api/robots/",
+                ROBOT_NAME,
             )
             return
-        
-        pos = message["base_pose"]["position"]
-        ori = message["base_pose"]["orientation"]
-        vel = message["base_velocity"]["linear"]
 
-        yaw = quaternion_to_yaw(ori["x"], ori["y"], ori["z"], ori["w"])
-        speed = math.sqrt(vel["x"] ** 2 + vel["y"] ** 2 + vel["z"] ** 2)
-        mode_name = MODE_NAMES.get(message["mode"], "unknown")
+        position = message["base_pose"]["position"]
+        orientation = message["base_pose"]["orientation"]
+        velocity = message["base_velocity"]["linear"]
 
-        data = {
-            "status": "online",
-            "position_x": pos["x"],
-            "position_y": pos["y"],
-            "orientation": yaw,
-            "speed": speed,
-            "mode": mode_name,
-        }
+        yaw = quaternion_to_yaw(
+            orientation["x"],
+            orientation["y"],
+            orientation["z"],
+            orientation["w"],
+        )
+        speed = math.sqrt(
+            velocity["x"] ** 2 + velocity["y"] ** 2 + velocity["z"] ** 2
+        )
 
-        update_robot_status(db, robot.id, data)
-
-    except Exception as e:
-        print(f"[ros_bridge_client] Error updating robot state: {e}")
+        update_robot_status(
+            db,
+            robot.id,
+            {
+                "status": "online",
+                "position_x": position["x"],
+                "position_y": position["y"],
+                "orientation": yaw,
+                "speed": speed,
+                "mode": MODE_NAMES.get(message["mode"], "unknown"),
+            },
+        )
+    except (KeyError, TypeError, ValueError):
+        logger.exception("Invalid robot-state message")
+    except Exception:
+        logger.exception("Failed to update robot state")
     finally:
         db.close()
-        
+
+
 class RosBridgeClient:
     def __init__(self):
         self.ros = roslibpy.Ros(host=ROSBRIDGE_HOST, port=ROSBRIDGE_PORT)
         self.listener = roslibpy.Topic(
-            self.ros, "/robot_state", "amr_interfaces/msg/RobotState"
+            self.ros,
+            "/robot_state",
+            "amr_interfaces/msg/RobotState",
         )
 
     def start(self):
         self.ros.on_ready(self.on_ready)
-        # roslibpy starts its event loop in a daemon thread and disables
-        # Twisted signal handlers there. Calling run_forever() in our own
-        # thread makes Twisted try to install signals outside the main thread.
+        # roslibpy owns its event-loop thread and signal handling.
         self.ros.factory.manager.run()
-        print("[ros_bridge_client] Starting connection to rosbridge...")
+        logger.info(
+            "Connecting to rosbridge at %s:%s",
+            ROSBRIDGE_HOST,
+            ROSBRIDGE_PORT,
+        )
 
     def on_ready(self):
-        print("[ros_bridge_client] Connected to rosbridge.")
+        logger.info("Connected to rosbridge")
         self.listener.subscribe(handle_robot_state)
+
     def stop(self):
         if self.ros.is_connected:
             self.listener.unsubscribe()
             self.ros.close()
-            print("[ros_bridge_client] Disconnected from rosbridge.")
+            logger.info("Disconnected from rosbridge")
+
 
 ros_bridge_client = RosBridgeClient()
-
-

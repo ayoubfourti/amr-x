@@ -19,4 +19,5 @@ if ! .venv/bin/python -c 'import fastapi, psycopg2, roslibpy, sqlalchemy, uvicor
 fi
 
 cd dashboard_app/backend
+../../.venv/bin/python -m alembic upgrade head
 exec ../../.venv/bin/python -m uvicorn app.main:app --reload

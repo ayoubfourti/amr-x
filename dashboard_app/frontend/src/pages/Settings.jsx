@@ -1,111 +1,127 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import PageTopbar from '../components/ui/PageTopbar'
-import { useTheme } from '../context/ThemeContext'
-import { useDemo } from '../context/DemoContext'
+import Icon from '../components/ui/Icon'
+import { StatusPill } from '../components/ui/CommandUI'
+import SelectField from '../components/ui/SelectField'
+import { useTheme } from '../hooks/useTheme'
+import { useDemo } from '../hooks/useDemo'
+import { useSidebarPreference } from '../hooks/useSidebarPreference'
+import './SettingsProfile.css'
 
-function ToggleSwitch({ on, onChange }) {
+const TIMEOUT_OPTIONS = [
+  { value: '3', label: '3 seconds' },
+  { value: '5', label: '5 seconds' },
+  { value: '10', label: '10 seconds' },
+  { value: '30', label: '30 seconds' },
+]
+
+function ToggleSwitch({ on, onChange, label }) {
   return (
-    <div
+    <button
+      type="button"
+      className={`control-toggle ${on ? 'is-on' : ''}`}
       onClick={() => onChange(!on)}
-      style={{
-        width: 44,
-        height: 24,
-        borderRadius: 12,
-        background: on ? 'var(--accent)' : 'var(--border)',
-        position: 'relative',
-        cursor: 'pointer',
-        transition: 'background 0.2s',
-        flexShrink: 0,
-      }}
+      role="switch"
+      aria-checked={on}
+      aria-label={label}
     >
-      <div
-        style={{
-          position: 'absolute',
-          top: 3,
-          left: on ? 23 : 3,
-          width: 18,
-          height: 18,
-          borderRadius: '50%',
-          background: '#fff',
-          boxShadow: '0 1px 4px rgba(0,0,0,0.2)',
-          transition: 'left 0.2s cubic-bezier(0.4,0,0.2,1)',
-        }}
-      />
-    </div>
+      <i />
+    </button>
+  )
+}
+
+function SectionCard({ icon, eyebrow, title, description, children, className = '', id }) {
+  return (
+    <section className={`command-surface settings-section ${className}`} id={id}>
+      <header className="settings-section-header">
+        <span className="settings-section-icon"><Icon name={icon} size={18} /></span>
+        <span>
+          <small>{eyebrow}</small>
+          <strong>{title}</strong>
+          {description && <p>{description}</p>}
+        </span>
+      </header>
+      <div className="settings-section-body">{children}</div>
+    </section>
   )
 }
 
 function SettingsRow({ label, subtext, control }) {
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '14px 0',
-        borderBottom: '1px solid var(--border)',
-      }}
-    >
-      <div>
-        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text)' }}>{label}</div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{subtext}</div>
-      </div>
-      <div>{control}</div>
+    <div className="settings-row">
+      <span className="settings-row-copy">
+        <strong>{label}</strong>
+        <small>{subtext}</small>
+      </span>
+      <div className="settings-row-control">{control}</div>
     </div>
   )
 }
 
-function PillButton({ active, onClick, children }) {
+function SegmentControl({ options, value, onChange }) {
   return (
-    <button
-      type="button"
-      className="filter-btn"
-      onClick={onClick}
-      style={active ? { background: 'var(--accent)', color: '#000', borderColor: 'var(--accent)' } : undefined}
-    >
-      {children}
-    </button>
+    <div className="settings-segmented">
+      {options.map((option) => (
+        <button
+          type="button"
+          className={value === option.value ? 'is-active' : ''}
+          onClick={() => onChange(option.value)}
+          key={option.value}
+        >
+          <Icon name={option.icon} size={14} />
+          {option.label}
+        </button>
+      ))}
+    </div>
   )
 }
 
 function SavedIndicator({ show }) {
-  if (!show) return null
-  return <span style={{ color: 'var(--online)', fontSize: 12, marginLeft: 8 }}>✓ Saved</span>
+  return show ? <span className="settings-saved"><Icon name="shield" size={13} /> Saved</span> : null
 }
 
 export default function Settings() {
+  const [searchParams] = useSearchParams()
   const { theme, toggleTheme } = useTheme()
   const { demo, toggleDemo } = useDemo()
-
-  const [sidebarDefault, setSidebarDefault] = useState('open')
-
+  const { preference: sidebarDefault, setPreference: handleSidebarDefault } = useSidebarPreference()
   const [robotIp, setRobotIp] = useState('')
   const [ipSaved, setIpSaved] = useState(false)
-
   const [wsUrl, setWsUrl] = useState('')
   const [wsSaved, setWsSaved] = useState(false)
-
   const [timeout_, setTimeout_] = useState('5')
   const [connStatus, setConnStatus] = useState(null)
-
   const [notifCritical, setNotifCritical] = useState(true)
   const [notifMission, setNotifMission] = useState(true)
   const [notifOffline, setNotifOffline] = useState(true)
+  const [highlightAppearance, setHighlightAppearance] = useState(false)
+  const appearanceTimerRef = useRef(null)
 
   useEffect(() => {
-    setSidebarDefault(localStorage.getItem('warebot-sidebar') === 'closed' ? 'closed' : 'open')
     setRobotIp(localStorage.getItem('amrx-robot-ip') || '')
     setWsUrl(localStorage.getItem('amrx-ws-url') || '')
     setTimeout_(localStorage.getItem('amrx-timeout') || '5')
     setNotifCritical(localStorage.getItem('amrx-notif-critical') !== 'false')
     setNotifMission(localStorage.getItem('amrx-notif-mission') !== 'false')
     setNotifOffline(localStorage.getItem('amrx-notif-offline') !== 'false')
+
   }, [])
 
-  function handleSidebarDefault(next) {
-    setSidebarDefault(next)
-    localStorage.setItem('warebot-sidebar', next)
-  }
+  useEffect(() => {
+    if (searchParams.get('section') !== 'appearance') return undefined
+    const requestedTheme = searchParams.get('theme')
+    if ((requestedTheme === 'dark' || requestedTheme === 'light') && requestedTheme !== theme) {
+      toggleTheme()
+    }
+    setHighlightAppearance(true)
+    requestAnimationFrame(() => {
+      document.getElementById('appearance-settings')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    })
+    window.clearTimeout(appearanceTimerRef.current)
+    appearanceTimerRef.current = window.setTimeout(() => setHighlightAppearance(false), 2400)
+    return () => window.clearTimeout(appearanceTimerRef.current)
+  }, [searchParams, theme, toggleTheme])
 
   function handleSaveIp() {
     localStorage.setItem('amrx-robot-ip', robotIp)
@@ -134,274 +150,189 @@ export default function Settings() {
     setConnStatus(null)
     try {
       const ws = new WebSocket(wsUrl || 'ws://localhost:9090')
+      let settled = false
+      const timer = window.setTimeout(() => {
+        if (!settled) {
+          settled = true
+          setConnStatus('error')
+          ws.close()
+        }
+      }, 3000)
       ws.onopen = () => {
+        settled = true
+        window.clearTimeout(timer)
         setConnStatus('ok')
         ws.close()
       }
-      ws.onerror = () => setConnStatus('error')
-      setTimeout(() => {
-        if (ws.readyState !== WebSocket.OPEN) {
+      ws.onerror = () => {
+        if (!settled) {
+          settled = true
+          window.clearTimeout(timer)
           setConnStatus('error')
         }
-      }, 3000)
+      }
     } catch {
       setConnStatus('error')
     }
   }
 
+  function selectTheme(next) {
+    if (next !== theme) toggleTheme()
+  }
+
   return (
-    <div className="users-page">
-      <PageTopbar title="Settings" />
+    <div className="users-page settings-command-page">
+      <PageTopbar
+        title="Settings"
+        subtitle="Configure workspace behavior, fleet connectivity, and operator alerts"
+      />
 
-      <div
-        className="modal-card"
-        style={{
-          marginBottom: 20,
-          borderColor: demo ? 'rgba(245,158,11,0.4)' : 'var(--border)',
-          borderWidth: 1,
-        }}
-      >
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 16,
-            paddingBottom: 12,
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          <div>
-            <h3
-              style={{
-                margin: 0,
-                fontSize: 14,
-                color: demo ? 'var(--warning)' : 'var(--text)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 8,
-              }}
-            >
-              {demo && (
-                <span
-                  style={{
-                    background: 'rgba(245,158,11,0.15)',
-                    border: '1px solid rgba(245,158,11,0.4)',
-                    borderRadius: 4,
-                    fontSize: 9,
-                    fontWeight: 700,
-                    padding: '2px 6px',
-                    letterSpacing: 1,
-                    color: 'var(--warning)',
-                  }}
-                >
-                  ACTIVE
-                </span>
-              )}
-              Demo Mode
-            </h3>
-            <p style={{ margin: '4px 0 0', fontSize: 12, color: 'var(--text-muted)' }}>
-              {demo
-                ? 'App is showing fake data. Real API calls are bypassed.'
-                : 'Show realistic fake data for presentations and client demos.'}
-            </p>
-          </div>
-          <ToggleSwitch on={demo} onChange={toggleDemo} />
-        </div>
+      <section className={`command-surface demo-control-card ${demo ? 'is-active' : ''}`}>
+        <span className="demo-control-icon"><Icon name="command" size={19} /></span>
+        <span className="demo-control-copy">
+          <small>Environment</small>
+          <strong>Simulation mode</strong>
+          <p>{demo ? 'Representative fleet data is active. Live API operations are bypassed.' : 'Use representative fleet data for demonstrations and interface validation.'}</p>
+        </span>
+        <StatusPill tone={demo ? 'amber' : 'neutral'}>{demo ? 'Simulation active' : 'Live data'}</StatusPill>
+        <ToggleSwitch on={demo} onChange={toggleDemo} label="Toggle simulation mode" />
+      </section>
 
-        {demo && (
-          <div
-            style={{
-              background: 'rgba(245,158,11,0.06)',
-              border: '1px solid rgba(245,158,11,0.2)',
-              borderRadius: 8,
-              padding: '10px 14px',
-              fontSize: 12,
-              color: 'var(--warning)',
-              lineHeight: 1.6,
-            }}
+      <div className="settings-layout">
+        <div className="settings-main-column">
+          <SectionCard
+            id="appearance-settings"
+            className={highlightAppearance ? 'settings-search-target' : ''}
+            icon="overview"
+            eyebrow="Workspace"
+            title="Appearance"
+            description="Personalize the command interface for this browser."
           >
-            ⚠ Demo mode is ON — all data shown is simulated. Disable before connecting a real robot.
-          </div>
-        )}
-      </div>
+            <SettingsRow
+              label="Color theme"
+              subtext="Select the interface contrast profile"
+              control={
+                <SegmentControl
+                  value={theme}
+                  onChange={selectTheme}
+                  options={[
+                    { value: 'dark', label: 'Dark', icon: 'moon' },
+                    { value: 'light', label: 'Light', icon: 'sun' },
+                  ]}
+                />
+              }
+            />
+            <SettingsRow
+              label="Navigation state"
+              subtext="Switch the sidebar layout now and keep it for your next visit"
+              control={
+                <SegmentControl
+                  value={sidebarDefault}
+                  onChange={handleSidebarDefault}
+                  options={[
+                    { value: 'open', label: 'Expanded', icon: 'chevron' },
+                    { value: 'closed', label: 'Compact', icon: 'collapse' },
+                  ]}
+                />
+              }
+            />
+          </SectionCard>
 
-      <div className="modal-card" style={{ marginBottom: 20 }}>
-        <h3>Appearance</h3>
-        <SettingsRow
-          label="Theme"
-          subtext="Choose between dark and light mode"
-          control={
-            <div style={{ display: 'flex', gap: 8 }}>
-              <PillButton active={theme === 'dark'} onClick={() => theme !== 'dark' && toggleTheme()}>
-                🌙 Dark
-              </PillButton>
-              <PillButton active={theme === 'light'} onClick={() => theme !== 'light' && toggleTheme()}>
-                ☀️ Light
-              </PillButton>
-            </div>
-          }
-        />
-        <SettingsRow
-          label="Sidebar"
-          subtext="Default sidebar state on startup"
-          control={
-            <div style={{ display: 'flex', gap: 8 }}>
-              <PillButton active={sidebarDefault === 'open'} onClick={() => handleSidebarDefault('open')}>
-                Expanded
-              </PillButton>
-              <PillButton active={sidebarDefault === 'closed'} onClick={() => handleSidebarDefault('closed')}>
-                Collapsed
-              </PillButton>
-            </div>
-          }
-        />
-      </div>
-
-      <div className="modal-card" style={{ marginBottom: 20 }}>
-        <h3>Robot Connection</h3>
-        <SettingsRow
-          label="Robot IP Address"
-          subtext="Used for WebSocket connection and robot identification. Format: 192.168.x.x"
-          control={
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input
-                className="search-input"
-                value={robotIp}
-                onChange={(e) => setRobotIp(e.target.value)}
-                placeholder="192.168.1.xx"
-                style={{ minWidth: 240 }}
-              />
-              <button className="primary-button" onClick={handleSaveIp} style={{ whiteSpace: 'nowrap' }}>
-                Save
+          <SectionCard
+            icon="wifi"
+            eyebrow="Infrastructure"
+            title="Robot connection"
+            description="Endpoints used for identification, telemetry, and remote control."
+          >
+            <SettingsRow
+              label="Robot IP address"
+              subtext="Primary unit address on the operations network"
+              control={
+                <div className="settings-field-action">
+                  <input value={robotIp} onChange={(e) => setRobotIp(e.target.value)} placeholder="192.168.1.40" />
+                  <button type="button" onClick={handleSaveIp}>Save</button>
+                  <SavedIndicator show={ipSaved} />
+                </div>
+              }
+            />
+            <SettingsRow
+              label="WebSocket endpoint"
+              subtext="Live telemetry and teleoperation bridge"
+              control={
+                <div className="settings-field-action">
+                  <input value={wsUrl} onChange={(e) => setWsUrl(e.target.value)} placeholder="ws://192.168.1.40:9090" />
+                  <button type="button" onClick={handleSaveWs}>Save</button>
+                  <SavedIndicator show={wsSaved} />
+                </div>
+              }
+            />
+            <SettingsRow
+              label="Connection timeout"
+              subtext="Maximum time allowed for a connection attempt"
+              control={
+                <SelectField
+                  name="connection-timeout"
+                  value={timeout_}
+                  options={TIMEOUT_OPTIONS}
+                  onChange={handleTimeoutChange}
+                  ariaLabel="Connection timeout"
+                />
+              }
+            />
+            <div className="connection-test-row">
+              <button className="primary-action" type="button" onClick={handleTestConnection}>
+                <Icon name="wifi" size={15} /> Test connection
               </button>
-              <SavedIndicator show={ipSaved} />
+              {connStatus && (
+                <StatusPill tone={connStatus === 'ok' ? 'green' : 'red'}>
+                  {connStatus === 'ok' ? 'Endpoint reachable' : 'Connection failed'}
+                </StatusPill>
+              )}
             </div>
-          }
-        />
-        <SettingsRow
-          label="WebSocket URL"
-          subtext="Address the dashboard connects to for live telemetry and robot control. Used by Teleoperation page. Requires page reload to take effect."
-          control={
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <input
-                className="search-input"
-                value={wsUrl}
-                onChange={(e) => setWsUrl(e.target.value)}
-                placeholder="ws://192.168.1.xx:9090"
-                style={{ minWidth: 240 }}
-              />
-              <button className="primary-button" onClick={handleSaveWs} style={{ whiteSpace: 'nowrap' }}>
-                Save
-              </button>
-              <SavedIndicator show={wsSaved} />
-            </div>
-          }
-        />
-        <SettingsRow
-          label="Connection timeout"
-          subtext="How long to wait before a connection attempt fails"
-          control={
-            <select className="search-input" value={timeout_} onChange={handleTimeoutChange} style={{ minWidth: 120 }}>
-              <option value="3">3s</option>
-              <option value="5">5s</option>
-              <option value="10">10s</option>
-              <option value="30">30s</option>
-            </select>
-          }
-        />
-
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            marginTop: 16,
-            paddingTop: 16,
-            borderTop: '1px solid var(--border)',
-          }}
-        >
-          <button className="primary-button" type="button" onClick={handleTestConnection}>
-            Test Connection
-          </button>
-          {connStatus && (
-            <span
-              style={{
-                fontSize: 12,
-                color: connStatus === 'ok' ? 'var(--online)' : 'var(--error)',
-              }}
-            >
-              {connStatus === 'ok' ? '✓ WebSocket reachable' : '✕ Could not connect'}
-            </span>
-          )}
+          </SectionCard>
         </div>
-      </div>
 
-      <div className="modal-card" style={{ marginBottom: 20 }}>
-        <h3>Notifications</h3>
-        <SettingsRow
-          label="Critical alerts"
-          subtext="Robot errors and safety-critical events"
-          control={
-            <ToggleSwitch
-              on={notifCritical}
-              onChange={(v) => handleNotifChange('amrx-notif-critical', setNotifCritical, v)}
+        <aside className="settings-side-column">
+          <SectionCard
+            icon="alert"
+            eyebrow="Operator alerts"
+            title="Notifications"
+            description="Choose which operational events require attention."
+          >
+            <SettingsRow
+              label="Critical alerts"
+              subtext="Safety and system failures"
+              control={<ToggleSwitch on={notifCritical} onChange={(v) => handleNotifChange('amrx-notif-critical', setNotifCritical, v)} label="Critical alerts" />}
             />
-          }
-        />
-        <SettingsRow
-          label="Mission updates"
-          subtext="Mission start, completion, and failure notifications"
-          control={
-            <ToggleSwitch
-              on={notifMission}
-              onChange={(v) => handleNotifChange('amrx-notif-mission', setNotifMission, v)}
+            <SettingsRow
+              label="Mission updates"
+              subtext="Starts, completions, and failures"
+              control={<ToggleSwitch on={notifMission} onChange={(v) => handleNotifChange('amrx-notif-mission', setNotifMission, v)} label="Mission updates" />}
             />
-          }
-        />
-        <SettingsRow
-          label="Robot offline alerts"
-          subtext="Notify when a robot loses connection"
-          control={
-            <ToggleSwitch
-              on={notifOffline}
-              onChange={(v) => handleNotifChange('amrx-notif-offline', setNotifOffline, v)}
+            <SettingsRow
+              label="Robot offline"
+              subtext="Unexpected connectivity loss"
+              control={<ToggleSwitch on={notifOffline} onChange={(v) => handleNotifChange('amrx-notif-offline', setNotifOffline, v)} label="Robot offline alerts" />}
             />
-          }
-        />
-      </div>
+          </SectionCard>
 
-      <div className="modal-card">
-        <h3>About</h3>
-        <div className="detail-grid">
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>App Name</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>AMR-X Control System</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Version</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>v2.4.1</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Build</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>2025</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Backend</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>FastAPI</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Frontend</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>React + Vite</div>
-          </div>
-          <div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Theme Engine</div>
-            <div style={{ fontSize: 13, color: 'var(--text)' }}>CSS Variables</div>
-          </div>
-        </div>
-        <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 16 }}>
-          This dashboard is built for CyberMech Systems autonomous robot fleet management.
-        </p>
+          <SectionCard
+            icon="command"
+            eyebrow="System"
+            title="Platform information"
+            description="Current command-system build and runtime."
+            className="platform-card"
+          >
+            <dl className="platform-facts">
+              <div><dt>Product</dt><dd>AMR-X Control</dd></div>
+              <div><dt>Version</dt><dd>2.4.1</dd></div>
+              <div><dt>Runtime</dt><dd>React + Vite</dd></div>
+              <div><dt>Services</dt><dd>FastAPI</dd></div>
+              <div><dt>Build</dt><dd>2026.07</dd></div>
+              <div><dt>Status</dt><dd className="online-value"><i /> Operational</dd></div>
+            </dl>
+          </SectionCard>
+        </aside>
       </div>
     </div>
   )

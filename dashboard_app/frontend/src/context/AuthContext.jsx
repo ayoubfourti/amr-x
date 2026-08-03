@@ -1,10 +1,10 @@
-import { createContext, useContext, useState } from 'react'
-
-const AuthContext = createContext(null)
+import { useState } from 'react'
+import { AuthContext } from './internalContexts'
 const STORAGE_KEY = 'currentUser'
 
 function sanitizeUser(user) {
-  const { password_hash, ...safe } = user
+  const safe = { ...user }
+  delete safe.password_hash
   return safe
 }
 
@@ -39,10 +39,4 @@ export function AuthProvider({ children }) {
   }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
-
-export function useAuth() {
-  const ctx = useContext(AuthContext)
-  if (!ctx) throw new Error('useAuth must be used within an AuthProvider')
-  return ctx
 }

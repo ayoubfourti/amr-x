@@ -2,13 +2,16 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getUsers, createUser, updateUser, deleteUser, patchUser } from '../api/users'
 import { getRobots } from '../api/robots'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../hooks/useAuth'
 import Badge from '../components/ui/Badge'
 import PageTopbar from '../components/ui/PageTopbar'
-import { useToast } from '../components/ui/Toast'
+import { useToast } from '../hooks/useToast'
 import ConfirmModal from '../components/ui/ConfirmModal'
 import { formatDate } from '../utils/format'
 import { initials, avatarColor } from '../utils/avatar'
+import Icon from '../components/ui/Icon'
+import { StatGrid } from '../components/ui/CommandUI'
+import SelectField from '../components/ui/SelectField'
 
 const ROLE_COLORS = {
   admin: '#dc2626',
@@ -23,6 +26,16 @@ const STATUS_COLORS = {
 }
 
 const emptyForm = { name: '', email: '', password: '', role: 'operator', status: 'pending' }
+const ROLE_OPTIONS = [
+  { value: 'admin', label: 'Admin' },
+  { value: 'operator', label: 'Operator' },
+  { value: 'client', label: 'Client' },
+]
+const USER_STATUS_OPTIONS = [
+  { value: 'approved', label: 'Approved' },
+  { value: 'pending', label: 'Pending' },
+  { value: 'rejected', label: 'Rejected' },
+]
 
 function UserModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMessage }) {
   const isEdit = mode === 'edit'
@@ -38,7 +51,7 @@ function UserModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMes
             </p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>
-            ✕
+            <Icon name="close" size={16} />
           </button>
         </div>
 
@@ -92,22 +105,27 @@ function UserModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMes
           )}
 
           <div className="modal-row">
-            <label className="auth-field">
+            <div className="auth-field">
               <span className="auth-label">Role</span>
-              <select name="role" value={form.role} onChange={onChange}>
-                <option value="admin">Admin</option>
-                <option value="operator">Operator</option>
-                <option value="client">Client</option>
-              </select>
-            </label>
-            <label className="auth-field">
+              <SelectField
+                name="role"
+                value={form.role}
+                options={ROLE_OPTIONS}
+                onChange={onChange}
+                ariaLabel="User role"
+              />
+            </div>
+            <div className="auth-field">
               <span className="auth-label">Status</span>
-              <select name="status" value={form.status} onChange={onChange} disabled={!isEdit}>
-                <option value="approved">Approved</option>
-                <option value="pending">Pending</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </label>
+              <SelectField
+                name="status"
+                value={form.status}
+                options={USER_STATUS_OPTIONS}
+                onChange={onChange}
+                ariaLabel="User status"
+                disabled={!isEdit}
+              />
+            </div>
           </div>
 
           {errorMessage && <p className="error">{errorMessage}</p>}
@@ -294,38 +312,23 @@ function Users() {
 
   return (
     <div className="users-page">
-      <PageTopbar title="Users" latency={latency} />
+      <PageTopbar
+        title="Users"
+        latency={latency}
+        subtitle={`${stats.total} identities · ${stats.approved} active`}
+        action={
+          <button type="button" className="primary-action" onClick={openCreateModal}>
+            <Icon name="users" size={16} /> New user
+          </button>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>User Management</h3>
-          <p className="topbar-subtext">
-            {stats.total} members · {stats.approved} active
-          </p>
-        </div>
-        <button type="button" className="primary-button" onClick={openCreateModal}>
-          + New User
-        </button>
-      </div>
-
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Total Users</span>
-          <strong>{stats.total}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Approved</span>
-          <strong>{stats.approved}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Pending</span>
-          <strong>{stats.pending}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Rejected</span>
-          <strong>{stats.rejected}</strong>
-        </div>
-      </div>
+      <StatGrid items={[
+        { label: 'Total users', value: stats.total, icon: 'users', detail: 'Directory', tone: 'cyan' },
+        { label: 'Approved', value: stats.approved, icon: 'shield', detail: 'Active access', tone: 'green' },
+        { label: 'Pending', value: stats.pending, icon: 'clock', detail: 'Review queue', tone: 'amber' },
+        { label: 'Rejected', value: stats.rejected, icon: 'close', detail: 'Access denied', tone: 'red' },
+      ]} />
 
       {showForm && (
         <UserModal
@@ -342,22 +345,24 @@ function Users() {
       <div className="filter-bar">
         <input
           className="search-input"
-          placeholder="🔍 Search name or email…"
+          placeholder="Search name or email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
-          <option value="all">All Roles</option>
-          <option value="admin">Admin</option>
-          <option value="operator">Operator</option>
-          <option value="client">Client</option>
-        </select>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Statuses</option>
-          <option value="approved">Approved</option>
-          <option value="pending">Pending</option>
-          <option value="rejected">Rejected</option>
-        </select>
+        <SelectField
+          name="user-role-filter"
+          value={roleFilter}
+          options={[{ value: 'all', label: 'All roles' }, ...ROLE_OPTIONS]}
+          onChange={(event) => setRoleFilter(event.target.value)}
+          ariaLabel="Filter users by role"
+        />
+        <SelectField
+          name="user-status-filter"
+          value={statusFilter}
+          options={[{ value: 'all', label: 'All statuses' }, ...USER_STATUS_OPTIONS]}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          ariaLabel="Filter users by status"
+        />
         <span className="results-count">{filteredUsers.length} results</span>
       </div>
 
@@ -417,7 +422,7 @@ function Users() {
                         disabled={approveMutation.isPending}
                         onClick={() => approveMutation.mutate(user.id)}
                       >
-                        {approveMutation.isPending ? '…' : '✅ Approve'}
+                        {approveMutation.isPending ? '…' : <><Icon name="shield" size={15} /> Approve</>}
                       </button>
                       <button
                         type="button"
@@ -425,15 +430,15 @@ function Users() {
                         disabled={rejectMutation.isPending}
                         onClick={() => rejectMutation.mutate(user.id)}
                       >
-                        {rejectMutation.isPending ? '…' : '⛔ Reject'}
+                        {rejectMutation.isPending ? '…' : <><Icon name="close" size={15} /> Reject</>}
                       </button>
                     </>
                   )}
                   <button type="button" className="icon-button" onClick={() => openEditModal(user)}>
-                    ✏️
+                    <Icon name="settings" size={16} />
                   </button>
                   <button type="button" className="icon-button" onClick={() => setConfirmDelete(user)}>
-                    🗑️
+                    <Icon name="close" size={16} />
                   </button>
                 </td>
               </tr>

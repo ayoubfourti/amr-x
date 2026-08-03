@@ -1,0 +1,617 @@
+.teleoperation-page {
+  --hud-cyan: #58d9ee;
+  --hud-blue: #4fa5ff;
+  --hud-green: #60e0b4;
+}
+
+.teleop-camera-stage {
+  min-height: 720px;
+  position: relative;
+  overflow: hidden;
+  border-color: rgba(79, 205, 235, .3);
+  border-radius: 17px;
+  background: #03111b;
+  isolation: isolate;
+  box-shadow: inset 0 0 80px rgba(26, 166, 210, .05), 0 24px 70px rgba(0, 5, 12, .24);
+}
+
+.teleop-camera-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  border: 1px solid rgba(93, 214, 240, .17);
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(68, 207, 235, .22), transparent 8%) top left / 90px 1px no-repeat,
+    linear-gradient(180deg, rgba(68, 207, 235, .22), transparent 8%) top left / 1px 90px no-repeat,
+    linear-gradient(-90deg, rgba(68, 207, 235, .22), transparent 8%) bottom right / 90px 1px no-repeat,
+    linear-gradient(0deg, rgba(68, 207, 235, .22), transparent 8%) bottom right / 1px 90px no-repeat;
+}
+
+.teleop-camera-stage > .live-camera-feed,
+.teleop-camera-stage > .live-camera-feed .camera-viewport {
+  min-height: 720px;
+}
+
+.teleop-camera-stage > .live-camera-feed > header {
+  position: absolute;
+  z-index: 8;
+  left: 18px;
+  right: 18px;
+  top: 15px;
+  min-height: 51px;
+  padding: 7px 11px;
+  border: 1px solid rgba(90, 205, 232, .2);
+  border-radius: 11px;
+  background: linear-gradient(100deg, rgba(5, 25, 39, .3), rgba(8, 31, 47, .12));
+  color: #eafaff;
+  box-shadow: 0 14px 36px rgba(0, 7, 13, .14);
+  backdrop-filter: none;
+}
+
+.teleop-camera-stage > .live-camera-feed > footer {
+  position: absolute;
+  z-index: 7;
+  right: 25px;
+  bottom: 10px;
+  color: rgba(182, 223, 233, .65);
+}
+
+.teleop-camera-stage .camera-viewport > img {
+  filter: saturate(.78) contrast(1.18) brightness(.58) hue-rotate(7deg);
+}
+
+.teleop-camera-stage .camera-vignette {
+  background:
+    linear-gradient(180deg, rgba(1, 9, 15, .42), transparent 30%, rgba(1, 9, 15, .55)),
+    radial-gradient(circle at 52% 42%, transparent 24%, rgba(1, 9, 15, .58));
+}
+
+.teleop-camera-stage .camera-state { top: 84px; }
+.teleop-camera-stage .camera-meta { bottom: 42px; }
+.teleop-camera-stage .camera-corner { display: none; }
+
+.hud-top-actions {
+  position: absolute;
+  z-index: 12;
+  right: 286px;
+  top: 25px;
+}
+
+.hud-top-actions button,
+.hud-map-panel button {
+  min-height: 31px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid rgba(91, 207, 233, .22);
+  border-radius: 7px;
+  background: rgba(7, 28, 43, .18);
+  color: #b4dbe5;
+  font-size: 8px;
+  font-weight: 750;
+  backdrop-filter: none;
+}
+
+.hud-top-actions button:hover,
+.hud-map-panel button:hover {
+  border-color: rgba(95, 220, 243, .52);
+  background: rgba(16, 68, 91, .52);
+  color: white;
+}
+
+.teleop-camera-stage .camera-view-tabs {
+  border-color: rgba(91, 207, 233, .19);
+  background: rgba(2, 15, 25, .5);
+  backdrop-filter: blur(14px);
+}
+
+.teleop-camera-stage .camera-view-tabs button.active {
+  border-color: rgba(94, 220, 240, .34);
+  background: linear-gradient(145deg, rgba(45, 176, 211, .2), rgba(36, 127, 171, .12));
+}
+
+.teleop-hud {
+  position: absolute;
+  z-index: 10;
+  border: 1px solid rgba(87, 207, 235, .25);
+  border-radius: 13px;
+  color: #eafaff;
+  background:
+    linear-gradient(145deg, rgba(9, 43, 64, .22), rgba(4, 20, 32, .1)),
+    linear-gradient(90deg, rgba(63, 181, 222, .025), transparent);
+  box-shadow: inset 0 1px rgba(255, 255, 255, .035), 0 18px 45px rgba(0, 6, 12, .2), 0 0 24px rgba(38, 176, 220, .025);
+  backdrop-filter: none;
+}
+
+.hud-unit-panel {
+  width: 220px;
+  left: 18px;
+  top: 82px;
+  padding: 12px;
+}
+
+.hud-panel-title {
+  display: grid;
+  gap: 3px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(105, 203, 228, .14);
+}
+
+.hud-panel-title span {
+  color: var(--hud-green);
+  font-size: 8px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.hud-panel-title span i {
+  width: 5px;
+  height: 5px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.hud-panel-title strong {
+  overflow: hidden;
+  color: #f1fcff;
+  font-size: 13px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.hud-unit-select {
+  margin-top: 10px;
+  display: grid;
+  gap: 5px;
+}
+
+.hud-unit-select > span,
+.hud-drive-panel small {
+  color: #779dac;
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.hud-unit-select .amrx-select-trigger {
+  height: 39px;
+  padding: 0 11px;
+  border: 1px solid rgba(90, 205, 231, .17);
+  border-radius: 7px;
+  background: rgba(1, 12, 21, .18);
+  color: #f2fcff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 39px;
+}
+
+.hud-unit-state {
+  margin-top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #8db1bd;
+  font-size: 8px;
+}
+
+.hud-unit-state span { display: flex; align-items: center; gap: 5px; }
+.hud-unit-state b { color: var(--hud-green); font-size: 8px; text-transform: uppercase; }
+
+.hud-map-panel {
+  width: 290px;
+  height: 205px;
+  right: 18px;
+  top: 82px;
+  overflow: hidden;
+  transition: width .28s ease, height .28s ease, inset .28s ease;
+}
+
+.hud-map-panel > header {
+  height: 47px;
+  padding: 0 9px 0 12px;
+  position: absolute;
+  z-index: 4;
+  left: 0;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(180deg, rgba(3, 17, 28, .93), rgba(3, 17, 28, .16));
+}
+
+.hud-map-panel header > div:first-child { display: grid; gap: 2px; }
+.hud-map-panel header small { color: #66ccdf; font-size: 8px; text-transform: uppercase; letter-spacing: .12em; }
+.hud-map-panel header strong { font-size: 10px; }
+.hud-map-panel header > div:last-child { display: flex; gap: 4px; }
+.hud-map-panel button { min-height: 28px; padding: 0 7px; }
+.hud-map-viewport { height: 100%; background: #04131e; }
+.hud-map-viewport > div { height: 100% !important; }
+
+.teleop-camera-stage.is-map-expanded .hud-map-panel {
+  width: min(760px, calc(100% - 36px));
+  height: calc(100% - 110px);
+  right: 18px;
+  top: 82px;
+  z-index: 20;
+}
+
+.teleop-camera-stage.is-map-expanded .hud-drive-panel,
+.teleop-camera-stage.is-map-expanded .hud-unit-panel,
+.teleop-camera-stage.is-map-expanded .hud-telemetry-strip {
+  opacity: .18;
+  pointer-events: none;
+}
+
+.hud-drive-panel {
+  width: 268px;
+  left: 18px;
+  bottom: 18px;
+  padding: 11px;
+}
+
+.hud-drive-panel > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.hud-drive-panel header > div { display: grid; gap: 2px; }
+.hud-drive-panel header strong { font-size: 11px; }
+
+.hud-motion-state {
+  color: #7698a5;
+  font-size: 8px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.hud-motion-state i {
+  width: 5px;
+  height: 5px;
+  display: inline-block;
+  margin-right: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.hud-motion-state.moving { color: var(--hud-green); }
+
+.hud-mode-tabs {
+  margin-top: 9px;
+  padding: 3px;
+  display: flex;
+  border: 1px solid rgba(93, 205, 231, .16);
+  border-radius: 7px;
+  background: rgba(1, 12, 21, .18);
+}
+
+.hud-mode-tabs button {
+  min-height: 26px;
+  flex: 1;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: #759aaa;
+  font-size: 8px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hud-mode-tabs button.active {
+  background: linear-gradient(135deg, rgba(38, 163, 218, .25), rgba(42, 111, 205, .18));
+  color: #dcf9ff;
+  box-shadow: inset 0 0 0 1px rgba(98, 218, 240, .18);
+}
+
+.hud-drive-body {
+  height: 142px;
+  display: grid;
+  place-items: center;
+}
+
+.hud-drive-pad {
+  width: 174px;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 52px);
+  grid-template-areas: ". forward ." "left stop right" ". backward .";
+  gap: 9px;
+}
+
+.hud-drive-pad button {
+  width: 52px;
+  height: 48px;
+  padding: 0;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(86, 209, 236, .3);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(49, 176, 218, .17), transparent 60%),
+    linear-gradient(145deg, rgba(20, 77, 105, .46), rgba(3, 19, 31, .72));
+  color: #9ce8f4;
+  box-shadow:
+    inset 0 0 18px rgba(49, 176, 218, .075),
+    inset 0 1px rgba(255,255,255,.045),
+    0 7px 16px rgba(0, 7, 13, .18);
+  touch-action: none;
+  user-select: none;
+}
+
+.hud-drive-pad button::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border: 1px solid rgba(101, 214, 237, .09);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.hud-drive-pad button .drive-pad-glyph {
+  z-index: 1;
+  font-size: 19px;
+  line-height: 1;
+  text-shadow: 0 0 10px rgba(99, 222, 241, .45);
+}
+.hud-drive-pad button small { display: none; }
+.hud-drive-pad button:hover,
+.hud-drive-pad button.active {
+  border-color: rgba(100, 226, 248, .65);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(89, 218, 238, .34), transparent 62%),
+    linear-gradient(145deg, rgba(35, 154, 198, .62), rgba(17, 67, 111, .7));
+  color: white;
+  box-shadow: inset 0 0 20px rgba(80, 211, 238, .14), 0 0 20px rgba(59, 197, 232, .22);
+  transform: translateY(-1px);
+}
+.hud-drive-pad button:active,
+.hud-drive-pad button.active {
+  transform: translateY(1px) scale(.97);
+}
+.hud-drive-pad .forward { grid-area: forward; }
+.hud-drive-pad .left { grid-area: left; }
+.hud-drive-pad .stop {
+  grid-area: stop;
+  color: #ff8b85;
+  border-color: rgba(255, 103, 96, .38);
+  background:
+    radial-gradient(circle, rgba(180, 46, 53, .18), transparent 62%),
+    linear-gradient(145deg, rgba(76, 27, 37, .56), rgba(29, 12, 21, .72));
+}
+.hud-drive-pad .stop::after { border-color: rgba(255, 130, 123, .11); }
+.hud-drive-pad .stop .drive-pad-glyph { font-size: 14px; text-shadow: 0 0 10px rgba(255, 98, 91, .44); }
+.hud-drive-pad .stop:hover {
+  border-color: rgba(255, 121, 114, .72);
+  background: linear-gradient(145deg, rgba(153, 44, 52, .65), rgba(65, 21, 33, .75));
+  box-shadow: inset 0 0 20px rgba(255, 90, 84, .11), 0 0 18px rgba(255, 78, 73, .16);
+}
+.hud-drive-pad .right { grid-area: right; }
+.hud-drive-pad .backward { grid-area: backward; }
+
+.hud-joystick {
+  width: 120px;
+  height: 120px;
+  position: relative;
+  border: 1px solid rgba(86, 209, 236, .36);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(40, 162, 208, .16), rgba(3, 20, 32, .42));
+  box-shadow: inset 0 0 25px rgba(49, 176, 218, .08);
+  touch-action: none;
+}
+
+.joystick-ring { position: absolute; inset: 14px; border: 1px dashed rgba(89, 201, 227, .18); border-radius: 50%; }
+.joystick-cross { position: absolute; background: rgba(91, 201, 227, .15); }
+.joystick-cross.vertical { width: 1px; top: 8px; bottom: 8px; left: 50%; }
+.joystick-cross.horizontal { height: 1px; left: 8px; right: 8px; top: 50%; }
+.hud-joystick > i {
+  width: 34px;
+  height: 34px;
+  margin: -17px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border: 1px solid #75e4f4;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #267492, #163f5c);
+  box-shadow: 0 0 20px rgba(79, 213, 237, .3);
+}
+
+.hud-speed-limit { display: grid; gap: 5px; }
+.hud-speed-limit > span { display: flex; justify-content: space-between; }
+.hud-speed-limit strong { color: #bfeef6; font: 750 9px var(--font-mono, monospace); }
+.hud-speed-limit input { width: 100%; accent-color: #55d6eb; }
+.hud-key-hints { margin-top: 8px; display: flex; justify-content: space-between; color: #789aa7; font-size: 7px; }
+.hud-key-hints span { display: flex; align-items: center; gap: 3px; }
+.hud-key-hints kbd {
+  min-width: 16px;
+  padding: 2px 3px;
+  border: 1px solid rgba(90, 196, 223, .2);
+  border-radius: 3px;
+  color: #9dcbd5;
+  font: 7px var(--font-mono, monospace);
+  text-align: center;
+}
+
+.hud-telemetry-strip {
+  min-height: 62px;
+  left: 304px;
+  right: 322px;
+  bottom: 18px;
+  padding: 0 5px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.hud-metric {
+  min-width: 0;
+  padding: 0 12px;
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  border-right: 1px solid rgba(91, 202, 229, .13);
+}
+.hud-metric:last-child { border-right: 0; }
+.hud-metric small { color: #7f9eaa; font-size: 8px; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.hud-metric strong { color: var(--hud-cyan); font: 750 12px var(--font-mono, monospace); }
+.hud-metric.tone-green strong { color: var(--hud-green); }
+
+.hud-emergency-stop {
+  width: 286px;
+  min-height: 62px;
+  position: absolute;
+  z-index: 11;
+  right: 18px;
+  bottom: 18px;
+  padding: 0 12px;
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 88, 82, .42);
+  border-radius: 12px;
+  background: linear-gradient(120deg, rgba(111, 28, 35, .28), rgba(47, 18, 28, .14));
+  color: #ff8e88;
+  box-shadow: 0 15px 38px rgba(18, 2, 5, .2);
+  backdrop-filter: none;
+}
+.hud-emergency-stop:hover { border-color: rgba(255, 103, 96, .72); background: rgba(123, 30, 37, .58); color: white; }
+.hud-emergency-stop span { display: grid; gap: 2px; text-align: left; }
+.hud-emergency-stop small { color: rgba(255, 180, 176, .76); font-size: 7px; text-transform: uppercase; letter-spacing: .1em; }
+.hud-emergency-stop strong { font-size: 9px; text-transform: uppercase; }
+.hud-emergency-stop kbd {
+  padding: 4px 6px;
+  border: 1px solid rgba(255, 157, 151, .2);
+  border-radius: 5px;
+  color: #ffaaa5;
+  font: 7px var(--font-mono, monospace);
+}
+
+.teleoperation-page .camera-eyebrow {
+  font-size: 8px;
+}
+
+.teleoperation-page .live-camera-feed header strong {
+  font-size: 12px;
+}
+
+.teleoperation-page .live-camera-feed header small,
+.teleoperation-page .camera-view-tabs button,
+.teleoperation-page .camera-state,
+.teleoperation-page .camera-meta {
+  font-size: 8px;
+}
+
+.teleoperation-page .live-camera-feed > footer {
+  font-size: 7px;
+}
+
+.teleop-camera-stage.is-camera-expanded {
+  position: fixed;
+  z-index: 1000;
+  inset: 12px;
+  min-height: 0;
+  border-radius: 14px;
+}
+.teleop-camera-stage.is-camera-expanded > .live-camera-feed,
+.teleop-camera-stage.is-camera-expanded > .live-camera-feed .camera-viewport { min-height: 100%; }
+body.teleop-fullscreen-active { overflow: hidden; }
+
+@media (max-width: 1180px) {
+  .hud-telemetry-strip { right: 18px; top: 298px; bottom: auto; }
+  .hud-emergency-stop { bottom: 18px; }
+}
+
+@media (max-width: 840px) {
+  .teleop-camera-stage {
+    min-height: 1080px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 440px auto auto;
+    gap: 10px;
+    padding: 450px 10px 10px;
+  }
+  .teleop-camera-stage > .live-camera-feed {
+    min-height: 440px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+  }
+  .teleop-camera-stage > .live-camera-feed .camera-viewport { min-height: 440px; }
+  .teleop-camera-stage > .live-camera-feed > header { left: 10px; right: 10px; top: 10px; }
+  .hud-top-actions { right: 265px; top: 20px; }
+  .teleop-hud,
+  .hud-emergency-stop { position: relative; inset: auto; width: auto; }
+  .hud-unit-panel { grid-column: 1; grid-row: 2; }
+  .hud-map-panel { height: 255px; grid-column: 2; grid-row: 2; }
+  .hud-drive-panel { grid-column: 1; grid-row: 3; }
+  .hud-telemetry-strip { grid-column: 2; grid-row: 3; }
+  .hud-emergency-stop { position: absolute; right: 10px; bottom: 10px; width: calc(50% - 15px); }
+  .teleop-camera-stage.is-map-expanded .hud-map-panel { position: absolute; inset: 74px 10px 10px; width: auto; height: auto; }
+  .teleop-camera-stage.is-camera-expanded { display: block; padding: 0; min-height: 0; }
+  .teleop-camera-stage.is-camera-expanded > .live-camera-feed { min-height: 100%; }
+  .teleop-camera-stage.is-camera-expanded .hud-unit-panel { position: absolute; left: 12px; top: 76px; width: 210px; }
+  .teleop-camera-stage.is-camera-expanded .hud-map-panel { position: absolute; right: 12px; top: 76px; width: 260px; height: 180px; }
+  .teleop-camera-stage.is-camera-expanded .hud-drive-panel { position: absolute; left: 12px; bottom: 12px; width: 250px; }
+  .teleop-camera-stage.is-camera-expanded .hud-telemetry-strip { position: absolute; left: 274px; right: 278px; bottom: 12px; top: auto; min-height: 62px; }
+  .teleop-camera-stage.is-camera-expanded .hud-emergency-stop { right: 12px; bottom: 12px; width: 254px; }
+}
+
+@media (max-width: 620px) {
+  .teleoperation-page .command-page-header { padding-bottom: 6px; }
+  .teleop-camera-stage {
+    min-height: 1510px;
+    display: flex;
+    flex-direction: column;
+    padding: 420px 8px 8px;
+  }
+  .teleop-camera-stage > .live-camera-feed,
+  .teleop-camera-stage > .live-camera-feed .camera-viewport { min-height: 410px; }
+  .teleop-camera-stage .live-camera-feed > header { align-items: flex-start; }
+  .hud-top-actions { left: 17px; right: auto; top: 346px; }
+  .hud-unit-panel,
+  .hud-map-panel,
+  .hud-drive-panel,
+  .hud-telemetry-strip { width: 100%; min-height: 0; flex: none; }
+  .hud-map-panel { height: 260px; }
+  .hud-drive-panel { order: 3; }
+  .hud-telemetry-strip { order: 4; min-height: 126px; grid-template-columns: 1fr 1fr; }
+  .hud-metric:nth-child(2) { border-right: 0; }
+  .hud-emergency-stop {
+    width: calc(100% - 16px);
+    min-height: 58px;
+    position: fixed;
+    z-index: 1100;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+  }
+  .teleop-camera-stage.is-camera-expanded .hud-unit-panel,
+  .teleop-camera-stage.is-camera-expanded .hud-map-panel,
+  .teleop-camera-stage.is-camera-expanded .hud-telemetry-strip { display: none; }
+  .teleop-camera-stage.is-camera-expanded .hud-drive-panel {
+    left: 8px;
+    bottom: 78px;
+    width: 220px;
+    transform: scale(.82);
+    transform-origin: bottom left;
+  }
+  .teleop-camera-stage.is-camera-expanded .hud-emergency-stop { width: calc(100% - 16px); right: 8px; bottom: 8px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hud-map-panel { transition: none; }
+}

@@ -10,7 +10,7 @@ def get_mission_by_id(db: Session, mission_id: int):
     return db.query(Mission).filter(Mission.id == mission_id).first()
 
 def create_mission(db: Session, data: MissionCreate):
-    mission = Mission(**data.dict())
+    mission = Mission(**data.model_dump())
     db.add(mission)
     db.commit()
     db.refresh(mission)
@@ -18,6 +18,8 @@ def create_mission(db: Session, data: MissionCreate):
 
 def delete_mission(db: Session, mission_id: int):
     mission = db.query(Mission).filter(Mission.id == mission_id).first()
+    if not mission:
+        return None
     db.delete(mission)
     db.commit()
     return mission

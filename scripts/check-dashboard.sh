@@ -15,5 +15,8 @@ if [[ ! -d dashboard_app/frontend/node_modules ]]; then
 fi
 
 .venv/bin/python -m compileall -q dashboard_app/backend/app
+PYTHONPATH=dashboard_app/backend \
+  .venv/bin/python -m unittest discover -s dashboard_app/backend/tests -p 'test_*.py'
+npm run worlds:check --prefix dashboard_app/frontend
 npm run lint --prefix dashboard_app/frontend
 npm run build --prefix dashboard_app/frontend

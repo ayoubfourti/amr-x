@@ -23,6 +23,8 @@ def create_robot(db: Session, name: str, ip_address: str):
 
 def update_robot_status(db: Session, robot_id: int, data: dict):
     robot = db.query(Robot).filter(Robot.id == robot_id).first()
+    if not robot:
+        return None
     for key, value in data.items():
         setattr(robot, key, value)
     db.commit()
@@ -71,7 +73,7 @@ def update_telemetry(db: Session, robot_id: int, data):
         existing = db.query(Alert).filter(
             Alert.robot_id == robot_id,
             Alert.type == 'critical',
-            Alert.is_resolved == False,
+            Alert.is_resolved.is_(False),
             Alert.message.like('%battery%')
         ).first()
         if not existing:

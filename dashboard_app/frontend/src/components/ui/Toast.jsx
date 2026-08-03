@@ -1,6 +1,5 @@
-import { createContext, useCallback, useContext, useState } from 'react'
-
-const ToastContext = createContext(null)
+import { useCallback, useState } from 'react'
+import { ToastContext } from '../../context/internalContexts'
 
 const TYPE_COLORS = {
   success: '#10b981',
@@ -112,10 +111,4 @@ export function ToastProvider({ children }) {
       </div>
     </ToastContext.Provider>
   )
-}
-
-export function useToast() {
-  const ctx = useContext(ToastContext)
-  if (!ctx) throw new Error('useToast must be used within a ToastProvider')
-  return ctx
 }

@@ -1,4 +1,5 @@
 import bcrypt
+import secrets
 from sqlalchemy.orm import Session
 from app.models.user import User
 from app.schemas.user import UserCreate, UserUpdate
@@ -21,13 +22,10 @@ def verify_password(plain: str, hashed: str) -> bool:
                 plain.encode('utf-8'),
                 hashed.encode('utf-8')
             )
-        else:
-            # Plain text fallback for old passwords
-            return plain == hashed
-    except Exception as e:
-        print(f"[verify_password] error: {e}")
-        # Final fallback
-        return plain == hashed
+        # Temporary compatibility for accounts not yet migrated.
+        return secrets.compare_digest(plain, hashed)
+    except (TypeError, ValueError):
+        return False
 
 def get_all_users(db: Session):
     return db.query(User).all()

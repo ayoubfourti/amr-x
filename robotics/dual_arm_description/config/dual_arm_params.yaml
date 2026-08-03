@@ -1,0 +1,50 @@
+# Reference parameters for the dual-arm module.
+# Mirrors joint limits already declared in dual_arm.urdf.xacro, collected
+# here for quick reference and reuse in controller/MoveIt tuning.
+
+left_arm:
+  joints:
+    - shoulder1_joint
+    - shoulder2_joint
+    - shoulder3_joint
+    - shoulder4_joint
+    - shoulder5_joint
+    - shoulder6_joint
+    - wrist_joint
+  joint_limits:
+    lower: -3.14159
+    upper: 3.14159
+    effort: 100.0
+    velocity: 1.0
+
+right_arm:
+  joints:
+    - shoulderR_joint
+    - shoulderR_2_joint
+    - shoulderR_3joint
+    - shoulderR_4joint
+    - shoulderR_5joint
+    - shoulderR_6joint
+    - wristR_joint
+  joint_limits:
+    lower: -3.14159
+    upper: 3.14159
+    effort: 100.0
+    velocity: 1.0
+
+base:
+  pinion_joint:
+    lower: -3.14159
+    upper: 3.14159
+    effort: 100.0
+    velocity: 1.0
+  rack_joint:
+    lower: -0.40
+    upper: 0.0
+    effort: 100.0
+    velocity: 1.0
+  robot_base_joint:
+    lower: -3.14159
+    upper: 3.14159
+    effort: 100.0
+    velocity: 1.0

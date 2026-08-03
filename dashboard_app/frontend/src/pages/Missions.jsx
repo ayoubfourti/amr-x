@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   getMissions,
-  createMission,
   deleteMission,
   startMission,
   pauseMission,
@@ -10,169 +9,72 @@ import {
   stopMission,
 } from '../api/missions'
 import { getRobots } from '../api/robots'
-import Badge from '../components/ui/Badge'
-import PageTopbar from '../components/ui/PageTopbar'
 import EmptyState from '../components/ui/EmptyState'
-import { useToast } from '../components/ui/Toast'
-import MissionTimeline from '../components/ui/MissionTimeline'
+import { useToast } from '../hooks/useToast'
 import ConfirmModal from '../components/ui/ConfirmModal'
-import { useDemo } from '../context/DemoContext'
+import MissionComposer from '../components/MissionComposer'
+import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
+import {
+  PageShell,
+  PageHeader,
+  Surface,
+  StatGrid,
+  StatusPill,
+  ProgressMeter,
+  SearchField,
+  IconAction,
+} from '../components/ui/CommandUI'
+import { useDemo } from '../hooks/useDemo'
 import { formatDate } from '../utils/format'
+import './Missions.css'
 
-const PRIORITY_COLORS = {
-  low: '#6b7280',
-  normal: '#2563eb',
-  high: '#d97706',
-  critical: '#dc2626',
-}
+const FILTERS = ['all', 'pending', 'running', 'paused', 'completed', 'failed']
 
-const STATUS_COLORS = {
-  pending: '#6b7280',
-  running: '#2563eb',
-  paused: '#f59e0b',
-  completed: '#16a34a',
-  failed: '#dc2626',
-}
+const PRIORITY_OPTIONS = [
+  { value: 'all', label: 'All priorities' },
+  { value: 'critical', label: 'Critical' },
+  { value: 'high', label: 'High' },
+  { value: 'normal', label: 'Normal' },
+  { value: 'low', label: 'Low' },
+]
 
-function MissionActionButton({ color, disabled, onClick, children }) {
-  const [hover, setHover] = useState(false)
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      style={{
-        padding: '4px 10px',
-        borderRadius: 6,
-        border: `1px solid ${color}44`,
-        fontSize: 11,
-        fontWeight: 600,
-        cursor: disabled ? 'not-allowed' : 'pointer',
-        marginRight: 4,
-        background: hover ? `${color}33` : `${color}22`,
-        color,
-        transition: 'background 0.15s',
-      }}
-    >
-      {children}
-    </button>
-  )
-}
+const WORKFLOW_OPTIONS = [
+  { value: 'all', label: 'All workflows' },
+  { value: 'delivery', label: 'Delivery' },
+  { value: 'pickup', label: 'Pickup' },
+  { value: 'inspection', label: 'Inspection' },
+  { value: 'patrol', label: 'Patrol' },
+]
 
-const FILTERS = ['all', 'pending', 'running', 'completed']
+const SORT_OPTIONS = [
+  { value: 'newest', label: 'Newest first' },
+  { value: 'priority', label: 'Priority' },
+  { value: 'progress', label: 'Progress' },
+  { value: 'name', label: 'Mission name' },
+]
 
-const emptyForm = {
-  robot_id: '',
-  name: '',
-  type: 'delivery',
-  destination: '',
-  priority: 'normal',
-  module_required: 'none',
-}
-
-function MissionModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage, robots }) {
-  const onlineRobots = (robots || []).filter((r) => r.status === 'online')
-
-  return (
-    <div className="modal-backdrop" onClick={onClose}>
-      <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-header">
-          <div>
-            <h3>New Mission</h3>
-            <p className="topbar-subtext">Assign a new mission to a robot</p>
-          </div>
-          <button type="button" className="modal-close" onClick={onClose}>
-            ✕
-          </button>
-        </div>
-
-        <form onSubmit={onSubmit}>
-          <label className="auth-field">
-            <span className="auth-label">Robot</span>
-            {onlineRobots.length > 0 ? (
-              <select name="robot_id" value={form.robot_id} onChange={onChange} required>
-                <option value="">— Select a robot —</option>
-                {onlineRobots.map((r) => (
-                  <option key={r.id} value={r.id}>
-                    {r.name} · {r.battery ?? '?'}% battery
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <p style={{ color: '#ef4444', fontSize: 13, marginTop: 8 }}>
-                No online robots available
-              </p>
-            )}
-          </label>
-          <label className="auth-field">
-            <span className="auth-label">Name</span>
-            <input name="name" value={form.name} onChange={onChange} required />
-          </label>
-          <label className="auth-field">
-            <span className="auth-label">Destination</span>
-            <input name="destination" value={form.destination} onChange={onChange} required />
-          </label>
-
-          <div className="modal-row">
-            <label className="auth-field">
-              <span className="auth-label">Type</span>
-              <select name="type" value={form.type} onChange={onChange}>
-                <option value="delivery">delivery</option>
-                <option value="patrol">patrol</option>
-                <option value="inspection">inspection</option>
-                <option value="pickup">pickup</option>
-              </select>
-            </label>
-            <label className="auth-field">
-              <span className="auth-label">Priority</span>
-              <select name="priority" value={form.priority} onChange={onChange}>
-                <option value="low">low</option>
-                <option value="normal">normal</option>
-                <option value="high">high</option>
-                <option value="critical">critical</option>
-              </select>
-            </label>
-          </div>
-
-          <label className="auth-field">
-            <span className="auth-label">Module Required</span>
-            <select name="module_required" value={form.module_required} onChange={onChange}>
-              <option value="none">none</option>
-              <option value="delivery_box">delivery_box</option>
-              <option value="arm">arm</option>
-              <option value="camera">camera</option>
-              <option value="thermal">thermal</option>
-            </select>
-          </label>
-
-          {errorMessage && <p className="error">{errorMessage}</p>}
-
-          <div className="modal-actions">
-            <button type="button" onClick={onClose}>
-              Cancel
-            </button>
-            <button type="submit" className="primary-button" disabled={isSaving}>
-              {isSaving ? 'Creating…' : '+ Create Mission'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  )
+const STATUS_TONES = {
+  pending: 'neutral',
+  running: 'green',
+  paused: 'amber',
+  completed: 'blue',
+  failed: 'red',
 }
 
 function Missions() {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
-  const { demo, DEMO_MISSIONS } = useDemo()
+  const { demo, DEMO_MISSIONS, DEMO_ROBOTS } = useDemo()
   const [filter, setFilter] = useState('all')
   const [search, setSearch] = useState('')
+  const [priorityFilter, setPriorityFilter] = useState('all')
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [unitFilter, setUnitFilter] = useState('all')
+  const [sortBy, setSortBy] = useState('newest')
   const [detailOpenId, setDetailOpenId] = useState(null)
   const [confirmDelete, setConfirmDelete] = useState(null)
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState(emptyForm)
 
   const {
     data: missions,
@@ -185,19 +87,6 @@ function Missions() {
     queryKey: ['robots'],
     queryFn: getRobots,
     refetchInterval: 4000,
-  })
-
-  const createMutation = useMutation({
-    mutationFn: createMission,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['missions'] })
-      setShowForm(false)
-      setForm(emptyForm)
-      showToast('Mission created', 'success')
-    },
-    onError: () => {
-      showToast('Failed to create mission', 'error')
-    },
   })
 
   const deleteMutation = useMutation({
@@ -255,16 +144,6 @@ function Missions() {
     action()
   }
 
-  function handleFormChange(e) {
-    const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault()
-    guardDemo(() => createMutation.mutate({ ...form, robot_id: Number(form.robot_id) }))
-  }
-
   function toggleDetail(id) {
     setDetailOpenId((prev) => (prev === id ? null : id))
   }
@@ -278,93 +157,178 @@ function Missions() {
       total: list.length,
       pending: list.filter((m) => m.status === 'pending').length,
       running: list.filter((m) => m.status === 'running').length,
+      paused: list.filter((m) => m.status === 'paused').length,
       completed: list.filter((m) => m.status === 'completed').length,
+      failed: list.filter((m) => m.status === 'failed').length,
     }
   }, [displayMissions])
 
   const filteredMissions = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return displayMissions.filter((m) => {
+    const filtered = displayMissions.filter((m) => {
       const matchesFilter = filter === 'all' || m.status === filter
       const matchesSearch =
-        !term || m.name?.toLowerCase().includes(term) || m.destination?.toLowerCase().includes(term)
-      return matchesFilter && matchesSearch
+        !term ||
+        m.name?.toLowerCase().includes(term) ||
+        m.destination?.toLowerCase().includes(term) ||
+        m.start_point?.toLowerCase().includes(term) ||
+        String(m.id).includes(term)
+      const matchesPriority = priorityFilter === 'all' || m.priority === priorityFilter
+      const matchesType = typeFilter === 'all' || m.type === typeFilter
+      const matchesUnit = unitFilter === 'all' || String(m.robot_id) === unitFilter
+      return matchesFilter && matchesSearch && matchesPriority && matchesType && matchesUnit
     })
-  }, [displayMissions, filter, search])
+
+    return [...filtered].sort((a, b) => {
+      if (sortBy === 'priority') {
+        const rank = { critical: 4, high: 3, normal: 2, low: 1 }
+        return (rank[b.priority] || 0) - (rank[a.priority] || 0)
+      }
+      if (sortBy === 'progress') return (b.progress || 0) - (a.progress || 0)
+      if (sortBy === 'name') return (a.name || '').localeCompare(b.name || '')
+      return new Date(b.created_at || 0) - new Date(a.created_at || 0)
+    })
+  }, [displayMissions, filter, priorityFilter, search, sortBy, typeFilter, unitFilter])
 
   const detailMission = missionList.find((m) => m.id === detailOpenId)
+  const displayRobots = useMemo(
+    () => (demo ? DEMO_ROBOTS : robots || []),
+    [demo, DEMO_ROBOTS, robots],
+  )
+  const unitOptions = useMemo(
+    () => [
+      { value: 'all', label: 'All units' },
+      ...displayRobots.map((robot) => ({ value: String(robot.id), label: robot.name })),
+    ],
+    [displayRobots],
+  )
+  const robotName = (id) => displayRobots.find((robot) => robot.id === id)?.name || `Unit ${id}`
 
   const latency = (robots || []).find((r) => r.status === 'online')?.wifi_latency ?? null
+  const hasAdvancedFilters = priorityFilter !== 'all' || typeFilter !== 'all' || unitFilter !== 'all'
+
+  function clearFilters() {
+    setSearch('')
+    setFilter('all')
+    setPriorityFilter('all')
+    setTypeFilter('all')
+    setUnitFilter('all')
+    setSortBy('newest')
+  }
+
+  const showError = isError && !demo
 
   return (
-    <div className="users-page">
-      <PageTopbar title="Missions" latency={latency} />
+    <PageShell className="missions-command-page">
+      <PageHeader
+        eyebrow="Operations"
+        title="Mission control"
+        description="Plan, dispatch, and monitor autonomous work"
+        icon="mission"
+        actions={
+          <>
+            <StatusPill tone={latency ? 'green' : 'neutral'}>
+              {latency ? `Fleet link · ${latency} ms` : 'Fleet link · standby'}
+            </StatusPill>
+            <button type="button" className="primary-action" onClick={() => setShowForm(true)}>
+              <Icon name="bolt" size={16} /> New mission
+            </button>
+          </>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>Mission Control</h3>
-          <p className="topbar-subtext">{stats.total} missions · {stats.running} running</p>
-        </div>
-        <button type="button" className="primary-button" onClick={() => setShowForm(true)}>
-          + New Mission
-        </button>
-      </div>
+      <StatGrid items={[
+        { label: 'Total missions', value: stats.total, icon: 'mission', detail: 'All workflows', tone: 'cyan' },
+        { label: 'Running', value: stats.running, icon: 'route', detail: 'Live now', tone: 'green' },
+        { label: 'Queued', value: stats.pending, icon: 'clock', detail: 'Ready to dispatch', tone: 'blue' },
+        { label: 'Completed', value: stats.completed, icon: 'shield', detail: 'This period', tone: 'cyan' },
+      ]} />
 
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Total</span>
-          <strong>{stats.total}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Pending</span>
-          <strong>{stats.pending}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Running</span>
-          <strong>{stats.running}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Completed</span>
-          <strong>{stats.completed}</strong>
-        </div>
-      </div>
+      <MissionComposer
+        open={showForm}
+        onClose={() => setShowForm(false)}
+        robots={displayRobots}
+        demo={demo}
+      />
 
-      {showForm && (
-        <MissionModal
-          form={form}
-          onChange={handleFormChange}
-          onSubmit={handleSubmit}
-          onClose={() => setShowForm(false)}
-          isSaving={createMutation.isPending}
-          errorMessage={createMutation.isError ? createMutation.error.message : ''}
-          robots={robots || []}
-        />
-      )}
-
-      <div className="filter-bar">
-        <input
-          className="search-input"
-          placeholder="🔍 Search name or destination…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={`filter-btn ${filter === f ? 'active' : ''}`}
-            onClick={() => setFilter(f)}
-          >
-            {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
-          </button>
-        ))}
-        <span className="results-count">{filteredMissions.length} results</span>
-      </div>
+      <Surface className="mission-toolbar">
+        <div className="mission-toolbar-primary">
+          <SearchField
+            placeholder="Search mission, route, destination, or ID…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          <div className="mission-filter-tabs">
+            {FILTERS.map((f) => (
+              <button
+                key={f}
+                type="button"
+                className={filter === f ? 'active' : ''}
+                onClick={() => setFilter(f)}
+              >
+                {f === 'all' ? 'All' : f.charAt(0).toUpperCase() + f.slice(1)}
+                <span>{f === 'all' ? stats.total : stats[f]}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="mission-toolbar-secondary">
+          <div className="mission-select">
+            <span>Priority</span>
+            <SelectField
+              name="mission-priority-filter"
+              value={priorityFilter}
+              options={PRIORITY_OPTIONS}
+              onChange={(event) => setPriorityFilter(event.target.value)}
+              ariaLabel="Filter missions by priority"
+            />
+          </div>
+          <div className="mission-select">
+            <span>Workflow</span>
+            <SelectField
+              name="mission-workflow-filter"
+              value={typeFilter}
+              options={WORKFLOW_OPTIONS}
+              onChange={(event) => setTypeFilter(event.target.value)}
+              ariaLabel="Filter missions by workflow"
+            />
+          </div>
+          <div className="mission-select">
+            <span>Assigned unit</span>
+            <SelectField
+              name="mission-unit-filter"
+              value={unitFilter}
+              options={unitOptions}
+              onChange={(event) => setUnitFilter(event.target.value)}
+              ariaLabel="Filter missions by assigned unit"
+            />
+          </div>
+          <div className="mission-select">
+            <span>Sort</span>
+            <SelectField
+              name="mission-sort"
+              value={sortBy}
+              options={SORT_OPTIONS}
+              onChange={(event) => setSortBy(event.target.value)}
+              ariaLabel="Sort missions"
+            />
+          </div>
+          <div className="mission-toolbar-meta">
+            <strong>{filteredMissions.length}</strong>
+            <span>of {stats.total} missions</span>
+          </div>
+          {(hasAdvancedFilters || search || filter !== 'all' || sortBy !== 'newest') && (
+            <button type="button" className="mission-clear-filters" onClick={clearFilters}>
+              <Icon name="close" size={13} /> Reset
+            </button>
+          )}
+        </div>
+      </Surface>
 
       {isLoading && <p>Loading missions…</p>}
-      {isError && <p className="error">Failed to load missions: {error.message}</p>}
+      {showError && <p className="error">Failed to load missions: {error.message}</p>}
 
-      {!isLoading && !isError && missionList.length === 0 && (
+      {!isLoading && !showError && missionList.length === 0 && (
         <EmptyState
           icon="🎯"
           title="No missions yet"
@@ -377,7 +341,7 @@ function Missions() {
         />
       )}
 
-      {!isLoading && !isError && missionList.length > 0 && filteredMissions.length === 0 && (
+      {!isLoading && !showError && missionList.length > 0 && filteredMissions.length === 0 && (
         <EmptyState
           icon="🔍"
           title="No missions match your search"
@@ -385,172 +349,189 @@ function Missions() {
         />
       )}
 
-      {!isLoading && !isError && filteredMissions.length > 0 && (
-        <div className="data-table-wrapper">
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Robot</th>
-              <th>Destination</th>
-              <th>Status</th>
-              <th>Progress</th>
-              <th>Priority</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredMissions.map((mission) => (
-              <tr key={mission.id}>
-                <td>{mission.name}</td>
-                <td>{mission.robot_id}</td>
-                <td>{mission.destination}</td>
-                <td>
-                  <Badge text={mission.status} color={STATUS_COLORS[mission.status] || '#6b7280'} />
-                </td>
-                <td>
-                  <div className="progress-bar">
-                    <div
-                      className="progress-fill"
-                      style={{ width: `${mission.progress ?? 0}%` }}
-                    />
-                  </div>{' '}
-                  {mission.progress ?? 0}%
-                </td>
-                <td>
-                  <Badge
-                    text={mission.priority}
-                    color={PRIORITY_COLORS[mission.priority] || '#6b7280'}
-                  />
-                </td>
-                <td>
-                  <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+      {!isLoading && !showError && filteredMissions.length > 0 && (
+        <Surface className="mission-list">
+          <div className="mission-list-head">
+            <span>Mission</span><span>Assigned unit</span><span>Status</span>
+            <span>Progress</span><span>Priority</span><span>Actions</span>
+          </div>
+          {filteredMissions.map((mission) => (
+            <article className={`mission-record ${mission.status === 'running' ? 'is-active' : ''}`} key={mission.id}>
+              <div className="mission-identity">
+                <span className="mission-type-icon"><Icon name={mission.type === 'patrol' ? 'map' : 'route'} size={18} /></span>
+                <span>
+                  <small>MX-{mission.id}</small>
+                  <strong>{mission.name}</strong>
+                  <em>{mission.start_point || 'Unspecified'} <Icon name="arrow" size={10} /> {mission.destination || 'Unspecified'}</em>
+                </span>
+              </div>
+              <div className="mission-unit">
+                <span><Icon name="robot" size={17} /></span>
+                <i><strong>{robotName(mission.robot_id)}</strong><small>Unit #{mission.robot_id}</small></i>
+              </div>
+              <StatusPill tone={STATUS_TONES[mission.status] || 'neutral'}>{mission.status}</StatusPill>
+              <ProgressMeter value={mission.progress} />
+              <StatusPill tone={mission.priority === 'critical' ? 'red' : mission.priority === 'high' ? 'amber' : 'neutral'} dot={false}>
+                {mission.priority}
+              </StatusPill>
+              <div className="mission-row-actions">
                     {mission.status === 'pending' && (
-                      <MissionActionButton
-                        color="#10b981"
+                      <IconAction
+                        icon="play"
+                        label={startMut.isPending ? 'Starting…' : 'Start'}
+                        tone="green"
                         disabled={startMut.isPending}
                         onClick={() => guardDemo(() => startMut.mutate(mission.id))}
-                      >
-                        {startMut.isPending ? '…' : '▶ Start'}
-                      </MissionActionButton>
+                      />
                     )}
                     {mission.status === 'running' && (
                       <>
-                        <MissionActionButton
-                          color="#f59e0b"
+                        <IconAction
+                          icon="pause"
+                          label={pauseMut.isPending ? 'Pausing…' : 'Pause'}
+                          tone="amber"
                           disabled={pauseMut.isPending}
                           onClick={() => guardDemo(() => pauseMut.mutate(mission.id))}
-                        >
-                          {pauseMut.isPending ? '…' : '⏸ Pause'}
-                        </MissionActionButton>
-                        <MissionActionButton
-                          color="#ef4444"
+                        />
+                        <IconAction
+                          icon="close"
+                          label={stopMut.isPending ? 'Stopping…' : 'Stop'}
+                          tone="red"
                           disabled={stopMut.isPending}
                           onClick={() => guardDemo(() => stopMut.mutate(mission.id))}
-                        >
-                          {stopMut.isPending ? '…' : '⏹ Stop'}
-                        </MissionActionButton>
+                        />
                       </>
                     )}
                     {mission.status === 'paused' && (
                       <>
-                        <MissionActionButton
-                          color="#10b981"
+                        <IconAction
+                          icon="play"
+                          label={resumeMut.isPending ? 'Resuming…' : 'Resume'}
+                          tone="green"
                           disabled={resumeMut.isPending}
                           onClick={() => guardDemo(() => resumeMut.mutate(mission.id))}
-                        >
-                          {resumeMut.isPending ? '…' : '▶ Resume'}
-                        </MissionActionButton>
-                        <MissionActionButton
-                          color="#ef4444"
+                        />
+                        <IconAction
+                          icon="close"
+                          label={stopMut.isPending ? 'Stopping…' : 'Stop'}
+                          tone="red"
                           disabled={stopMut.isPending}
                           onClick={() => guardDemo(() => stopMut.mutate(mission.id))}
-                        >
-                          {stopMut.isPending ? '…' : '⏹ Stop'}
-                        </MissionActionButton>
+                        />
                       </>
                     )}
-                    <button
-                      type="button"
-                      className="icon-button"
-                      onClick={() => toggleDetail(mission.id)}
-                    >
-                      View
-                    </button>
-                    <button
-                      type="button"
-                      className="icon-button"
+                    <IconAction icon="overview" label="Details" onClick={() => toggleDetail(mission.id)} />
+                    <IconAction
+                      icon="close"
+                      label="Delete"
+                      tone="red"
                       onClick={() => guardDemo(() => setConfirmDelete(mission))}
-                    >
-                      🗑️
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        </div>
+                    />
+              </div>
+            </article>
+          ))}
+        </Surface>
       )}
 
       {detailMission && (
-        <>
-          <div className="modal-card">
-            <div className="modal-header">
-              <div>
-                <h3>{detailMission.name}</h3>
-                <p className="topbar-subtext">Mission details</p>
+        <div className="mission-detail-backdrop" onMouseDown={() => setDetailOpenId(null)}>
+          <section className="mission-detail-panel" role="dialog" aria-modal="true" onMouseDown={(event) => event.stopPropagation()}>
+            <header className="mission-detail-header">
+              <div className="mission-detail-heading">
+                <span><Icon name={detailMission.type === 'patrol' ? 'map' : 'route'} size={21} /></span>
+                <div>
+                  <small>Mission MX-{detailMission.id}</small>
+                  <h2>{detailMission.name}</h2>
+                  <p>{detailMission.type} workflow · assigned to {robotName(detailMission.robot_id)}</p>
+                </div>
               </div>
-              <button type="button" className="modal-close" onClick={() => setDetailOpenId(null)}>
-                ✕
-              </button>
-            </div>
-            <div className="detail-grid">
-              <div>
-                <span className="form-label">Robot ID</span>
-                <div>{detailMission.robot_id}</div>
+              <div className="mission-detail-header-actions">
+                <StatusPill tone={STATUS_TONES[detailMission.status] || 'neutral'}>{detailMission.status}</StatusPill>
+                <button type="button" className="mission-detail-close" onClick={() => setDetailOpenId(null)} aria-label="Close mission details">
+                  <Icon name="close" size={17} />
+                </button>
               </div>
-              <div>
-                <span className="form-label">Type</span>
-                <div>{detailMission.type}</div>
-              </div>
-              <div>
-                <span className="form-label">Status</span>
-                <div>{detailMission.status}</div>
-              </div>
-              <div>
-                <span className="form-label">Start point</span>
-                <div>{detailMission.start_point ?? '—'}</div>
-              </div>
-              <div>
-                <span className="form-label">Destination</span>
-                <div>{detailMission.destination}</div>
-              </div>
-              <div>
-                <span className="form-label">Module required</span>
-                <div>{detailMission.module_required}</div>
-              </div>
-              <div>
-                <span className="form-label">Priority</span>
-                <div>{detailMission.priority}</div>
-              </div>
-              <div>
-                <span className="form-label">Progress</span>
-                <div>{detailMission.progress ?? 0}%</div>
-              </div>
-              <div>
-                <span className="form-label">Recurring</span>
-                <div>{detailMission.is_recurring ? 'Yes' : 'No'}</div>
-              </div>
-              <div>
-                <span className="form-label">Created at</span>
-                <div>{formatDate(detailMission.created_at)}</div>
-              </div>
-            </div>
-          </div>
+            </header>
 
-          <MissionTimeline mission={detailMission} onClose={() => setDetailOpenId(null)} />
-        </>
+            <div className="mission-detail-body">
+              <main>
+                <section className="mission-detail-progress">
+                  <div>
+                    <span>Execution progress</span>
+                    <strong>{detailMission.progress ?? 0}%</strong>
+                  </div>
+                  <ProgressMeter value={detailMission.progress} label={false} />
+                  <p>{detailMission.status === 'completed' ? 'Mission objectives completed successfully.' : 'Live progress reported by the assigned unit.'}</p>
+                </section>
+
+                <section className="mission-detail-section">
+                  <div className="mission-detail-section-title">
+                    <Icon name="route" size={17} />
+                    <div><strong>Route plan</strong><small>Movement endpoints and execution target</small></div>
+                  </div>
+                  <div className="mission-route-card">
+                    <span><i /><small>Start point</small><strong>{detailMission.start_point || 'Not specified'}</strong></span>
+                    <b><Icon name="arrow" size={17} /></b>
+                    <span><i /><small>Destination</small><strong>{detailMission.destination || 'Not specified'}</strong></span>
+                  </div>
+                </section>
+
+                <section className="mission-detail-section">
+                  <div className="mission-detail-section-title">
+                    <Icon name="command" size={17} />
+                    <div><strong>Execution configuration</strong><small>Robot, payload, and scheduling requirements</small></div>
+                  </div>
+                  <dl className="mission-detail-grid">
+                    <div><dt>Assigned unit</dt><dd>{robotName(detailMission.robot_id)}<small>Unit #{detailMission.robot_id}</small></dd></div>
+                    <div><dt>Workflow</dt><dd>{detailMission.type || '—'}</dd></div>
+                    <div><dt>Required module</dt><dd>{(detailMission.module_required || 'None').replaceAll('_', ' ')}</dd></div>
+                    <div><dt>Priority</dt><dd><StatusPill tone={detailMission.priority === 'critical' ? 'red' : detailMission.priority === 'high' ? 'amber' : 'neutral'} dot={false}>{detailMission.priority}</StatusPill></dd></div>
+                    <div><dt>Execution pattern</dt><dd>{detailMission.is_recurring ? 'Repeatable routine' : 'One-time mission'}</dd></div>
+                    <div><dt>Created</dt><dd>{formatDate(detailMission.created_at)}</dd></div>
+                  </dl>
+                </section>
+              </main>
+
+              <aside className="mission-detail-activity">
+                <span className="mission-detail-kicker">Activity</span>
+                <h3>Mission timeline</h3>
+                <p>Operational events generated from the current mission state.</p>
+                <div className="mission-event-list">
+                  <article className="is-complete">
+                    <i><Icon name="shield" size={13} /></i>
+                    <span><small>{formatDate(detailMission.created_at)}</small><strong>Mission created</strong><em>Configuration validated and queued.</em></span>
+                  </article>
+                  <article className={detailMission.status !== 'pending' ? 'is-complete' : 'is-pending'}>
+                    <i><Icon name="play" size={13} /></i>
+                    <span><small>{detailMission.started_at ? formatDate(detailMission.started_at) : 'Awaiting dispatch'}</small><strong>Execution started</strong><em>{detailMission.status === 'pending' ? 'Waiting for operator dispatch.' : `Assigned to ${robotName(detailMission.robot_id)}.`}</em></span>
+                  </article>
+                  <article className={(detailMission.progress || 0) >= 50 ? 'is-complete' : 'is-pending'}>
+                    <i><Icon name="route" size={13} /></i>
+                    <span><small>{(detailMission.progress || 0) >= 50 ? `${detailMission.progress}% complete` : 'Upcoming'}</small><strong>Route in progress</strong><em>Travelling toward {detailMission.destination || 'destination'}.</em></span>
+                  </article>
+                  <article className={detailMission.status === 'completed' ? 'is-complete' : 'is-pending'}>
+                    <i><Icon name="mission" size={13} /></i>
+                    <span><small>{detailMission.completed_at ? formatDate(detailMission.completed_at) : 'Upcoming'}</small><strong>Mission complete</strong><em>Finalize objectives and return telemetry.</em></span>
+                  </article>
+                </div>
+                <div className="mission-detail-readiness">
+                  <i />
+                  <span><strong>{detailMission.status === 'running' ? 'Telemetry active' : 'Mission record available'}</strong><small>Fleet state refreshes automatically.</small></span>
+                </div>
+              </aside>
+            </div>
+
+            <footer className="mission-detail-footer">
+              <span><Icon name="clock" size={14} /> Last synchronized from fleet operations</span>
+              <div>
+                {detailMission.status === 'pending' && <IconAction icon="play" label="Start mission" tone="green" onClick={() => guardDemo(() => startMut.mutate(detailMission.id))} />}
+                {detailMission.status === 'running' && <IconAction icon="pause" label="Pause mission" tone="amber" onClick={() => guardDemo(() => pauseMut.mutate(detailMission.id))} />}
+                {detailMission.status === 'paused' && <IconAction icon="play" label="Resume mission" tone="green" onClick={() => guardDemo(() => resumeMut.mutate(detailMission.id))} />}
+                <button type="button" className="mission-detail-done" onClick={() => setDetailOpenId(null)}>Done</button>
+              </div>
+            </footer>
+          </section>
+          </div>
       )}
 
       <ConfirmModal
@@ -567,7 +548,7 @@ function Missions() {
         }}
         onCancel={() => setConfirmDelete(null)}
       />
-    </div>
+    </PageShell>
   )
 }
 

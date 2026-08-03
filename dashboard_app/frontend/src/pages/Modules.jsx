@@ -4,11 +4,105 @@ import { getModules, toggleModule, createModule } from '../api/modules'
 import { getRobots } from '../api/robots'
 import Badge from '../components/ui/Badge'
 import PageTopbar from '../components/ui/PageTopbar'
+import { StatGrid, StatusPill } from '../components/ui/CommandUI'
 import EmptyState from '../components/ui/EmptyState'
-import { useToast } from '../components/ui/Toast'
+import { useToast } from '../hooks/useToast'
+import { useDockingStatus } from '../hooks/useDockingStatus'
+import { useModuleDocking } from '../hooks/useModuleDocking'
+import { useRosConnection } from '../hooks/useRosConnection'
 import { formatDate } from '../utils/format'
+import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
+import dualArmImage from '../../../../docs/assets/images/dual-arm-module-concept-render.png'
+import singleArmImage from '../../../../docs/assets/images/rviz-arm-urdf-model.png'
+import shelfAccessImage from '../../../../docs/assets/images/reference-shelf-climbing-robot-detail.png'
+import inspectionImage from '../../../../docs/assets/images/reference-mobile-manipulator-warehouse.png'
+import sensorImage from '../../../../docs/assets/images/rviz-amr-x-base-model.png'
+import compartmentImage from '../../../../docs/assets/images/secure-compartment-module-cad.png'
+import './Modules.css'
 
 const FILTERS = ['all', 'active', 'inactive', 'error']
+const MODULE_STATUS_OPTIONS = [
+  { value: 'connected', label: 'Connected' },
+  { value: 'disconnected', label: 'Disconnected' },
+  { value: 'error', label: 'Error' },
+  { value: 'standby', label: 'Standby' },
+]
+
+const MODULE_LIBRARY = [
+  {
+    id: 'MOD-DUAL-ARM',
+    name: 'Dual-arm manipulator',
+    type: 'dual_arm',
+    image: dualArmImage,
+    icon: 'route',
+    stage: 'Confirmed V1',
+    tone: 'green',
+    source: 'AMR-X concept',
+    description: 'Coordinated manipulation payload for handling, pick-and-place, and workcell interaction.',
+    capability: 'MoveIt 2 · Manipulation',
+  },
+  {
+    id: 'MOD-ARM',
+    name: 'Robotic arm',
+    type: 'robotic_arm',
+    image: singleArmImage,
+    icon: 'route',
+    stage: 'Engineering',
+    tone: 'blue',
+    source: 'ROS engineering capture',
+    description: 'Single-arm payload for compact manipulation tasks and early motion-planning validation.',
+    capability: 'Arm control · ROS 2',
+  },
+  {
+    id: 'MOD-SHELF',
+    name: 'Shelf-access module',
+    type: 'shelf_access',
+    image: shelfAccessImage,
+    icon: 'module',
+    stage: 'Future concept',
+    tone: 'amber',
+    source: 'External reference',
+    description: 'Vertical and rack-interface payload direction for retrieval in structured storage systems.',
+    capability: 'Lift · Rack interface',
+  },
+  {
+    id: 'MOD-INSPECTION',
+    name: 'Inspection module',
+    type: 'inspection',
+    image: inspectionImage,
+    icon: 'camera',
+    stage: 'Future concept',
+    tone: 'amber',
+    source: 'External reference',
+    description: 'Mobile inspection payload for facility rounds, evidence capture, and remote assessment.',
+    capability: 'Vision · Remote inspection',
+  },
+  {
+    id: 'MOD-SENSOR',
+    name: 'Sensor payload',
+    type: 'sensor_payload',
+    image: sensorImage,
+    icon: 'wifi',
+    stage: 'Engineering',
+    tone: 'blue',
+    source: 'ROS engineering capture',
+    description: 'Configurable perception payload for depth, thermal, environmental, and localization sensors.',
+    capability: 'Perception · Data capture',
+  },
+  {
+    id: 'MOD-COMPARTMENT',
+    name: 'Secure compartment',
+    type: 'secure_compartment',
+    image: compartmentImage,
+    icon: 'shield',
+    stage: 'Concept',
+    tone: 'cyan',
+    source: 'AMR-X concept',
+    description: 'Enclosed delivery payload for controlled transport and auditable handover workflows.',
+    capability: 'Secure delivery · Access',
+  },
+]
 
 function tempColor(temperature) {
   if (temperature == null) return '#6b7280'
@@ -29,7 +123,7 @@ function ModuleModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage
             <p className="topbar-subtext">Attach a new module to a robot</p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>
-            ✕
+            <Icon name="close" size={16} />
           </button>
         </div>
 
@@ -46,15 +140,16 @@ function ModuleModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage
             <span className="auth-label">Type</span>
             <input name="type" value={form.type} onChange={onChange} required />
           </label>
-          <label className="auth-field">
+          <div className="auth-field">
             <span className="auth-label">Status</span>
-            <select name="status" value={form.status} onChange={onChange}>
-              <option value="connected">connected</option>
-              <option value="disconnected">disconnected</option>
-              <option value="error">error</option>
-              <option value="standby">standby</option>
-            </select>
-          </label>
+            <SelectField
+              name="status"
+              value={form.status}
+              options={MODULE_STATUS_OPTIONS}
+              onChange={onChange}
+              ariaLabel="Module status"
+            />
+          </div>
 
           {errorMessage && <p className="error">{errorMessage}</p>}
 
@@ -75,6 +170,9 @@ function ModuleModal({ form, onChange, onSubmit, onClose, isSaving, errorMessage
 function Modules() {
   const queryClient = useQueryClient()
   const { showToast } = useToast()
+  const { ros } = useRosConnection()
+  const docking = useDockingStatus(ros)
+  const { dock: onDock, undock: onUndock, progress, result } = useModuleDocking(ros)
   const [filter, setFilter] = useState('all')
   const [showForm, setShowForm] = useState(false)
   const [form, setForm] = useState(emptyForm)
@@ -126,6 +224,16 @@ function Modules() {
     createMutation.mutate({ ...form, robot_id: Number(form.robot_id) })
   }
 
+  function openTemplate(template) {
+    setForm({
+      robot_id: '',
+      name: template.name,
+      type: template.type,
+      status: 'disconnected',
+    })
+    setShowForm(true)
+  }
+
   const moduleList = modules || []
 
   const stats = useMemo(() => {
@@ -148,17 +256,16 @@ function Modules() {
 
   return (
     <div className="users-page">
-      <PageTopbar title="Modules" latency={latency} />
-
-      <div className="page-heading-row">
-        <div>
-          <h3>Attached Modules</h3>
-          <p className="topbar-subtext">{moduleList.length} modules</p>
-        </div>
-        <button type="button" className="primary-button" onClick={() => setShowForm(true)}>
-          + New Module
-        </button>
-      </div>
+      <PageTopbar
+        title="Modules"
+        latency={latency}
+        subtitle={`${moduleList.length} registered · Payload inventory`}
+        action={
+          <button type="button" className="primary-action" onClick={() => setShowForm(true)}>
+            <Icon name="module" size={16} /> New module
+          </button>
+        }
+      />
 
       {showForm && (
         <ModuleModal
@@ -171,48 +278,69 @@ function Modules() {
         />
       )}
 
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Active</span>
-          <strong>{stats.active}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Inactive</span>
-          <strong>{stats.inactive}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Error</span>
-          <strong>{stats.error}</strong>
-        </div>
-      </div>
+      <StatGrid items={[
+        { label: 'Active', value: stats.active, icon: 'module', detail: 'Attached now', tone: 'green' },
+        { label: 'Inactive', value: stats.inactive, icon: 'pause', detail: 'Available', tone: 'blue' },
+        { label: 'Error', value: stats.error, icon: 'alert', detail: 'Needs service', tone: 'red' },
+      ]} />
 
-      <div className="filter-bar">
-        {FILTERS.map((f) => (
-          <button
-            key={f}
-            type="button"
-            className={`filter-btn ${filter === f ? 'active' : ''}`}
-            onClick={() => setFilter(f)}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+      <section className="command-surface module-interface-status">
+        <span className="module-interface-icon"><Icon name="command" size={19} /></span>
+        <span className="module-interface-copy">
+          <small>Common interface</small>
+          <strong>Module docking station</strong>
+          <p>Mechanical lock, presence detection, power, and data handoff.</p>
+        </span>
+        <div className="module-interface-facts">
+          <span><small>State</small><strong>{docking?.state || 'unavailable'}</strong></span>
+          <span><small>Lock</small><strong>{docking?.mechanicalLock ? 'Engaged' : 'Released'}</strong></span>
+          <span><small>Presence</small><strong>{docking?.moduleDetected ? 'Detected' : 'Clear'}</strong></span>
+        </div>
+        <StatusPill tone={docking?.state === 'docked' ? 'green' : 'neutral'}>
+          {docking?.state === 'docked' ? 'Docked' : 'Ready'}
+        </StatusPill>
+        <div className="module-interface-actions">
+          <button type="button" onClick={onDock} disabled={!onDock || docking?.state !== 'undocked'}>
+            <Icon name="module" size={14} /> Dock
           </button>
-        ))}
-      </div>
+          <button type="button" onClick={onUndock} disabled={!onUndock || docking?.state !== 'docked'}>
+            Undock
+          </button>
+        </div>
+        {progress && (
+          <div className="module-docking-progress">
+            <span style={{ width: `${Math.max(0, Math.min(100, progress.progress * 100))}%` }} />
+          </div>
+        )}
+        {result && <p className={`module-docking-result ${result.success ? 'is-success' : 'is-error'}`}>{result.message}</p>}
+      </section>
+
+      {moduleList.length > 0 && (
+        <section className="registered-modules-section">
+          <header className="module-section-heading">
+            <div><small>Connected hardware</small><h2>Registered modules</h2></div>
+            <div className="module-filter-tabs">
+              {FILTERS.map((f) => (
+                <button
+                  key={f}
+                  type="button"
+                  className={filter === f ? 'active' : ''}
+                  onClick={() => setFilter(f)}
+                >
+                  {f.charAt(0).toUpperCase() + f.slice(1)}
+                </button>
+              ))}
+            </div>
+          </header>
+        </section>
+      )}
 
       {isLoading && <p>Loading modules…</p>}
       {isError && <p className="error">Failed to load modules: {error.message}</p>}
 
-      {!isLoading && !isError && moduleList.length === 0 && (
-        <EmptyState
-          icon="🔌"
-          title="No modules registered"
-          subtitle="Attach a module to a robot to see it here"
-        />
-      )}
-
       {!isLoading && !isError && moduleList.length > 0 && filteredModules.length === 0 && (
         <EmptyState
-          icon="🔍"
+          icon={<Icon name="search" size={40} />}
           title="No modules match your search"
           subtitle="Try a different filter"
         />
@@ -243,6 +371,47 @@ function Modules() {
           ))}
         </div>
       )}
+
+      <section className="module-library-section">
+        <header className="module-section-heading">
+          <div>
+            <small>Platform roadmap</small>
+            <h2>Module library</h2>
+            <p>Engineering concepts and reference placeholders for the shared AMR-X module interface.</p>
+          </div>
+          <span className="module-library-count">{MODULE_LIBRARY.length} directions</span>
+        </header>
+
+        <div className="module-library-grid">
+          {MODULE_LIBRARY.map((template) => (
+            <article className="command-surface module-concept-card" key={template.id}>
+              <div className="module-concept-media">
+                <img src={template.image} alt={`${template.name} placeholder`} />
+                <span className="module-source-label">{template.source}</span>
+                <span className="module-concept-icon"><Icon name={template.icon} size={17} /></span>
+              </div>
+              <div className="module-concept-body">
+                <div className="module-concept-meta">
+                  <span>{template.id}</span>
+                  <StatusPill tone={template.tone}>{template.stage}</StatusPill>
+                </div>
+                <h3>{template.name}</h3>
+                <p>{template.description}</p>
+                <footer>
+                  <span>{template.capability}</span>
+                  <button type="button" onClick={() => openTemplate(template)}>
+                    Use template <Icon name="arrow" size={13} />
+                  </button>
+                </footer>
+              </div>
+            </article>
+          ))}
+        </div>
+        <p className="module-library-note">
+          <Icon name="shield" size={14} />
+          Concept and external-reference imagery communicates direction only; it does not confirm production geometry, payload, or readiness.
+        </p>
+      </section>
     </div>
   )
 }

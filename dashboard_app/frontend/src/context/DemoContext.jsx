@@ -1,8 +1,7 @@
-import { createContext, useContext, useState } from 'react'
+import { useState } from 'react'
+import { DemoContext } from './internalContexts'
 
-const DemoContext = createContext(null)
-
-export const DEMO_ROBOTS = [
+const DEMO_ROBOTS = [
   {
     id: 9001,
     name: 'AMR-X Demo',
@@ -33,7 +32,7 @@ export const DEMO_ROBOTS = [
   },
 ]
 
-export const DEMO_MISSIONS = [
+const DEMO_MISSIONS = [
   {
     id: 9001,
     name: 'Delivery Run A',
@@ -84,7 +83,7 @@ export const DEMO_MISSIONS = [
   },
 ]
 
-export const DEMO_ALERTS = [
+const DEMO_ALERTS = [
   {
     id: 9001,
     type: 'warning',
@@ -111,7 +110,7 @@ export const DEMO_ALERTS = [
   },
 ]
 
-export const DEMO_MODULES = [
+const DEMO_MODULES = [
   {
     id: 9001,
     name: 'Delivery Box Pro',
@@ -146,8 +145,4 @@ export function DemoProvider({ children }) {
       {children}
     </DemoContext.Provider>
   )
-}
-
-export function useDemo() {
-  return useContext(DemoContext)
 }

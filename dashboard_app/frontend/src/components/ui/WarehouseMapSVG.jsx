@@ -1,4 +1,5 @@
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { annotationWorldPosition, MAP_LABEL_TYPES } from '../../hooks/useMapAnnotations'
 
 const METERS_W = 40
 const METERS_H = 30
@@ -35,6 +36,20 @@ const OBSTACLES = [
 
 const SHELF_LABELS = ['A', 'B', 'C']
 
+const ENTITY_COLORS = {
+  wall: '#477f91',
+  partition: '#3d7183',
+  rack: '#2a9ab0',
+  zone: '#39d6b0',
+  payload: '#d6a24d',
+  obstacle: '#df8257',
+  actor: '#e3b461',
+  dock: '#d7ca55',
+  landmark: '#669fc0',
+  included: '#4b8195',
+  light: '#8be8f5',
+}
+
 function toSvgX(m) {
   return m * SCALE
 }
@@ -43,7 +58,16 @@ function toSvgY(m) {
 }
 
 const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
-  { robots, height = 420, compact = false, colors },
+  {
+    robots,
+    height = 420,
+    compact = false,
+    colors,
+    world = null,
+    annotations = [],
+    onAnnotationSelect,
+    onAnnotationPointerDown,
+  },
   ref,
 ) {
   const svgRef = useRef(null)
@@ -127,6 +151,28 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
 
   const [view, setView] = useState({ cx: VB_W / 2, cy: VB_H / 2, zoom: 1 })
 
+  const worldPlan = useMemo(() => {
+    if (!world) return null
+    const bounds = world.bounds || { width: METERS_W, height: METERS_H }
+    const minX = Number.isFinite(bounds.minX) ? bounds.minX : -bounds.width / 2
+    const maxY = Number.isFinite(bounds.maxY) ? bounds.maxY : bounds.height / 2
+    const padding = 52
+    const scale = Math.min(
+      (VB_W - padding * 2) / Math.max(bounds.width, 1),
+      (VB_H - padding * 2) / Math.max(bounds.height, 1),
+    )
+    const project = (x, y) => ({
+      x: padding + (x - minX) * scale,
+      y: padding + (maxY - y) * scale,
+    })
+    const entities = (world.entities || []).filter((entity) => entity.category !== 'floor')
+    return { bounds, minX, maxY, padding, scale, project, entities }
+  }, [world])
+
+  useEffect(() => {
+    setView({ cx: VB_W / 2, cy: VB_H / 2, zoom: 1 })
+  }, [world?.id])
+
   function clampZoom(z) {
     return Math.min(3.0, Math.max(0.4, z))
   }
@@ -136,29 +182,52 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
     setView((v) => ({ ...v, zoom: clampZoom(v.zoom * (e.deltaY < 0 ? 1.1 : 0.9)) }))
   }
 
-  function startDrag(clientX, clientY) {
-    dragState.current = { startX: clientX, startY: clientY, cx: view.cx, cy: view.cy }
+  function startDrag(event) {
+    if (event.pointerType === 'mouse' && event.button !== 0) return
+    dragState.current = {
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      cx: view.cx,
+      cy: view.cy,
+      zoom: view.zoom,
+    }
+    try {
+      event.currentTarget.setPointerCapture(event.pointerId)
+    } catch {
+      // Pointer capture can fail if the browser has already ended the gesture.
+    }
   }
 
-  function moveDrag(clientX, clientY) {
-    if (!dragState.current || !svgRef.current) return
+  function moveDrag(event) {
+    const drag = dragState.current
+    if (!drag || drag.pointerId !== event.pointerId || !svgRef.current) return
     const rect = svgRef.current.getBoundingClientRect()
-    const w = VB_W / view.zoom
-    const h = VB_H / view.zoom
-    const dx = ((clientX - dragState.current.startX) * w) / rect.width
-    const dy = ((clientY - dragState.current.startY) * h) / rect.height
-    setView((v) => ({ ...v, cx: dragState.current.cx - dx, cy: dragState.current.cy - dy }))
+    if (!rect.width || !rect.height) return
+    const safeZoom = clampZoom(Number.isFinite(drag.zoom) ? drag.zoom : 1)
+    const w = VB_W / safeZoom
+    const h = VB_H / safeZoom
+    const dx = ((event.clientX - drag.startX) * w) / rect.width
+    const dy = ((event.clientY - drag.startY) * h) / rect.height
+    const nextCx = drag.cx - dx
+    const nextCy = drag.cy - dy
+    if (!Number.isFinite(nextCx) || !Number.isFinite(nextCy)) return
+    setView((current) => ({ ...current, cx: nextCx, cy: nextCy }))
   }
 
-  function endDrag() {
+  function endDrag(event) {
+    const drag = dragState.current
+    if (event && drag && drag.pointerId !== event.pointerId) return
     dragState.current = null
-  }
-
-  function handleMouseDown(e) {
-    startDrag(e.clientX, e.clientY)
-  }
-  function handleMouseMove(e) {
-    if (dragState.current) moveDrag(e.clientX, e.clientY)
+    if (event) {
+      try {
+        if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+          event.currentTarget.releasePointerCapture(event.pointerId)
+        }
+      } catch {
+        // The browser may have released capture before this handler runs.
+      }
+    }
   }
 
   function zoomIn() {
@@ -175,7 +244,21 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
     setView({ cx: toSvgX(found.mx ?? 5), cy: toSvgY(found.my ?? 5), zoom: 1.8 })
   }
 
-  useImperativeHandle(ref, () => ({ zoomIn, zoomOut, reset, focusRobot }))
+  function clientToWorld(clientX, clientY) {
+    const svg = svgRef.current
+    const matrix = svg?.getScreenCTM()
+    if (!svg || !matrix || !worldPlan) return null
+    const point = svg.createSVGPoint()
+    point.x = clientX
+    point.y = clientY
+    const svgPoint = point.matrixTransform(matrix.inverse())
+    return {
+      worldX: worldPlan.minX + (svgPoint.x - worldPlan.padding) / worldPlan.scale,
+      worldY: worldPlan.maxY - (svgPoint.y - worldPlan.padding) / worldPlan.scale,
+    }
+  }
+
+  useImperativeHandle(ref, () => ({ zoomIn, zoomOut, reset, focusRobot, clientToWorld }))
 
   const vbW = VB_W / view.zoom
   const vbH = VB_H / view.zoom
@@ -188,11 +271,12 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
 
   return (
     <div
-      style={{ width: '100%', height, cursor: 'grab' }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={endDrag}
-      onMouseLeave={endDrag}
+      style={{ width: '100%', height, cursor: dragState.current ? 'grabbing' : 'grab', touchAction: 'none', userSelect: 'none' }}
+      onPointerDown={startDrag}
+      onPointerMove={moveDrag}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+      onLostPointerCapture={endDrag}
       onWheel={handleWheel}
     >
       <svg ref={svgRef} viewBox={viewBox} style={{ width: '100%', height: '100%', display: 'block' }}>
@@ -237,17 +321,32 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
           />
         ))}
 
-        <rect
-          x={SCALE * 0.5}
-          y={SCALE * 0.5}
-          width={VB_W - SCALE}
-          height={VB_H - SCALE}
-          fill="none"
-          stroke="#1e6b4a"
-          strokeWidth="3"
-          strokeOpacity="0.6"
-          rx="2"
-        />
+        {worldPlan ? (
+          <rect
+            x={worldPlan.project(worldPlan.bounds.minX ?? -worldPlan.bounds.width / 2, worldPlan.bounds.maxY ?? worldPlan.bounds.height / 2).x}
+            y={worldPlan.project(worldPlan.bounds.minX ?? -worldPlan.bounds.width / 2, worldPlan.bounds.maxY ?? worldPlan.bounds.height / 2).y}
+            width={worldPlan.bounds.width * worldPlan.scale}
+            height={worldPlan.bounds.height * worldPlan.scale}
+            fill="#071b29"
+            fillOpacity=".55"
+            stroke="#3c9bb0"
+            strokeWidth="2"
+            strokeOpacity=".65"
+            rx="3"
+          />
+        ) : (
+          <rect
+            x={SCALE * 0.5}
+            y={SCALE * 0.5}
+            width={VB_W - SCALE}
+            height={VB_H - SCALE}
+            fill="none"
+            stroke="#1e6b4a"
+            strokeWidth="3"
+            strokeOpacity="0.6"
+            rx="2"
+          />
+        )}
 
         {!compact &&
           vLines
@@ -266,7 +365,7 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
               </text>
             ))}
 
-        {ZONES.map((z) => {
+        {!worldPlan && ZONES.map((z) => {
           const zoneColor = ZONE_COLOR_MAP[z.color] || z.color
           const cx = toSvgX(z.x) + (z.w * SCALE) / 2
           const cy = toSvgY(z.y) + (z.h * SCALE) / 2
@@ -314,7 +413,7 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
           )
         })}
 
-        {OBSTACLES.map((o, i) => {
+        {!worldPlan && OBSTACLES.map((o, i) => {
           const x = toSvgX(o.x)
           const y = toSvgY(o.y)
           const w = o.w * SCALE
@@ -351,6 +450,119 @@ const WarehouseMapSVG = forwardRef(function WarehouseMapSVG(
                   SHELF {SHELF_LABELS[i] || i + 1}
                 </text>
               )}
+            </g>
+          )
+        })}
+
+        {worldPlan?.entities.map((entity) => {
+          const center = worldPlan.project(entity.pose[0], entity.pose[1])
+          const size = entity.geometry.size || [
+            (entity.geometry.radius || .35) * 2,
+            (entity.geometry.radius || .35) * 2,
+            entity.geometry.length || 1,
+          ]
+          const width = Math.max(4, Math.min(VB_W, size[0] * worldPlan.scale))
+          const entityHeight = Math.max(4, Math.min(VB_H, size[1] * worldPlan.scale))
+          const color = ENTITY_COLORS[entity.category] || '#568da0'
+          const rotation = -((entity.pose[5] || 0) * 180) / Math.PI
+          const label = entity.name.replace(/^zone_/, '').replaceAll('_', ' ').toUpperCase()
+
+          if (entity.geometry.type === 'cylinder' || entity.category === 'light') {
+            return (
+              <g key={entity.id}>
+                <title>{entity.name}</title>
+                <circle
+                  cx={center.x}
+                  cy={center.y}
+                  r={Math.max(3, width / 2)}
+                  fill={color}
+                  fillOpacity=".24"
+                  stroke={color}
+                  strokeWidth="1.5"
+                />
+              </g>
+            )
+          }
+
+          return (
+            <g key={entity.id} transform={`rotate(${rotation} ${center.x} ${center.y})`}>
+              <title>{entity.name}</title>
+              <rect
+                x={center.x - width / 2}
+                y={center.y - entityHeight / 2}
+                width={width}
+                height={entityHeight}
+                rx={entity.category === 'zone' ? 4 : 1.5}
+                fill={color}
+                fillOpacity={entity.category === 'zone' ? '.1' : '.24'}
+                stroke={color}
+                strokeOpacity=".78"
+                strokeWidth={entity.category === 'wall' ? 2 : 1}
+                strokeDasharray={entity.category === 'zone' ? '6 4' : undefined}
+              />
+              {!compact && entity.category === 'zone' && (
+                <text
+                  x={center.x}
+                  y={center.y}
+                  fill={color}
+                  fontSize="8"
+                  fontWeight="700"
+                  textAnchor="middle"
+                  dominantBaseline="middle"
+                >
+                  {label}
+                </text>
+              )}
+            </g>
+          )
+        })}
+
+        {worldPlan && annotations.map((annotation) => {
+          const position = annotationWorldPosition(annotation, worldPlan.bounds)
+          const point = worldPlan.project(position.worldX, position.worldY)
+          const type = MAP_LABEL_TYPES[annotation.type] || MAP_LABEL_TYPES.note
+          const text = annotation.label || type.label
+          const labelWidth = Math.min(150, Math.max(48, text.length * (compact ? 5 : 6) + 18))
+          return (
+            <g
+              className="world-map-annotation"
+              transform={`translate(${point.x} ${point.y})`}
+              onClick={(event) => {
+                event.stopPropagation()
+                onAnnotationSelect?.(annotation.id)
+              }}
+              onPointerDown={(event) => {
+                event.stopPropagation()
+                onAnnotationPointerDown?.(event, annotation.id)
+              }}
+              style={{ cursor: onAnnotationPointerDown ? 'grab' : onAnnotationSelect ? 'pointer' : 'default' }}
+              key={annotation.id}
+            >
+              <title>{`${type.label}: ${text}`}</title>
+              <line x1="0" y1="0" x2="0" y2="-18" stroke={type.color} strokeWidth="1.5" />
+              <circle cx="0" cy="0" r="4" fill={type.color} stroke="#dffcff" strokeWidth="1" />
+              <rect
+                x={-labelWidth / 2}
+                y="-39"
+                width={labelWidth}
+                height="21"
+                rx="6"
+                fill="#061923"
+                fillOpacity=".94"
+                stroke={type.color}
+                strokeOpacity=".7"
+              />
+              <text
+                x="0"
+                y="-28"
+                fill="#ebfbfe"
+                fontSize={compact ? 7 : 9}
+                fontWeight="700"
+                textAnchor="middle"
+                dominantBaseline="middle"
+              >
+                {text}
+              </text>
             </g>
           )
         })}

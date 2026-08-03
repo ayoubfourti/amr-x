@@ -6,7 +6,7 @@ from app.controllers.robot import (
     create_robot, update_robot_status,
     update_telemetry, get_telemetry_history
 )
-from app.schemas.robot import RobotCreate, TelemetryUpdate
+from app.schemas.robot import RobotCreate, RobotStatusUpdate, TelemetryUpdate
 
 router = APIRouter(prefix="/api/robots", tags=["Robots"])
 
@@ -16,15 +16,25 @@ def get_robots(db: Session = Depends(get_db)):
 
 @router.get("/{robot_id}")
 def get_robot(robot_id: int, db: Session = Depends(get_db)):
-    return get_robot_by_id(db, robot_id)
+    robot = get_robot_by_id(db, robot_id)
+    if not robot:
+        raise HTTPException(404, "Robot not found")
+    return robot
 
 @router.post("/")
 def add_robot(data: RobotCreate, db: Session = Depends(get_db)):
     return create_robot(db, data.name, data.ip_address)
 
 @router.put("/{robot_id}/status")
-def update_status(robot_id: int, data: dict, db: Session = Depends(get_db)):
-    return update_robot_status(db, robot_id, data)
+def update_status(
+    robot_id: int,
+    data: RobotStatusUpdate,
+    db: Session = Depends(get_db),
+):
+    robot = update_robot_status(db, robot_id, data.model_dump(exclude_none=True))
+    if not robot:
+        raise HTTPException(404, "Robot not found")
+    return robot
 
 @router.post("/{robot_id}/telemetry")
 def receive_telemetry(

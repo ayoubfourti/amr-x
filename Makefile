@@ -1,4 +1,7 @@
-.PHONY: setup setup-docs setup-website dev docs website build check check-docs clean
+.PHONY: help commands setup setup-docs setup-website dev docs website build check check-docs clean
+
+help commands:
+	npm run commands
 
 setup:
 	npm run setup

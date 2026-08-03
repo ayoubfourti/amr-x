@@ -5,7 +5,7 @@ const listenHost = "0.0.0.0";
 const listenPort = 3000;
 
 const website = { host: "127.0.0.1", port: 3001, name: "website" };
-const documentation = { host: "127.0.0.1", port: 8000, name: "documentation" };
+const documentation = { host: "127.0.0.1", port: 8001, name: "documentation" };
 
 function targetFor(url = "/") {
   const pathname = new URL(url, "http://localhost").pathname;

@@ -22,6 +22,8 @@ def create_module(db: Session, data: ModuleCreate):
 
 def toggle_module(db: Session, module_id: int, is_active: bool):
     module = db.query(Module).filter(Module.id == module_id).first()
+    if not module:
+        return None
     module.is_active = is_active
     db.commit()
     db.refresh(module)
