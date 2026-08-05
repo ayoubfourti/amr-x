@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com)
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
      Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="dual_arm">
-  <xacro:arg name="controllers_file" default=""/>
   <link name="world"/>
   <joint name="world_fixed" type="fixed">
     <parent link="world"/>
@@ -32,7 +31,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/base_link.STL" />
+          filename="file://$(find dual_arm_description)/meshes/base_link.STL" />
       </geometry>
       <material
         name="">
@@ -46,7 +45,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/base_link.STL" />
+          filename="file://$(find dual_arm_description)/meshes/base_link.STL" />
       </geometry>
     </collision>
   </link>
@@ -72,7 +71,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/pinion.STL" />
+          filename="file://$(find dual_arm_description)/meshes/pinion.STL" />
       </geometry>
       <material
         name="">
@@ -86,7 +85,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/pinion.STL" />
+          filename="file://$(find dual_arm_description)/meshes/pinion.STL" />
       </geometry>
     </collision>
   </link>
@@ -102,8 +101,8 @@
       link="pinion" />
     <axis
       xyz="1 0 0" />
-
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+  
+    <limit lower="0.0" upper="7.2" effort="1000" velocity="20.0"/>
   </joint>
   <link
     name="rack">
@@ -127,7 +126,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/rack.STL" />
+          filename="file://$(find dual_arm_description)/meshes/rack.STL" />
       </geometry>
       <material
         name="">
@@ -141,7 +140,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/rack.STL" />
+          filename="file://$(find dual_arm_description)/meshes/rack.STL" />
       </geometry>
     </collision>
   </link>
@@ -158,8 +157,9 @@
     <limit
         lower="-0.40"
         upper="0"
-        effort="100"
-        velocity="1.0"/>
+        effort="15000"
+        velocity="5.0"/>
+    <mimic joint="pinion_joint" multiplier="-0.056" offset="0.0"/> 
 
 </joint>
   <link
@@ -184,7 +184,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/robot_base.STL" />
+          filename="file://$(find dual_arm_description)/meshes/robot_base.STL" />
       </geometry>
       <material
         name="">
@@ -198,7 +198,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/robot_base.STL" />
+          filename="file://$(find dual_arm_description)/meshes/robot_base.STL" />
       </geometry>
     </collision>
   </link>
@@ -214,8 +214,8 @@
       link="robot_base" />
     <axis
       xyz="0 0 1" />
-
-    <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
+  
+    <limit lower="-3.14159" upper="3.14159" effort="500" velocity="1.0"/>
   </joint>
   <link
     name="shoulder_1">
@@ -239,7 +239,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_1.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_1.STL" />
       </geometry>
       <material
         name="">
@@ -253,7 +253,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_1.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -269,7 +269,7 @@
       link="shoulder_1" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
@@ -294,7 +294,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_2.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_2.STL" />
       </geometry>
       <material
         name="">
@@ -308,7 +308,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_2.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -324,7 +324,7 @@
       link="shoulder_2" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
@@ -349,7 +349,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_3.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_3.STL" />
       </geometry>
       <material
         name="">
@@ -363,7 +363,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_3.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -379,7 +379,7 @@
       link="shoulder_3" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="250" velocity="1.0"/>
   </joint>
   <link
@@ -404,7 +404,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_4.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_4.STL" />
       </geometry>
       <material
         name="">
@@ -418,7 +418,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_4.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_4.STL" />
       </geometry>
     </collision>
   </link>
@@ -434,7 +434,7 @@
       link="shoulder_4" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="200" velocity="1.0"/>
   </joint>
   <link
@@ -459,7 +459,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_5.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_5.STL" />
       </geometry>
       <material
         name="">
@@ -473,7 +473,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_5.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_5.STL" />
       </geometry>
     </collision>
   </link>
@@ -489,7 +489,7 @@
       link="shoulder_5" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
@@ -514,7 +514,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_6.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_6.STL" />
       </geometry>
       <material
         name="">
@@ -528,7 +528,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulder_6.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulder_6.STL" />
       </geometry>
     </collision>
   </link>
@@ -544,7 +544,7 @@
       link="shoulder_6" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
@@ -569,7 +569,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wrist.STL" />
+          filename="file://$(find dual_arm_description)/meshes/wrist.STL" />
       </geometry>
       <material
         name="">
@@ -583,7 +583,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wrist.STL" />
+          filename="file://$(find dual_arm_description)/meshes/wrist.STL" />
       </geometry>
     </collision>
   </link>
@@ -599,7 +599,7 @@
       link="wrist" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
   </joint>
   <link
@@ -624,7 +624,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_1.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_1.STL" />
       </geometry>
       <material
         name="">
@@ -638,7 +638,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_1.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_1.STL" />
       </geometry>
     </collision>
   </link>
@@ -654,7 +654,7 @@
       link="shoulderR_1" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
@@ -679,7 +679,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_2.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_2.STL" />
       </geometry>
       <material
         name="">
@@ -693,7 +693,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_2.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_2.STL" />
       </geometry>
     </collision>
   </link>
@@ -709,7 +709,7 @@
       link="shoulderR_2" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="300" velocity="1.0"/>
   </joint>
   <link
@@ -734,7 +734,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_3.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_3.STL" />
       </geometry>
       <material
         name="">
@@ -748,7 +748,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_3.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_3.STL" />
       </geometry>
     </collision>
   </link>
@@ -764,7 +764,7 @@
       link="shoulderR_3" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="250" velocity="1.0"/>
   </joint>
   <link
@@ -789,7 +789,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_4.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_4.STL" />
       </geometry>
       <material
         name="">
@@ -803,7 +803,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_4.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_4.STL" />
       </geometry>
     </collision>
   </link>
@@ -819,7 +819,7 @@
       link="shoulderR_4" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="200" velocity="1.0"/>
   </joint>
   <link
@@ -844,7 +844,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_5.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_5.STL" />
       </geometry>
       <material
         name="">
@@ -858,7 +858,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_5.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_5.STL" />
       </geometry>
     </collision>
   </link>
@@ -874,7 +874,7 @@
       link="shoulderR_5" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
@@ -899,7 +899,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_6.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_6.STL" />
       </geometry>
       <material
         name="">
@@ -913,7 +913,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/shoulderR_6.STL" />
+          filename="file://$(find dual_arm_description)/meshes/shoulderR_6.STL" />
       </geometry>
     </collision>
   </link>
@@ -929,7 +929,7 @@
       link="shoulderR_6" />
     <axis
       xyz="0 0 1" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="150" velocity="1.0"/>
   </joint>
   <link
@@ -954,7 +954,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wristR.STL" />
+          filename="file://$(find dual_arm_description)/meshes/wristR.STL" />
       </geometry>
       <material
         name="">
@@ -968,7 +968,7 @@
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://dual_arm_description/meshes/wristR.STL" />
+          filename="file://$(find dual_arm_description)/meshes/wristR.STL" />
       </geometry>
     </collision>
   </link>
@@ -984,7 +984,7 @@
       link="wristR" />
     <axis
       xyz="0 1 0" />
-
+  
     <limit lower="-3.14159" upper="3.14159" effort="100" velocity="1.0"/>
   </joint>
 
@@ -992,7 +992,30 @@
     <hardware>
       <plugin>gz_ros2_control/GazeboSimSystem</plugin>
     </hardware>
-
+    <joint name="pinion_joint">
+      <command_interface name="position">
+        <param name="p">1500.0</param>
+        <param name="i">200.0</param>
+        <param name="d">10.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="rack_joint">
+      <param name="mimic">pinion_joint</param>
+      <param name="multiplier">-0.056</param>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
+    <joint name="robot_base_joint">
+      <command_interface name="position">
+        <param name="p">300.0</param>
+        <param name="i">0.0</param>
+        <param name="d">30.0</param>
+      </command_interface>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+    </joint>
     <!-- Left arm: heavy shoulder joints get stronger gains -->
     <joint name="shoulder1_joint">
       <command_interface name="position">
@@ -1125,7 +1148,7 @@
   </ros2_control>
   <gazebo>
     <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
-      <parameters>$(arg controllers_file)</parameters>
+      <parameters>$(find dual_arm_control)/config/dual_arm_controllers.yaml</parameters>
     </plugin>
   </gazebo>
 </robot>

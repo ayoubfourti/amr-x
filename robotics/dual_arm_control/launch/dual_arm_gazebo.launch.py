@@ -39,11 +39,13 @@ def generate_launch_description():
         name='IGN_GAZEBO_RESOURCE_PATH',
         value=pkg_dual_arm_description)
 
-    # Start Gazebo
+    # Start Gazebo (bullet-featherstone: required for mimic constraint support)
     start_gazebo = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
             os.path.join(pkg_ros_gz_sim, 'launch', 'gz_sim.launch.py')),
-        launch_arguments={'gz_args': '-r empty.sdf'}.items())
+        launch_arguments={
+            'gz_args': '-r empty.sdf --physics-engine gz-physics-bullet-featherstone-plugin'
+        }.items())
 
     # Clock bridge
     clock_bridge = Node(
@@ -101,6 +103,16 @@ def generate_launch_description():
             arguments=['right_arm_controller',
                        '--controller-manager', '/controller_manager'],
             output='screen')])
+    # Pinion position controller (the lift)
+    pinion_position_controller = TimerAction(
+        period=6.0,
+        actions=[Node(
+            package='controller_manager',
+            executable='spawner',
+            arguments=['pinion_position_controller',
+                       '--controller-manager', '/controller_manager'],
+            output='screen')])
+
 
     return LaunchDescription([
         set_gz_resource_path,
@@ -112,4 +124,5 @@ def generate_launch_description():
         joint_state_broadcaster,
         left_arm_controller,
         right_arm_controller,
+        pinion_position_controller,
     ])
