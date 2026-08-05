@@ -266,4 +266,74 @@
   <gazebo reference="BR_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
   <gazebo reference="BL_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
 
+
+  <!-- ==== INSPECTION MODULE (thermal camera + gas sensor) ==== -->
+  <link name="cameras_mount_Link">
+    <inertial>
+      <origin xyz="-0.040236 0.013428 -0.026709" rpy="0 0 0"/>
+      <mass value="0.14071"/>
+      <inertia ixx="5.798E-05" ixy="3.3384E-07" ixz="-1.7319E-07"
+               iyy="1.6986E-05" iyz="1.6883E-08" izz="5.5627E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/cameras_mount_Link.STL"/></geometry>
+      <material name="inspection_mount_green"><color rgba="0 0.7451 0 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/cameras_mount_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="cameras_mount_joint" type="fixed">
+    <origin xyz="0.51252 -0.0115 0.13975" rpy="0 0.020136 0"/>
+    <parent link="base_link"/>
+    <child link="cameras_mount_Link"/>
+  </joint>
+
+  <link name="camera_thermal_Link">
+    <inertial>
+      <origin xyz="-0.025189 4.4462E-06 -7.318E-05" rpy="0 0 0"/>
+      <mass value="0.008096"/>
+      <inertia ixx="6.1294E-07" ixy="7.4569E-11" ixz="-1.4303E-09"
+               iyy="4.3511E-07" iyz="-4.9824E-11" izz="4.3599E-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/camera_thermal_Link.STL"/></geometry>
+      <material name="inspection_thermal_grey"><color rgba="0.89412 0.89412 0.89412 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/camera_thermal_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="camera_thermal_joint" type="fixed">
+    <origin xyz="0.018405 0.0095726 0.02568" rpy="0 0 0"/>
+    <parent link="cameras_mount_Link"/>
+    <child link="camera_thermal_Link"/>
+  </joint>
+
+  <link name="GAZ_sensor_Link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/GAZ_sensor_Link.STL"/></geometry>
+      <material name="inspection_gas_white"><color rgba="1 1 1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/GAZ_sensor_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="GAZ_sensor_Joint" type="fixed">
+    <origin xyz="0.23945 -0.30074 -0.235" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="GAZ_sensor_Link"/>
+  </joint>
+
 </robot>
