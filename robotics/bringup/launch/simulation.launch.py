@@ -62,17 +62,25 @@ def generate_launch_description():
         "'",
         os.path.join(pkg_gazebo, "worlds", "hospital_harmonic.sdf"),
         "' if '", environment, "' == 'hospital' else ('",
-        os.path.join(pkg_gazebo, "worlds", "warehouse.sdf"),
-        "' if '", simulator_variant, "' == 'harmonic' else '",
         os.path.join(pkg_gazebo, "worlds", "warehouse_harmonic.sdf"),
+        "' if '", simulator_variant, "' == 'harmonic' else '",
+        os.path.join(pkg_gazebo, "worlds", "warehouse_fortress.sdf"),
         "')"
     ])
-    # Spawn in the warehouse loading area, or in the hospital's main
-    # corridor (verified clear of walls/furniture - min. 1.7m clearance).
+    # Spawn in the warehouse_harmonic.sdf empty marked bay (verified by
+    # placing a box there in the GUI and reading its pose - the AWS
+    # RoboMaker warehouse layout has no world-coordinate markers of its
+    # own to derive this from), or in the hospital's main corridor
+    # (verified clear of walls/furniture - min. 1.7m clearance).
     default_spawn_x = PythonExpression([
-        "'0.0' if '", environment, "' == 'hospital' else '-8.0'"])
+        "'0.0' if '", environment, "' == 'hospital' else '-1.2639'"])
     default_spawn_y = PythonExpression([
-        "'8.0' if '", environment, "' == 'hospital' else '0.0'"])
+        "'8.0' if '", environment, "' == 'hospital' else '-3.9049'"])
+    # aws_robomaker_warehouse_GroundB_01's floor surface doesn't sit at
+    # world Z=0 (physics settles the robot to Z=0.034 there, not 0.02) -
+    # spawn a hair above that measured resting height instead of guessing.
+    default_spawn_z = PythonExpression([
+        "'0.02' if '", environment, "' == 'hospital' else '0.045'"])
     gazebo_resource_path = os.pathsep.join([
         pkg_gazebo,
         os.path.join(pkg_gazebo, "models"),
@@ -134,7 +142,7 @@ def generate_launch_description():
         arguments=[
             "-topic", "/robot_description",
             "-name", "amr_x",
-            "-x", default_spawn_x, "-y", default_spawn_y, "-z", "0.02",
+            "-x", default_spawn_x, "-y", default_spawn_y, "-z", default_spawn_z,
             "-Y", "0.0",
         ],
     )
