@@ -25,6 +25,10 @@ class DualArmTrajectoryNode(Node):
             'shoulderR_4joint', 'shoulderR_5joint', 'shoulderR_6joint',
             'wristR_joint'
         ]
+        # NEW: base mechanism joints (pinion, rack slider, robot_base rotation)
+        self.base_joints = [
+            'pinion_joint', 'rack_joint', 'robot_base_joint'
+        ]
 
         self.left_client = ActionClient(
             self, FollowJointTrajectory, '/left_arm_controller/follow_joint_trajectory'
@@ -32,13 +36,17 @@ class DualArmTrajectoryNode(Node):
         self.right_client = ActionClient(
             self, FollowJointTrajectory, '/right_arm_controller/follow_joint_trajectory'
         )
-
+        # NEW: base action client
+        self.base_client = ActionClient(
+            self, FollowJointTrajectory, '/base_controller/follow_joint_trajectory'
+        )
         self.get_logger().info('Dual Arm Trajectory Node initialized')
 
     def wait_for_servers(self, timeout=5.0):
         self.get_logger().info('Waiting for arm controllers...')
         left_ready = self.left_client.wait_for_server(timeout_sec=timeout)
         right_ready = self.right_client.wait_for_server(timeout_sec=timeout)
+        base_ready = self.base_client.wait_for_server(timeout_sec=timeout)  # NEW
 
         if left_ready and right_ready:
             self.get_logger().info('Both arm controllers ready!')
@@ -96,6 +104,37 @@ class DualArmTrajectoryNode(Node):
 
         return left_ok, right_ok
 
+    # NEW: move the base mechanism (pinion, rack slider, robot_base rotation)
+    def move_base(self, positions, duration_sec=3.0):
+        self.get_logger().info(f'Moving base over {duration_sec}s...')
+        self.get_logger().info(f'  Base (pinion, rack, robot_base): {[f"{x:.2f}" for x in positions]}')
+
+        base_traj = self._create_trajectory(self.base_joints, positions, duration_sec)
+
+        base_future = self.base_client.send_goal_async(
+            FollowJointTrajectory.Goal(trajectory=base_traj)
+        )
+        rclpy.spin_until_future_complete(self, base_future, timeout_sec=2.0)
+        base_handle = base_future.result()
+
+        if not base_handle.accepted:
+            self.get_logger().error('Base rejected the trajectory')
+            return False
+
+        self.get_logger().info('Base accepted trajectory, executing...')
+
+        base_result_future = base_handle.get_result_async()
+        timeout = duration_sec + 5.0
+        rclpy.spin_until_future_complete(self, base_result_future, timeout_sec=timeout)
+
+        base_ok = base_result_future.done()
+        if base_ok:
+            self.get_logger().info('Base reached target')
+        else:
+            self.get_logger().error('Base failed')
+
+        return base_ok
+
     def _create_trajectory(self, joints, positions, duration_sec):
         traj = JointTrajectory()
         traj.joint_names = joints
@@ -120,11 +159,23 @@ def main(args=None):
         home = [0.0] * 7
         pos_a = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]
         pos_b = [-0.5, 0.3, -0.3, 0.4, -0.4, 0.2, -0.2]
+         # NEW: base test positions [pinion_joint, rack_joint, robot_base_joint]
+        base_home = [0.0, 0.0, 0.0]
+        base_down = [0.0, -0.40, 0.0]   # rack_joint at its lower limit (fully retracted)
+        base_up = [0.0, 0.0, 0.0]       # rack_joint back at upper limit (0 = fully extended)
 
         node.get_logger().info('=== STARTING TRAJECTORY SEQUENCE ===')
 
         node.get_logger().info('Step 1: HOME')
         node.move_to_position(home, home, duration_sec=2.0)
+        time.sleep(1.0)
+        # NEW: Step 1.5 - test the base slider going down then back up
+        node.get_logger().info('Step 1.5: BASE DOWN (rack_joint lower limit)')
+        node.move_base(base_down, duration_sec=3.0)
+        time.sleep(1.0)
+
+        node.get_logger().info('Step 1.6: BASE UP (rack_joint back to home)')
+        node.move_base(base_up, duration_sec=3.0)
         time.sleep(1.0)
 
         node.get_logger().info('Step 2: Position A')
