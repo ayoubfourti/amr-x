@@ -1,7 +1,16 @@
 import { useMemo, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { getRobots, createRobot, updateRobotStatus } from '../api/robots'
-import { useAuth } from '../context/AuthContext'
+import Badge from '../components/ui/Badge'
+import PageTopbar from '../components/ui/PageTopbar'
+import { StatGrid } from '../components/ui/CommandUI'
+import EmptyState from '../components/ui/EmptyState'
+import { useToast } from '../hooks/useToast'
+import { useDemo } from '../hooks/useDemo'
+import { formatDate } from '../utils/format'
+import Icon from '../components/ui/Icon'
+import SelectField from '../components/ui/SelectField'
+import './Robots.css'
 
 const STATUS_COLORS = {
   online: '#16a34a',
@@ -9,49 +18,17 @@ const STATUS_COLORS = {
   error: '#dc2626',
 }
 
-const AVATAR_COLORS = ['#2563eb', '#7c3aed', '#16a34a', '#d97706', '#dc2626', '#0891b2']
-
-function initials(name) {
-  return (name || '?')
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join('')
-}
-
-function avatarColor(name) {
-  const index = (name || '').charCodeAt(0) % AVATAR_COLORS.length
-  return AVATAR_COLORS[index] || AVATAR_COLORS[0]
-}
-
-function Badge({ text, color }) {
-  return (
-    <span
-      style={{
-        backgroundColor: color,
-        color: '#fff',
-        padding: '4px 12px',
-        borderRadius: '999px',
-        fontSize: '0.8rem',
-        fontWeight: 600,
-        textTransform: 'capitalize',
-        boxShadow: `0 2px 6px ${color}55`,
-      }}
-    >
-      {text}
-    </span>
-  )
-}
-
-function formatDate(value) {
-  if (!value) return '—'
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return '—'
-  return date.toLocaleString()
-}
-
 const emptyForm = { name: '', ip_address: '', status: 'online', mode: 'idle' }
+const ROBOT_STATUS_OPTIONS = [
+  { value: 'online', label: 'Online' },
+  { value: 'offline', label: 'Offline' },
+  { value: 'error', label: 'Error' },
+]
+const ROBOT_MODE_OPTIONS = [
+  { value: 'idle', label: 'Idle' },
+  { value: 'autonomous', label: 'Autonomous' },
+  { value: 'manual', label: 'Manual' },
+]
 
 function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMessage }) {
   const isEdit = mode === 'edit'
@@ -66,7 +43,7 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
             </p>
           </div>
           <button type="button" className="modal-close" onClick={onClose}>
-            ✕
+            <Icon name="close" size={16} />
           </button>
         </div>
 
@@ -91,22 +68,26 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
 
           {isEdit && (
             <div className="modal-row">
-              <label className="auth-field">
+              <div className="auth-field">
                 <span className="auth-label">Status</span>
-                <select name="status" value={form.status} onChange={onChange}>
-                  <option value="online">online</option>
-                  <option value="offline">offline</option>
-                  <option value="error">error</option>
-                </select>
-              </label>
-              <label className="auth-field">
+                <SelectField
+                  name="status"
+                  value={form.status}
+                  options={ROBOT_STATUS_OPTIONS}
+                  onChange={onChange}
+                  ariaLabel="Robot status"
+                />
+              </div>
+              <div className="auth-field">
                 <span className="auth-label">Mode</span>
-                <select name="mode" value={form.mode} onChange={onChange}>
-                  <option value="idle">idle</option>
-                  <option value="autonomous">autonomous</option>
-                  <option value="manual">manual</option>
-                </select>
-              </label>
+                <SelectField
+                  name="mode"
+                  value={form.mode}
+                  options={ROBOT_MODE_OPTIONS}
+                  onChange={onChange}
+                  ariaLabel="Robot mode"
+                />
+              </div>
             </div>
           )}
 
@@ -128,7 +109,8 @@ function RobotModal({ mode, form, onChange, onSubmit, onClose, isSaving, errorMe
 
 function Robots() {
   const queryClient = useQueryClient()
-  const { currentUser } = useAuth()
+  const { showToast } = useToast()
+  const { demo, DEMO_ROBOTS } = useDemo()
   const [form, setForm] = useState(emptyForm)
   const [showForm, setShowForm] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -147,6 +129,10 @@ function Robots() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['robots'] })
       closeModal()
+      showToast('Robot registered successfully', 'success')
+    },
+    onError: () => {
+      showToast('Failed to register robot', 'error')
     },
   })
 
@@ -155,6 +141,10 @@ function Robots() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['robots'] })
       closeModal()
+      showToast('Robot updated', 'success')
+    },
+    onError: () => {
+      showToast('Failed to update robot', 'error')
     },
   })
 
@@ -183,6 +173,10 @@ function Robots() {
 
   function handleSubmit(e) {
     e.preventDefault()
+    if (demo) {
+      showToast('Demo mode active — disable to add real robots', 'warning')
+      return
+    }
     if (editingId) {
       statusMutation.mutate({ id: editingId, data: { status: form.status, mode: form.mode } })
     } else {
@@ -190,76 +184,50 @@ function Robots() {
     }
   }
 
+  const displayRobots = useMemo(() => (demo ? DEMO_ROBOTS : robots || []), [demo, DEMO_ROBOTS, robots])
+
   const stats = useMemo(() => {
-    const list = robots || []
+    const list = displayRobots
     return {
       total: list.length,
       online: list.filter((r) => r.status === 'online').length,
       offline: list.filter((r) => r.status === 'offline').length,
       error: list.filter((r) => r.status === 'error').length,
     }
-  }, [robots])
+  }, [displayRobots])
 
   const filteredRobots = useMemo(() => {
     const term = search.trim().toLowerCase()
-    return (robots || []).filter((r) => {
+    return displayRobots.filter((r) => {
       const matchesSearch =
         !term || r.name?.toLowerCase().includes(term) || r.ip_address?.toLowerCase().includes(term)
       const matchesStatus = statusFilter === 'all' || r.status === statusFilter
       return matchesSearch && matchesStatus
     })
-  }, [robots, search, statusFilter])
+  }, [displayRobots, search, statusFilter])
 
   const activeMutation = editingId ? statusMutation : createMutation
+  const latency = displayRobots.find((r) => r.status === 'online')?.wifi_latency ?? null
 
   return (
-    <div className="users-page">
-      <div className="page-topbar">
-        <div>
-          <h2>Robots</h2>
-          <p className="topbar-subtext">{new Date().toLocaleString()}</p>
-        </div>
-        <div className="topbar-right">
-          <span className="connection-pill">📶 Connected · 12ms</span>
-          {currentUser && (
-            <span
-              className="avatar-chip"
-              style={{ backgroundColor: avatarColor(currentUser.name) }}
-            >
-              {initials(currentUser.name)}
-            </span>
-          )}
-        </div>
-      </div>
+    <div className="users-page robots-page">
+      <PageTopbar
+        title="Robots"
+        latency={latency}
+        subtitle={`${stats.total} registered · ${stats.online} online`}
+        action={
+          <button type="button" className="primary-action" onClick={openCreateModal}>
+            <Icon name="robot" size={16} /> Register robot
+          </button>
+        }
+      />
 
-      <div className="page-heading-row">
-        <div>
-          <h3>Fleet Management</h3>
-          <p className="topbar-subtext">{stats.total} robots · {stats.online} online</p>
-        </div>
-        <button type="button" className="primary-button" onClick={openCreateModal}>
-          + Register Robot
-        </button>
-      </div>
-
-      <div className="stat-cards">
-        <div className="stat-card">
-          <span>Total Robots</span>
-          <strong>{stats.total}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Online</span>
-          <strong>{stats.online}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Offline</span>
-          <strong>{stats.offline}</strong>
-        </div>
-        <div className="stat-card">
-          <span>Error</span>
-          <strong>{stats.error}</strong>
-        </div>
-      </div>
+      <StatGrid items={[
+        { label: 'Total robots', value: stats.total, icon: 'robot', detail: 'Fleet inventory', tone: 'cyan' },
+        { label: 'Online', value: stats.online, icon: 'wifi', detail: 'Connected now', tone: 'green' },
+        { label: 'Offline', value: stats.offline, icon: 'pause', detail: 'Unavailable', tone: 'blue' },
+        { label: 'Error', value: stats.error, icon: 'alert', detail: 'Needs attention', tone: 'red' },
+      ]} />
 
       {showForm && (
         <RobotModal
@@ -276,23 +244,46 @@ function Robots() {
       <div className="filter-bar">
         <input
           className="search-input"
-          placeholder="🔍 Search name or IP…"
+          placeholder="Search name or IP…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
-          <option value="all">All Statuses</option>
-          <option value="online">online</option>
-          <option value="offline">offline</option>
-          <option value="error">error</option>
-        </select>
+        <SelectField
+          name="robot-status-filter"
+          value={statusFilter}
+          options={[{ value: 'all', label: 'All statuses' }, ...ROBOT_STATUS_OPTIONS]}
+          onChange={(event) => setStatusFilter(event.target.value)}
+          ariaLabel="Filter robots by status"
+        />
         <span className="results-count">{filteredRobots.length} results</span>
       </div>
 
       {isLoading && <p>Loading robots…</p>}
       {isError && <p className="error">Failed to load robots: {error.message}</p>}
 
-      {!isLoading && !isError && (
+      {!isLoading && !isError && displayRobots.length === 0 && (
+        <EmptyState
+          icon={<Icon name="robot" size={40} />}
+          title="No robots registered yet"
+          subtitle="Add your first robot to start managing your fleet"
+          action={
+            <button type="button" className="primary-button" onClick={openCreateModal}>
+              <Icon name="robot" size={16} /> Register robot
+            </button>
+          }
+        />
+      )}
+
+      {!isLoading && !isError && displayRobots.length > 0 && filteredRobots.length === 0 && (
+        <EmptyState
+          icon={<Icon name="search" size={40} />}
+          title="No robots match your search"
+          subtitle="Try a different name or status filter"
+        />
+      )}
+
+      {!isLoading && !isError && filteredRobots.length > 0 && (
+        <div className="data-table-wrapper">
         <table className="data-table">
           <thead>
             <tr>
@@ -310,36 +301,47 @@ function Robots() {
           <tbody>
             {filteredRobots.map((robot) => (
               <tr key={robot.id}>
-                <td>{robot.name}</td>
-                <td>{robot.ip_address || '—'}</td>
+                <td className="robot-name-cell">{robot.name}</td>
+                <td className="robot-ip-cell">{robot.ip_address || '—'}</td>
                 <td>
-                  <Badge text={robot.status} color={STATUS_COLORS[robot.status] || '#6b7280'} />
+                  <Badge
+                    className="robot-state-badge"
+                    text={robot.status}
+                    color={STATUS_COLORS[robot.status] || '#6b7280'}
+                  />
                 </td>
                 <td>
-                  <Badge text={robot.mode} color="#2563eb" />
+                  <Badge className="robot-state-badge" text={robot.mode} color="#2563eb" />
                 </td>
                 <td>
-                  <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${robot.battery ?? 0}%` }} />
-                  </div>{' '}
-                  {robot.battery ?? '—'}%
+                  <div className="robot-battery-cell">
+                    <div className="progress-bar">
+                      <div className="progress-fill" style={{ width: `${robot.battery ?? 0}%` }} />
+                    </div>
+                    <strong>{robot.battery ?? '—'}%</strong>
+                  </div>
                 </td>
-                <td>{robot.speed ?? '—'} m/s</td>
-                <td>{robot.wifi_latency ?? '—'} ms</td>
-                <td>{formatDate(robot.last_seen)}</td>
+                <td className="robot-live-value">
+                  <strong>{robot.speed ?? '—'}</strong><span>m/s</span>
+                </td>
+                <td className="robot-live-value">
+                  <strong>{robot.wifi_latency ?? '—'}</strong><span>ms</span>
+                </td>
+                <td className="robot-last-seen">{formatDate(robot.last_seen)}</td>
                 <td>
                   <button
                     type="button"
                     className="icon-button"
                     onClick={() => openEditModal(robot)}
                   >
-                    ✏️
+                    <Icon name="settings" size={16} />
                   </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        </div>
       )}
     </div>
   )

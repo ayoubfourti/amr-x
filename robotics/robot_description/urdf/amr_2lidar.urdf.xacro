@@ -39,6 +39,20 @@
   <xacro:property name="lidar_samples"      value="360"/>
   <xacro:property name="lidar_update_rate"  value="10"/>
 
+  <!-- Front-facing RGB camera (for AprilTag / visual-dock detection).
+       Mounted on the real cameras_mount_Link bracket (see INSPECTION MODULE
+       below), beside camera_thermal_Link, rather than floating off
+       base_link at a guessed position. xyz/rpy are relative to
+       cameras_mount_Link's own frame. VERIFY against the actual bracket
+       once the real camera is fitted. -->
+  <xacro:property name="camera_xyz"          value="0.0 -0.05 0.02"/>
+  <xacro:property name="camera_rpy"          value="0 0 0"/>
+  <xacro:property name="camera_topic"        value="camera/image_raw"/>
+  <xacro:property name="camera_width"        value="640"/>
+  <xacro:property name="camera_height"       value="480"/>
+  <xacro:property name="camera_update_rate"  value="30"/>
+  <xacro:property name="camera_horizontal_fov" value="1.089"/> <!-- ~62 deg -->
+
   <!-- ===================================================================
        1. Pull in the NEW CAD export (chassis + casters + drive wheels +
           Lidar1_link + Lidar2_link, all with meshes)
@@ -66,6 +80,48 @@
     <parent link="base_link"/>
     <child  link="imu_link"/>
     <origin xyz="${imu_xyz}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===================================================================
+       3b. Camera frame. camera_link follows REP-103 (X fwd, Y left, Z up)
+           for a sane mount pose; camera_optical_link rotates into the
+           optical convention (Z fwd, X right, Y down) that image_geometry
+           / apriltag_ros expect, and is what the sensor reports as its
+           gz_frame_id below. Both links carry a small non-zero inertial:
+           since they host a sensor, sdformat must preserve them as real
+           bodies rather than lumping them into base_link, and a zero-mass
+           body can't be welded by the physics engine - it just drifts
+           free instead of staying mounted.
+
+           Parented to cameras_mount_Link (defined below, under INSPECTION
+           MODULE) rather than base_link directly - that's the real mount
+           bracket your camera actually lives on, alongside
+           camera_thermal_Link.
+       =================================================================== -->
+  <link name="camera_link">
+    <inertial>
+      <mass value="0.05"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-6" iyy="1e-6" izz="1e-6" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <joint name="camera_joint" type="fixed">
+    <parent link="cameras_mount_Link"/>
+    <child  link="camera_link"/>
+    <origin xyz="${camera_xyz}" rpy="${camera_rpy}"/>
+  </joint>
+
+  <link name="camera_optical_link">
+    <inertial>
+      <mass value="0.001"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="1e-7" iyy="1e-7" izz="1e-7" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </link>
+  <joint name="camera_optical_joint" type="fixed">
+    <parent link="camera_link"/>
+    <child  link="camera_optical_link"/>
+    <origin xyz="0 0 0" rpy="-1.5708 0 -1.5708"/>
   </joint>
 
   <!-- ===================================================================
@@ -183,11 +239,109 @@
   </gazebo>
 
   <!-- ===================================================================
+       6b. Camera sensor -> publishes ${camera_topic}/image + camera_info.
+           gz_frame_id points at the optical frame, not camera_link, so
+           downstream image consumers (apriltag_ros, image_proc) get poses
+           in the standard camera-optical convention without a re-rotation.
+       =================================================================== -->
+  <gazebo reference="camera_link">
+    <sensor name="camera" type="camera">
+      <topic>${camera_topic}</topic>
+      <gz_frame_id>camera_optical_link</gz_frame_id>
+      <update_rate>${camera_update_rate}</update_rate>
+      <always_on>true</always_on>
+      <visualize>true</visualize>
+      <camera>
+        <horizontal_fov>${camera_horizontal_fov}</horizontal_fov>
+        <image>
+          <width>${camera_width}</width>
+          <height>${camera_height}</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.05</near>
+          <far>30.0</far>
+        </clip>
+      </camera>
+    </sensor>
+  </gazebo>
+
+  <!-- ===================================================================
        7. Zero-friction casters (passive: must not fight the drive)
        =================================================================== -->
   <gazebo reference="FR_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
   <gazebo reference="FL_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
   <gazebo reference="BR_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
   <gazebo reference="BL_Caster_Wheel_Link"><mu1>0.0</mu1><mu2>0.0</mu2></gazebo>
+
+
+  <!-- ==== INSPECTION MODULE (thermal camera + gas sensor) ==== -->
+  <link name="cameras_mount_Link">
+    <inertial>
+      <origin xyz="-0.040236 0.013428 -0.026709" rpy="0 0 0"/>
+      <mass value="0.14071"/>
+      <inertia ixx="5.798E-05" ixy="3.3384E-07" ixz="-1.7319E-07"
+               iyy="1.6986E-05" iyz="1.6883E-08" izz="5.5627E-05"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/cameras_mount_Link.STL"/></geometry>
+      <material name="inspection_mount_green"><color rgba="0 0.7451 0 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/cameras_mount_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="cameras_mount_joint" type="fixed">
+    <origin xyz="0.51252 -0.0115 0.13975" rpy="0 0.020136 0"/>
+    <parent link="base_link"/>
+    <child link="cameras_mount_Link"/>
+  </joint>
+
+  <link name="camera_thermal_Link">
+    <inertial>
+      <origin xyz="-0.025189 4.4462E-06 -7.318E-05" rpy="0 0 0"/>
+      <mass value="0.008096"/>
+      <inertia ixx="6.1294E-07" ixy="7.4569E-11" ixz="-1.4303E-09"
+               iyy="4.3511E-07" iyz="-4.9824E-11" izz="4.3599E-07"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/camera_thermal_Link.STL"/></geometry>
+      <material name="inspection_thermal_grey"><color rgba="0.89412 0.89412 0.89412 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/camera_thermal_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="camera_thermal_joint" type="fixed">
+    <origin xyz="0.018405 0.0095726 0.02568" rpy="0 0 0"/>
+    <parent link="cameras_mount_Link"/>
+    <child link="camera_thermal_Link"/>
+  </joint>
+
+  <link name="GAZ_sensor_Link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.001"/>
+      <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/GAZ_sensor_Link.STL"/></geometry>
+      <material name="inspection_gas_white"><color rgba="1 1 1 1"/></material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry><mesh filename="package://robot_description/meshes/GAZ_sensor_Link.STL"/></geometry>
+    </collision>
+  </link>
+  <joint name="GAZ_sensor_Joint" type="fixed">
+    <origin xyz="0.23945 -0.30074 -0.235" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="GAZ_sensor_Link"/>
+  </joint>
 
 </robot>

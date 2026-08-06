@@ -75,7 +75,7 @@ cross-team conflicts. Undecided engineering values are explicitly marked
     npm run docs
     ```
 
-    Open <http://127.0.0.1:8000/>.
+    Open <http://127.0.0.1:8001/>.
 
 === "Website and documentation"
 

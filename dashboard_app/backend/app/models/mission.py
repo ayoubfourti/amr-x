@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text
 from sqlalchemy.sql import func
+
 from app.db.database import Base
+
 
 class Mission(Base):
     __tablename__ = "missions"
@@ -17,4 +19,6 @@ class Mission(Base):
     is_recurring = Column(Boolean, default=False)
     started_at = Column(DateTime)
     completed_at = Column(DateTime)
+    duration_seconds = Column(Integer)
+    notes = Column(Text)
     created_at = Column(DateTime, server_default=func.now())

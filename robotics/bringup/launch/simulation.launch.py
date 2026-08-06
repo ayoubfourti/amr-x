@@ -64,7 +64,7 @@ def generate_launch_description():
         "' if '", environment, "' == 'hospital' else ('",
         os.path.join(pkg_gazebo, "worlds", "warehouse.sdf"),
         "' if '", simulator_variant, "' == 'harmonic' else '",
-        os.path.join(pkg_gazebo, "worlds", "warehouse_fortress.sdf"),
+        os.path.join(pkg_gazebo, "worlds", "warehouse_harmonic.sdf"),
         "')"
     ])
     # Spawn in the warehouse loading area, or in the hospital's main

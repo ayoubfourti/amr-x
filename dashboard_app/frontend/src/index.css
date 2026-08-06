@@ -1,7 +1,38 @@
+@font-face {
+  font-family: 'AMRX Inter';
+  src: url('../../../website/public/fonts/inter-regular.otf') format('opentype');
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'AMRX Inter';
+  src: url('../../../website/public/fonts/inter-semibold.otf') format('opentype');
+  font-weight: 600 800;
+  font-display: swap;
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+[class*='animation'],
+[class*='animate'],
+.status-dot-pulse,
+.card-enter,
+.toast-enter {
+  transition: none !important;
 }
 
 html,
@@ -13,13 +44,66 @@ body,
   overflow: hidden;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 body {
   font-family:
+    'AMRX Inter',
     'Inter',
     'Segoe UI',
     sans-serif;
-  background-color: #0a0a0f;
-  color: #e2e8f0;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  letter-spacing: -0.3px;
+  line-height: 1.3;
+}
+
+strong {
+  font-weight: 700;
+}
+
+/* Fluid typography */
+h1,
+h2 {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+}
+h3 {
+  font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+}
+.stat-card strong {
+  font-size: clamp(20px, 3vw, 28px);
+}
+
+/* Prevent text overflow */
+* {
+  word-break: break-word;
+}
+code,
+pre,
+.monospace {
+  word-break: break-all;
+}
+
+@keyframes pageFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .mt-4 {
@@ -28,4 +112,102 @@ body {
 
 .mt-6 {
   margin-top: 24px;
+}
+
+@keyframes robotPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.robot-pulse-ring {
+  animation: robotPulse 2s ease-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes mapShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.map-shimmer {
+  animation: mapShimmer 1.5s linear infinite;
+}
+
+.map-icon-btn:hover {
+  background-color: #1c1c26;
+}
+
+.map-robot-card {
+  transition: background-color 0.15s ease;
+}
+
+.map-robot-card:hover {
+  background-color: #15151d;
+}
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.25s ease-out;
+}
+
+.dashboard-bg {
+  background-image: radial-gradient(circle, #1c1c26 1px, transparent 1px);
+  background-size: 24px 24px;
+  background-position: 0 0;
+}
+
+.dashboard-light {
+  background: #f0f2f8;
+}
+
+@keyframes statusPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.6;
+  }
+}
+
+.status-dot-pulse {
+  animation: statusPulse 2s ease-in-out infinite;
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card-enter {
+  animation: cardFadeIn 0.3s ease-out forwards;
 }

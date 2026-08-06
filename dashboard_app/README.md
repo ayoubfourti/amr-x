@@ -14,7 +14,7 @@ Web-based dashboard for operators to monitor robots, create missions, and manage
 
 ## Quick start
 
-Docker, Docker Compose, Python 3.10+, Node.js 20.19+ or 22.12+, and npm are
+Docker, Docker Compose, Python 3.10+, Node.js 20.9+, and npm 10+ are
 required. Run all supported commands from the repository root.
 
 Install the backend and frontend dependencies:

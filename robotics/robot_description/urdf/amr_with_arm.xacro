@@ -1,0 +1,194 @@
+<?xml version="1.0"?>
+<!--
+  amr_with_arm.xacro
+  ====================
+  Extends amr.urdf.xacro with the real mycobot_280 arm mounted on top.
+
+  This adds:
+    1. module_mount_link  — physical mount plate on the robot chassis top face
+                            (this is the link modules.yaml calls "module_mount_top")
+    2. arm_module         — the full mycobot_280 + gripper, parented to module_mount_link
+                            via a fixed joint (replaces the fake box)
+
+  The arm is conditionally included via `attach_arm` arg so you can still
+  spawn the bare robot for navigation-only runs.
+
+  Build with:
+    xacro amr_with_arm.xacro use_gazebo:=true attach_arm:=true > /tmp/amr_with_arm.urdf
+
+  Spawn in Gazebo:
+    ros2 run ros_gz_sim create -world amr_warehouse \
+      -file /tmp/amr_with_arm.urdf -name amr -x 0 -y -5.4 -z 0.15
+-->
+<robot name="amr_x" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ===== Arguments ===================================================== -->
+  <xacro:arg name="use_gazebo"   default="true"/>
+  <xacro:arg name="attach_arm"   default="false"/>   <!-- false = bare robot -->
+  <xacro:arg name="arm_prefix"   default=""/>        <!-- prefix for arm joint/link names -->
+  <xacro:arg name="params_file"
+             default="$(find robot_description)/config/robot_params.yaml"/>
+
+  <!-- ===== Reuse the full AMR base (your existing file) ================= -->
+  <!--
+    We include amr.urdf.xacro content by re-including its children.
+    amr.urdf.xacro is the entry point so we just include its pieces directly
+    to avoid a double <robot> tag.
+  -->
+  <xacro:property name="cfg" value="${xacro.load_yaml('$(arg params_file)')}"/>
+  <xacro:property name="P"   value="${cfg['amr_x']}"/>
+
+  <!-- Chassis dims (needed to compute mount offset) -->
+  <xacro:property name="chassis_length"   value="${P['chassis']['length']}"/>
+  <xacro:property name="chassis_width"    value="${P['chassis']['width']}"/>
+  <xacro:property name="chassis_height"   value="${P['chassis']['height']}"/>
+  <xacro:property name="chassis_mass"     value="${P['chassis']['mass']}"/>
+  <xacro:property name="chassis_z_offset" value="${P['chassis']['z_offset_from_axle']}"/>
+  <xacro:property name="wheel_radius"     value="${P['wheel']['radius']}"/>
+  <xacro:property name="wheel_width"      value="${P['wheel']['width']}"/>
+  <xacro:property name="wheel_mass"       value="${P['wheel']['mass']}"/>
+  <xacro:property name="wheel_separation" value="${P['wheel']['separation']}"/>
+  <xacro:property name="wheel_x_offset"   value="${P['wheel']['x_offset']}"/>
+  <xacro:property name="caster_radius"   value="${P['caster']['radius']}"/>
+  <xacro:property name="caster_mass"     value="${P['caster']['mass']}"/>
+  <xacro:property name="caster_x_offset" value="${P['caster']['x_offset']}"/>
+  <xacro:property name="drive_max_linear_velocity"  value="${P['drive']['max_linear_velocity']}"/>
+  <xacro:property name="drive_max_angular_velocity" value="${P['drive']['max_angular_velocity']}"/>
+  <xacro:property name="drive_max_linear_accel"     value="${P['drive']['max_linear_accel']}"/>
+  <xacro:property name="drive_max_angular_accel"    value="${P['drive']['max_angular_accel']}"/>
+  <xacro:property name="lidar_enabled"      value="${P['lidar']['enabled']}"/>
+  <xacro:property name="lidar_x"            value="${P['lidar']['x']}"/>
+  <xacro:property name="lidar_y"            value="${P['lidar']['y']}"/>
+  <xacro:property name="lidar_z"            value="${P['lidar']['z']}"/>
+  <xacro:property name="lidar_radius"       value="${P['lidar']['radius']}"/>
+  <xacro:property name="lidar_height"       value="${P['lidar']['height']}"/>
+  <xacro:property name="lidar_mass"         value="${P['lidar']['mass']}"/>
+  <xacro:property name="lidar_samples"      value="${P['lidar']['samples']}"/>
+  <xacro:property name="lidar_min_angle"    value="${P['lidar']['min_angle']}"/>
+  <xacro:property name="lidar_max_angle"    value="${P['lidar']['max_angle']}"/>
+  <xacro:property name="lidar_min_range"    value="${P['lidar']['min_range']}"/>
+  <xacro:property name="lidar_max_range"    value="${P['lidar']['max_range']}"/>
+  <xacro:property name="lidar_update_rate"  value="${P['lidar']['update_rate']}"/>
+  <xacro:property name="lidar_noise_stddev" value="${P['lidar']['noise_stddev']}"/>
+  <xacro:property name="imu_enabled"            value="${P['imu']['enabled']}"/>
+  <xacro:property name="imu_x"                  value="${P['imu']['x']}"/>
+  <xacro:property name="imu_y"                  value="${P['imu']['y']}"/>
+  <xacro:property name="imu_z"                  value="${P['imu']['z']}"/>
+  <xacro:property name="imu_size"               value="${P['imu']['size']}"/>
+  <xacro:property name="imu_mass"               value="${P['imu']['mass']}"/>
+  <xacro:property name="imu_update_rate"        value="${P['imu']['update_rate']}"/>
+  <xacro:property name="imu_gyro_noise_stddev"  value="${P['imu']['gyro_noise_stddev']}"/>
+  <xacro:property name="imu_gyro_bias_stddev"   value="${P['imu']['gyro_bias_stddev']}"/>
+  <xacro:property name="imu_accel_noise_stddev" value="${P['imu']['accel_noise_stddev']}"/>
+  <xacro:property name="imu_accel_bias_stddev"  value="${P['imu']['accel_bias_stddev']}"/>
+  <xacro:property name="encoders_publish_rate"  value="${P['encoders']['publish_rate']}"/>
+
+  <!-- ===== Base robot includes =========================================== -->
+  <xacro:include filename="$(find robot_description)/urdf/inertial_macros.xacro"/>
+  <xacro:include filename="$(find robot_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find robot_description)/urdf/amr_base.xacro"/>
+  <xacro:include filename="$(find robot_description)/urdf/amr_sensors.xacro"/>
+
+  <xacro:if value="$(arg use_gazebo)">
+    <xacro:include filename="$(find robot_description)/urdf/amr_gazebo.xacro"/>
+  </xacro:if>
+
+  <!-- ===== module_mount_link ============================================= -->
+  <!--
+    A thin aluminium plate on top of the chassis.
+    Position: centred on chassis top face, slightly forward of centre.
+    z = chassis_height/2  (top face of chassis body)
+    Tune xyz once you see it in Gazebo.
+  -->
+  <link name="module_mount_link">
+    <inertial>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <mass value="0.15"/>
+      <inertia ixx="0.000244" ixy="0" ixz="0"
+               iyy="0.000163" iyz="0"
+               izz="0.000394"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <!-- 10.5 cm × 14 cm mount plate, 8 mm thick — matches g_shape_base footprint -->
+        <box size="0.105 0.14 0.008"/>
+      </geometry>
+      <material name="dark_grey">
+        <color rgba="1 0 0 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.105 0.14 0.008"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!--
+    Joint: chassis_link → module_mount_link
+    z offset = chassis_height/2 + 0.004 (half plate thickness)
+    x offset = 0.05  (slightly forward — keeps arm away from lidar)
+    Adjust x/y once you see it in Gazebo.
+  -->
+  <joint name="module_mount_joint" type="fixed">
+    <parent link="top_plate_link"/>
+    <child  link="module_mount_link"/>
+    <origin xyz="0.05 0.0 0.008" rpy="0 0 0"/>
+  </joint>
+
+  <!-- ===== Real mycobot_280 arm (conditional) ============================ -->
+  <xacro:if value="$(arg attach_arm)">
+
+    <xacro:include filename="$(find arm_description)/urdf/single_arm.xacro"/>
+    <xacro:include filename="$(find arm_description)/urdf/gripper.xacro"/>
+    <xacro:include filename="$(find arm_description)/urdf/arm_gazebo.xacro"/>
+    <xacro:include filename="$(find arm_description)/urdf/arm_control.xacro"/>
+
+    <!-- g_shape_base (the arm's mounting foot) — parented to module_mount_link -->
+    <xacro:g_shape_base
+        base_link="base_link"
+        prefix="arm_"/>
+
+    <!-- Fixed joint: module_mount_link → arm base_link -->
+    <joint name="arm_dock_joint" type="fixed">
+      <parent link="module_mount_link"/>
+      <child  link="arm_base_link"/>
+      <!--
+        z = 0.004 (half mount plate) + 0.015 (half g_shape_base collision box)
+            = 0.019  above mount plate centre
+        No rotation: arm faces same direction as robot (+X forward)
+      -->
+      <origin xyz="0.0 0.0 0.019" rpy="0 0 0"/>
+    </joint>
+
+    <!-- 6-DOF arm chain -->
+    <xacro:single_arm
+        base_link="base_link"
+        flange_link="link6_flange"
+        prefix="arm_">
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </xacro:single_arm>
+
+    <!-- Adaptive gripper on link6_flange -->
+    <xacro:gripper
+        parent="link6_flange"
+        prefix="arm_">
+      <origin xyz="0 0 0.034" rpy="1.579 0 0"/>
+    </xacro:gripper>
+
+    <!-- Gazebo ros2_control plugin for the arm -->
+    <xacro:load_gazebo_sim_ros2_control_plugin
+        robot_name="mycobot_280"
+        use_gazebo="$(arg use_gazebo)"/>
+
+    <!-- ros2_control hardware interface -->
+    <xacro:arm_ros2_control
+        prefix="arm_"
+        flange_link="link6_flange"
+        use_gazebo="$(arg use_gazebo)"/>
+
+  </xacro:if>
+
+</robot>

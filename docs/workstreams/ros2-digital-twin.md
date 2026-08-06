@@ -38,5 +38,7 @@ and operator tools.
   sourcing, common commands, and runtime inspection.
 - [Digital twin and simulation](../robotics/simulation.md): launch composition,
   worlds, options, topics, verification, and limitations.
+- [Dual-arm simulation](../robotics/dual-arm-simulation.md): module description,
+  Gazebo controllers, synchronized trajectory validation, and MoveIt startup.
 - [Mapping, localization, and Nav2](../robotics/navigation.md): SLAM, map
   saving, live-map navigation, AMCL, and troubleshooting.

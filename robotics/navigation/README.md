@@ -408,6 +408,71 @@ If the scan drifts off the walls **while moving but recovers when stopped**,
 that is AMCL update spacing, not geometry - `update_min_d` / `update_min_a` in
 `nav2_params.yaml` (both set to 0.05 here) control how often AMCL corrects.
 
+## Spawning obstacles and actors (hospital simulation)
+
+The hospital world can be populated with 19 static "unmapped" obstacles
+(furniture the SLAM map does not know about, to stress-test local obstacle
+avoidance) and 16 dynamic pedestrian actors (local wander loops).
+These are spawned into an already-running simulation with two scripts, not
+baked into the world file.
+
+### Expected layout
+
+```
+navigation/test/
+├── scripts/
+│   ├── fetch_assets.sh
+│   ├── spawn_obstacles.sh
+│   └── spawn_actors.sh
+├── actors/
+│   └── actor_wanderer_1.sdf ... actor_wanderer_16.sdf
+└── assets/                # created by fetch_assets.sh - gitignored, NOT committed
+    └── hospital_assets/
+        └── fuel_models/
+```
+
+`scripts/` and `actors/` are committed (plain text, small). `assets/` is
+fetched by each teammate and should be in `.gitignore` - the Fuel model
+meshes/textures live there and are pulled from an external repo, not stored
+in this one.
+
+### First time only (after cloning)
+
+```bash
+cd ~/amr-x/robotics/navigation/test/scripts
+chmod +x fetch_assets.sh spawn_obstacles.sh spawn_actors.sh
+./fetch_assets.sh
+```
+
+This clones the AWS RoboMaker hospital asset pack and downloads the 20 Fuel
+models the obstacles use, into `../assets/hospital_assets/fuel_models`. Only
+needs to run once per machine - it does not need to be repeated for every
+sim launch, and does not need to run again after a normal `git pull` unless
+the model list itself changes.
+
+### Every time you want obstacles/actors in a running sim
+
+With the `hospital` world already launched (`ros2 launch bringup
+simulation.launch.py environment:=hospital`), open a new terminal:
+
+```bash
+cd ~/amr-x/robotics/navigation/test/scripts
+./spawn_obstacles.sh
+./spawn_actors.sh
+```
+
+Each `.sh` calls `ros2 run ros_gz_sim create` once per entity (one obstacle
+or actor per call - there is no single command that spawns all of them at
+once). Both scripts locate their own directory automatically
+(`$(dirname "${BASH_SOURCE[0]}")`), so they work regardless of where the repo
+is cloned or which machine runs them - no hardcoded paths or usernames to
+edit.
+
+Spawning is **not persistent**: closing or restarting the Gazebo world clears
+everything spawned this way, and both scripts need to be rerun. This is a
+deliberate tradeoff versus baking the obstacles into the world file - faster
+to iterate on, but must be re-run per session.
+
 ## Troubleshooting
 
 **You changed something and the behaviour did not change.** Check the
