@@ -34,15 +34,21 @@ from launch.actions import (DeclareLaunchArgument, ExecuteProcess,
                             IncludeLaunchDescription, TimerAction)
 from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
 
 
 def generate_launch_description():
     pkg_nav = get_package_share_directory("navigation")
     pkg_slam = get_package_share_directory("slam_toolbox")
     pkg_nav2_bringup = get_package_share_directory("nav2_bringup")
-    pkg_explore = get_package_share_directory("explore_lite")
+    # NOT get_package_share_directory("explore_lite") here: that resolves
+    # eagerly at generation time and crashes the whole launch file even
+    # when explore:=false, since explore_lite isn't always installed.
+    # FindPackageShare is a launch-time substitution - it's only resolved
+    # when the IncludeLaunchDescription below actually executes, which the
+    # IfCondition(explore) skips entirely when explore_lite isn't wanted.
 
     use_sim_time = LaunchConfiguration("use_sim_time")
     use_rviz = LaunchConfiguration("rviz")
@@ -126,7 +132,8 @@ def generate_launch_description():
     # ---------------------------------------------------------------
     explore = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(pkg_explore, "launch", "explore.launch.py")),
+            PathJoinSubstitution(
+                [FindPackageShare("explore_lite"), "launch", "explore.launch.py"])),
         launch_arguments={"use_sim_time": use_sim_time}.items(),
         condition=IfCondition(LaunchConfiguration("explore")),
     )
