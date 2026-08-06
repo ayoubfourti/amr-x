@@ -40,9 +40,12 @@
   <xacro:property name="lidar_update_rate"  value="10"/>
 
   <!-- Front-facing RGB camera (for AprilTag / visual-dock detection).
-       Mounted at the front edge, facing +X (robot forward), above the
-       Lidar deck. VERIFY xyz against wherever the real camera ends up. -->
-  <xacro:property name="camera_xyz"          value="0.40 0.0 0.15"/>
+       Mounted on the real cameras_mount_Link bracket (see INSPECTION MODULE
+       below), beside camera_thermal_Link, rather than floating off
+       base_link at a guessed position. xyz/rpy are relative to
+       cameras_mount_Link's own frame. VERIFY against the actual bracket
+       once the real camera is fitted. -->
+  <xacro:property name="camera_xyz"          value="0.0 -0.05 0.02"/>
   <xacro:property name="camera_rpy"          value="0 0 0"/>
   <xacro:property name="camera_topic"        value="camera/image_raw"/>
   <xacro:property name="camera_width"        value="640"/>
@@ -89,6 +92,11 @@
            bodies rather than lumping them into base_link, and a zero-mass
            body can't be welded by the physics engine - it just drifts
            free instead of staying mounted.
+
+           Parented to cameras_mount_Link (defined below, under INSPECTION
+           MODULE) rather than base_link directly - that's the real mount
+           bracket your camera actually lives on, alongside
+           camera_thermal_Link.
        =================================================================== -->
   <link name="camera_link">
     <inertial>
@@ -98,7 +106,7 @@
     </inertial>
   </link>
   <joint name="camera_joint" type="fixed">
-    <parent link="base_link"/>
+    <parent link="cameras_mount_Link"/>
     <child  link="camera_link"/>
     <origin xyz="${camera_xyz}" rpy="${camera_rpy}"/>
   </joint>
