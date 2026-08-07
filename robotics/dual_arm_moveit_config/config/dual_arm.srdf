@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <robot name="dual_arm">
 
-    <!-- LEFT ARM planning group -->
+    <!-- ============================================================ -->
+    <!-- PLANNING GROUPS                                              -->
+    <!-- ============================================================ -->
+
+    <!-- LEFT ARM — 7 DOF -->
     <group name="left_arm">
         <joint name="shoulder1_joint"/>
         <joint name="shoulder2_joint"/>
@@ -12,7 +16,7 @@
         <joint name="wrist_joint"/>
     </group>
 
-    <!-- RIGHT ARM planning group -->
+    <!-- RIGHT ARM — 7 DOF -->
     <group name="right_arm">
         <joint name="shoulderR_joint"/>
         <joint name="shoulderR_2_joint"/>
@@ -23,13 +27,34 @@
         <joint name="wristR_joint"/>
     </group>
 
-    <!-- BOTH ARMS as one group (subgroups) -->
+    <!-- BOTH ARMS — dual arm coordination -->
     <group name="both_arms">
         <group name="left_arm"/>
         <group name="right_arm"/>
     </group>
 
-    <!-- Home position for left arm -->
+    <!-- BASE — rotating platform -->
+    <group name="base">
+        <joint name="robot_base_joint"/>
+    </group>
+
+    <!-- LIFT — rack and pinion mechanism -->
+    <group name="lift">
+        <joint name="pinion_joint"/>
+    </group>
+
+    <!-- WHOLE ROBOT — full body planning -->
+    <group name="whole_robot">
+        <group name="base"/>
+        <group name="lift"/>
+        <group name="left_arm"/>
+        <group name="right_arm"/>
+    </group>
+
+    <!-- ============================================================ -->
+    <!-- NAMED STATES                                                 -->
+    <!-- ============================================================ -->
+
     <group_state name="home" group="left_arm">
         <joint name="shoulder1_joint" value="0"/>
         <joint name="shoulder2_joint" value="0"/>
@@ -40,7 +65,6 @@
         <joint name="wrist_joint" value="0"/>
     </group_state>
 
-    <!-- Home position for right arm -->
     <group_state name="home" group="right_arm">
         <joint name="shoulderR_joint" value="0"/>
         <joint name="shoulderR_2_joint" value="0"/>
@@ -51,31 +75,107 @@
         <joint name="wristR_joint" value="0"/>
     </group_state>
 
-    <!-- Virtual joint anchoring robot to the world -->
-    <virtual_joint name="virtual_joint" type="fixed" parent_frame="world" child_link="base_link"/>
+    <group_state name="home" group="base">
+        <joint name="robot_base_joint" value="0"/>
+    </group_state>
 
-    <!-- Disable collision between adjacent links (they touch by design) -->
-    <!-- Left arm -->
-    <disable_collisions link1="base_link" link2="shoulder_1" reason="Adjacent"/>
+    <group_state name="home" group="lift">
+        <joint name="pinion_joint" value="0"/>
+    </group_state>
+
+    <!-- ============================================================ -->
+    <!-- VIRTUAL JOINT                                                -->
+    <!-- ============================================================ -->
+
+    <virtual_joint name="virtual_joint" type="fixed"
+                   parent_frame="world" child_link="base_link"/>
+
+    <!-- ============================================================ -->
+    <!-- COLLISION MATRIX                                             -->
+    <!-- ============================================================ -->
+
+    <!-- === BASE / LIFT structure === -->
+    <disable_collisions link1="base_link" link2="rack"       reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="pinion"     reason="Adjacent"/>
+    <disable_collisions link1="rack"      link2="pinion"     reason="Adjacent"/>
+    <disable_collisions link1="rack"      link2="robot_base" reason="Adjacent"/>
+    <disable_collisions link1="base_link" link2="robot_base" reason="Never"/>
+    <disable_collisions link1="pinion"    link2="robot_base" reason="Never"/>
+
+    <!-- === LEFT ARM — adjacent pairs === -->
+    <disable_collisions link1="base_link"  link2="shoulder_1" reason="Adjacent"/>
     <disable_collisions link1="shoulder_1" link2="shoulder_2" reason="Adjacent"/>
     <disable_collisions link1="shoulder_2" link2="shoulder_3" reason="Adjacent"/>
     <disable_collisions link1="shoulder_3" link2="shoulder_4" reason="Adjacent"/>
     <disable_collisions link1="shoulder_4" link2="shoulder_5" reason="Adjacent"/>
     <disable_collisions link1="shoulder_5" link2="shoulder_6" reason="Adjacent"/>
-    <disable_collisions link1="shoulder_6" link2="wrist" reason="Adjacent"/>
+    <disable_collisions link1="shoulder_6" link2="wrist"      reason="Adjacent"/>
 
-    <!-- Right arm -->
-    <disable_collisions link1="base_link" link2="shoulderR_1" reason="Adjacent"/>
+    <!-- === LEFT ARM — non-adjacent pairs === -->
+    <disable_collisions link1="shoulder_1" link2="shoulder_3" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="shoulder_4" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="shoulder_5" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="shoulder_6" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="wrist"      reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="shoulder_4" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="shoulder_5" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="shoulder_6" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="wrist"      reason="Never"/>
+    <disable_collisions link1="shoulder_3" link2="shoulder_5" reason="Never"/>
+    <disable_collisions link1="shoulder_3" link2="shoulder_6" reason="Never"/>
+    <disable_collisions link1="shoulder_3" link2="wrist"      reason="Never"/>
+    <disable_collisions link1="shoulder_4" link2="shoulder_6" reason="Never"/>
+    <disable_collisions link1="shoulder_4" link2="wrist"      reason="Never"/>
+    <disable_collisions link1="shoulder_5" link2="wrist"      reason="Never"/>
+
+    <!-- === LEFT ARM vs BASE structure === -->
+    <disable_collisions link1="shoulder_1" link2="rack"       reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="pinion"     reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="robot_base" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="base_link"  reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="rack"       reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="pinion"     reason="Never"/>
+
+    <!-- === RIGHT ARM — adjacent pairs === -->
+    <disable_collisions link1="base_link"   link2="shoulderR_1" reason="Adjacent"/>
     <disable_collisions link1="shoulderR_1" link2="shoulderR_2" reason="Adjacent"/>
     <disable_collisions link1="shoulderR_2" link2="shoulderR_3" reason="Adjacent"/>
     <disable_collisions link1="shoulderR_3" link2="shoulderR_4" reason="Adjacent"/>
     <disable_collisions link1="shoulderR_4" link2="shoulderR_5" reason="Adjacent"/>
     <disable_collisions link1="shoulderR_5" link2="shoulderR_6" reason="Adjacent"/>
-    <disable_collisions link1="shoulderR_6" link2="wristR" reason="Adjacent"/>
+    <disable_collisions link1="shoulderR_6" link2="wristR"      reason="Adjacent"/>
 
-    <!-- Base links -->
-    <disable_collisions link1="base_link" link2="rack" reason="Adjacent"/>
-    <disable_collisions link1="rack" link2="robot_base" reason="Adjacent"/>
-    <disable_collisions link1="rack" link2="pinion" reason="Adjacent"/>
+    <!-- === RIGHT ARM — non-adjacent pairs === -->
+    <disable_collisions link1="shoulderR_1" link2="shoulderR_3" reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="shoulderR_4" reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="shoulderR_5" reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="shoulderR_6" reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="wristR"      reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="shoulderR_4" reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="shoulderR_5" reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="shoulderR_6" reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="wristR"      reason="Never"/>
+    <disable_collisions link1="shoulderR_3" link2="shoulderR_5" reason="Never"/>
+    <disable_collisions link1="shoulderR_3" link2="shoulderR_6" reason="Never"/>
+    <disable_collisions link1="shoulderR_3" link2="wristR"      reason="Never"/>
+    <disable_collisions link1="shoulderR_4" link2="shoulderR_6" reason="Never"/>
+    <disable_collisions link1="shoulderR_4" link2="wristR"      reason="Never"/>
+    <disable_collisions link1="shoulderR_5" link2="wristR"      reason="Never"/>
+
+    <!-- === RIGHT ARM vs BASE structure === -->
+    <disable_collisions link1="shoulderR_1" link2="rack"       reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="pinion"     reason="Never"/>
+    <disable_collisions link1="shoulderR_1" link2="robot_base" reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="base_link"  reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="rack"       reason="Never"/>
+    <disable_collisions link1="shoulderR_2" link2="pinion"     reason="Never"/>
+
+    <!-- === CROSS-ARM — left vs right === -->
+    <disable_collisions link1="shoulder_1" link2="shoulderR_1" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="shoulderR_2" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="shoulderR_1" reason="Never"/>
+    <disable_collisions link1="shoulder_2" link2="shoulderR_2" reason="Never"/>
+    <disable_collisions link1="shoulder_1" link2="wristR"      reason="Never"/>
+    <disable_collisions link1="wrist"      link2="shoulderR_1" reason="Never"/>
 
 </robot>
