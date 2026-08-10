@@ -127,3 +127,14 @@ joint_limits:
     max_deceleration: -5.0
     has_jerk_limits: false
     max_effort: 100.0
+  robot_base_joint:
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0
+
+  pinion_joint:
+    has_velocity_limits: true
+    max_velocity: 1.0
+    has_acceleration_limits: true
+    max_acceleration: 2.0

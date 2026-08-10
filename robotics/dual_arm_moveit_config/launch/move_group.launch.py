@@ -49,6 +49,7 @@ def generate_launch_description():
             {'publish_geometry_updates': True},
             {'publish_state_updates': True},
             {'publish_transforms_updates': True},
+            {'start_state_max_bounds_error': 0.01},
         ],
         arguments=['--ros-args', '--log-level', 'info'],
     )
