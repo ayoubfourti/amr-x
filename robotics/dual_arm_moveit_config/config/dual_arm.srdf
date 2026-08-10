@@ -82,6 +82,42 @@
     <group_state name="home" group="lift">
         <joint name="pinion_joint" value="0"/>
     </group_state>
+    <group_state name="home" group="both_arms">
+        <joint name="shoulder1_joint" value="0"/>
+        <joint name="shoulder2_joint" value="0"/>
+        <joint name="shoulder3_joint" value="0"/>
+        <joint name="shoulder4_joint" value="0"/>
+        <joint name="shoulder5_joint" value="0"/>
+        <joint name="shoulder6_joint" value="0"/>
+        <joint name="wrist_joint" value="0"/>
+        <joint name="shoulderR_joint" value="0"/>
+        <joint name="shoulderR_2_joint" value="0"/>
+        <joint name="shoulderR_3joint" value="0"/>
+        <joint name="shoulderR_4joint" value="0"/>
+        <joint name="shoulderR_5joint" value="0"/>
+        <joint name="shoulderR_6joint" value="0"/>
+        <joint name="wristR_joint" value="0"/>
+    </group_state>
+
+    <group_state name="home" group="whole_robot">
+        <joint name="robot_base_joint" value="0"/>
+        <joint name="pinion_joint" value="0"/>
+        <joint name="shoulder1_joint" value="0"/>
+        <joint name="shoulder2_joint" value="0"/>
+        <joint name="shoulder3_joint" value="0"/>
+        <joint name="shoulder4_joint" value="0"/>
+        <joint name="shoulder5_joint" value="0"/>
+        <joint name="shoulder6_joint" value="0"/>
+        <joint name="wrist_joint" value="0"/>
+        <joint name="shoulderR_joint" value="0"/>
+        <joint name="shoulderR_2_joint" value="0"/>
+        <joint name="shoulderR_3joint" value="0"/>
+        <joint name="shoulderR_4joint" value="0"/>
+        <joint name="shoulderR_5joint" value="0"/>
+        <joint name="shoulderR_6joint" value="0"/>
+        <joint name="wristR_joint" value="0"/>
+    </group_state>
+
 
     <!-- ============================================================ -->
     <!-- VIRTUAL JOINT                                                -->
