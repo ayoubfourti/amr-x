@@ -13,6 +13,7 @@ install(DIRECTORY config launch
 
 install(PROGRAMS
   scripts/dual_arm_trajectory_node.py
+  scripts/pick_place_demo.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
