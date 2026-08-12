@@ -219,6 +219,8 @@ ros2 launch bringup simulation.launch.py environment:=hospital
 ros2 launch navigation nav2.launch.py \
   map:=$(ros2 pkg prefix navigation)/share/navigation/maps/Hospital_map.yaml \
   keepout_filter:=hospital
+(for The Warehouse map ) ros2 launch navigation nav2.launch.py \
+map:=$(ros2 pkg prefix navigation)/share/navigation/maps/warehouse_harmonic.yaml
 ```
 
 Using `$(ros2 pkg prefix navigation)/share/navigation/maps/...` resolves through
