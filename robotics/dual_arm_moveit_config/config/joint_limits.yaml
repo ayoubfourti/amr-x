@@ -1,140 +1,152 @@
 joint_limits:
-  # Left arm
+
+  # ============================================================
+  # LEFT ARM
+  # Values matched to the URDF
+  # ============================================================
+
   shoulder1_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 300.0
+
   shoulder2_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 300.0
+
   shoulder3_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 250.0
+
   shoulder4_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 200.0
+
   shoulder5_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 150.0
+
   shoulder6_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 150.0
+
   wrist_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
     max_effort: 100.0
-  # Right arm
+
+
+  # ============================================================
+  # RIGHT ARM
+  # Values matched to the URDF
+  # ============================================================
+
   shoulderR_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 300.0
+
   shoulderR_2_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 300.0
+
   shoulderR_3joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 250.0
+
   shoulderR_4joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 200.0
+
   shoulderR_5joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 150.0
+
   shoulderR_6joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
-    max_effort: 100.0
+    max_effort: 150.0
+
   wristR_joint:
     has_velocity_limits: true
-    max_velocity: 3.0
+    max_velocity: 1.0
     has_acceleration_limits: true
-    max_acceleration: 10.0
+    max_acceleration: 5.0
     has_deceleration_limits: true
-    max_deceleration: -5.0
+    max_deceleration: 5.0
     has_jerk_limits: false
     max_effort: 100.0
-  robot_base_joint:
-    has_velocity_limits: true
-    max_velocity: 2.0
-    has_acceleration_limits: true
-    max_acceleration: 4.0
-
-  pinion_joint:
-    has_velocity_limits: true
-    max_velocity: 2.0
-    has_acceleration_limits: true
-    max_acceleration: 4.0
