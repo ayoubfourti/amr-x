@@ -43,8 +43,8 @@
       <geometry>
         <mesh filename="package://robot_description/meshes/cameras_mount_Link.STL"/>
       </geometry>
-      <material name="inspection_mount_green">
-        <color rgba="0 0.7451 0 1"/>
+      <material name="amrx_medical_teal">
+        <color rgba="0 0.38 0.46 1"/>
       </material>
     </visual>
     <collision>
@@ -73,8 +73,8 @@
       <geometry>
         <mesh filename="package://robot_description/meshes/camera_thermal_Link.STL"/>
       </geometry>
-      <material name="inspection_thermal_grey">
-        <color rgba="0.89412 0.89412 0.89412 1"/>
+      <material name="amrx_sensor_graphite">
+        <color rgba="0.06 0.08 0.10 1"/>
       </material>
     </visual>
     <collision>
@@ -102,8 +102,8 @@
       <geometry>
         <mesh filename="package://robot_description/meshes/GAZ_sensor_Link.STL"/>
       </geometry>
-      <material name="inspection_gas_white">
-        <color rgba="1 1 1 1"/>
+      <material name="amrx_porcelain_white">
+        <color rgba="0.82 0.86 0.88 1"/>
       </material>
     </visual>
     <collision>
