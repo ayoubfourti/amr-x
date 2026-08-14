@@ -15,7 +15,6 @@ class InspectionActionServer(Node):
     def __init__(self):
         super().__init__('inspection_action_server')
         self.declare_parameter('scan_duration_seconds', 3.0)
-        self.declare_parameter('edge_threshold', 100)
         
         self._action_server = ActionServer(
             self,
@@ -44,28 +43,69 @@ class InspectionActionServer(Node):
             self.get_logger().error(f'Error converting image: {e}')
 
     def detect_defects(self, frame):
-        """Process image and detect defects"""
+        """Advanced defect detection using morphological operations and contour analysis"""
         if frame is None:
             return InspectionResult.DEFECT_NONE, 0.0
         
         # Convert to grayscale
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         
-        # Detect edges (potential cracks/damage)
-        edges = cv2.Canny(gray, 100, 200)
-        edge_count = np.count_nonzero(edges)
+        # Apply Gaussian blur to reduce noise
+        blurred = cv2.GaussianBlur(gray, (5, 5), 0)
         
-        # Calculate confidence based on edge detection
-        total_pixels = gray.shape[0] * gray.shape[1]
-        edge_ratio = edge_count / total_pixels
+        # Adaptive thresholding for better edge detection
+        thresh = cv2.adaptiveThreshold(blurred, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                        cv2.THRESH_BINARY, 11, 2)
         
-        # Simple defect detection logic
-        if edge_ratio > 0.1:
+        # Morphological operations to enhance cracks
+        kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3))
+        morph = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, kernel, iterations=2)
+        morph = cv2.morphologyEx(morph, cv2.MORPH_OPEN, kernel, iterations=1)
+        
+        # Find contours (potential defects)
+        contours, _ = cv2.findContours(morph, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        
+        if not contours:
+            return InspectionResult.DEFECT_NONE, 1.0
+        
+        # Analyze contours for defect characteristics
+        frame_area = gray.shape[0] * gray.shape[1]
+        defect_area = 0
+        crack_count = 0
+        
+        for contour in contours:
+            area = cv2.contourArea(contour)
+            if area < 50:  # Ignore very small noise
+                continue
+            
+            defect_area += area
+            
+            # Check contour shape (cracks are elongated)
+            perimeter = cv2.arcLength(contour, True)
+            if perimeter > 0:
+                circularity = 4 * np.pi * area / (perimeter ** 2)
+                # Cracks have low circularity (not round)
+                if circularity < 0.3:
+                    crack_count += 1
+        
+        # Calculate defect metrics
+        defect_ratio = defect_area / frame_area
+        
+        # Determine defect type and confidence
+        if defect_ratio > 0.05:  # 5% of image is defects
             defect_type = InspectionResult.DEFECT_CRACK
-            confidence = min(edge_ratio, 0.99)
+            confidence = min(defect_ratio * 2, 0.99)  # Scale confidence
+        elif defect_ratio > 0.01:  # 1% is minor defect
+            defect_type = InspectionResult.DEFECT_CRACK
+            confidence = min(defect_ratio, 0.8)
         else:
             defect_type = InspectionResult.DEFECT_NONE
             confidence = 1.0
+        
+        self.get_logger().info(
+            f'Defect analysis: area_ratio={defect_ratio:.2%}, '
+            f'crack_count={crack_count}, confidence={confidence:.2f}'
+        )
         
         return defect_type, confidence
 
