@@ -6,20 +6,20 @@
   name="AMR-X_robot">
   <!-- Product finishes shared by the existing CAD parts. These materials
        change appearance only; no geometry or physical properties are added. -->
-  <material name="amrx_metallic_medium_grey">
-    <color rgba="1 0 0 1" />
+  <material name="amrx_porcelain_white">
+    <color rgba="0.82 0.86 0.88 1" />
   </material>
   <material name="amrx_brushed_silver">
-    <color rgba="1 0 0 1" />
+    <color rgba="0.32 0.36 0.39 1" />
   </material>
   <material name="amrx_graphite_hardware">
-    <color rgba="1 0 0 1" />
+    <color rgba="0.16 0.19 0.22 1" />
   </material>
   <material name="amrx_rubber_black">
-    <color rgba="1 0 0 1" />
+    <color rgba="0.035 0.04 0.045 1" />
   </material>
   <material name="amrx_sensor_graphite">
-    <color rgba="1 0 0 1" />
+    <color rgba="0.06 0.08 0.10 1" />
   </material>
   <link
     name="base_link">
@@ -45,7 +45,7 @@
         <mesh
           filename="package://robot_description/meshes/base_body_visual.STL" />
       </geometry>
-      <material name="amrx_metallic_medium_grey" />
+      <material name="amrx_porcelain_white" />
     </visual>
     <visual name="deck_finish">
       <origin xyz="0 0 0" rpy="0 0 0" />
