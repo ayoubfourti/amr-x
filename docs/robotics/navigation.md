@@ -344,6 +344,48 @@ python3 navigation/scripts/go_to_goal.py 2.0 8.0        # x y
 python3 navigation/scripts/go_to_goal.py 2.0 8.0 90     # x y yaw(deg)
 ```
 
+### Station mission interface
+
+`station_mission.py` drives the robot through a **sequence** of named stations —
+the multi-stop equivalent of sending one goal at a time. It opens a small window
+with three dropdowns (1st, 2nd, 3rd stop) populated from the active stations
+file. On **Go**, it sends each station in order via `/mission/go_to_station` and
+waits for the mission server to report `arrived at <name>` on `/mission/status`
+before sending the next. No RViz is needed; nothing extra to launch beyond
+`nav2.launch.py`, which already starts the mission server.
+
+Pick the environment's stations with `--stations`, matching the map you launched:
+
+```bash
+python3 navigation/scripts/station_mission.py --stations warehouse
+python3 navigation/scripts/station_mission.py --stations hospital
+```
+
+On start it prints how many stations it loaded and from where — a quick check
+that the right file was picked up:
+
+```
+Loaded 9 stations from .../stations_warehouse.yaml
+```
+
+`--stations` also accepts a full path (`--stations /path/to/file.yaml`); with no
+argument it falls back to the warehouse file.
+
+If the mission stops early, the interface reports which leg failed and why
+(refused goal, failed to reach, unknown station) and does not continue to the
+next stop. A completed run prints `Mission complete — all stations reached.`
+
+**Headless / no display.** If there is no GUI available, add `--cli` for a text
+prompt that lists the stations and reads a sequence by name or number:
+
+```bash
+python3 navigation/scripts/station_mission.py --stations warehouse --cli
+```
+
+The interface is a thin client over the same `/mission/*` topics documented
+above, so anything it does can also be driven directly from the command line or a
+dashboard.
+
 ---
 
 ## Stations
@@ -394,7 +436,9 @@ and saving its live pose. The layouts below show where they sit.
 **Warehouse** — nine stations across goods-in, dispatch, storage, staging, and
 support zones:
 
-![Warehouse stations](../assets/images/warehouse_stations.png){ width="420" }
+<p style="text-align:center">
+  <img src="/docs/assets/images/warehouse_stations.png" alt="Warehouse stations layout" width="380">
+</p>
 
 | Station | x | y | Zone |
 |---|---|---|---|
@@ -411,7 +455,9 @@ support zones:
 **Hospital** — eighteen stations across wards, exam rooms, labs, operating and
 recovery rooms, ICUs, and storage:
 
-![Hospital stations](../assets/images/hospital_stations.png){ width="340" }
+<p style="text-align:center">
+  <img src="/docs/assets/images/hospital_stations.png" alt="Hospital stations layout" width="320">
+</p>
 
 | Station | x | y | yaw (rad) |
 |---|---|---|---|
