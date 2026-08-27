@@ -1,12 +1,12 @@
 import time
 import cv2
 import numpy as np
+import requests
 import rclpy
 from rclpy.action import ActionServer
 from rclpy.node import Node
 from rclpy.subscription import Subscription
 from sensor_msgs.msg import Image
-from std_msgs.msg import Float32
 from cv_bridge import CvBridge
 from amr_interfaces.action import RunInspection
 from amr_interfaces.msg import InspectionResult
@@ -16,7 +16,6 @@ class InspectionActionServer(Node):
     def __init__(self):
         super().__init__('inspection_action_server')
         self.declare_parameter('scan_duration_seconds', 3.0)
-        self.declare_parameter('gas_threshold', 50.0)  # PPM threshold for gas leak
         
         self._action_server = ActionServer(
             self,
@@ -43,7 +42,7 @@ class InspectionActionServer(Node):
         
         # Subscribe to gas sensor
         self.gas_subscriber = self.create_subscription(
-            Float32,
+            Image,
             '/inspection/gas',
             self.gas_callback,
             1
@@ -71,8 +70,11 @@ class InspectionActionServer(Node):
 
     def gas_callback(self, msg):
         """Store latest gas sensor reading (PPM - parts per million)"""
-        self.gas_concentration = msg.data
-        self.get_logger().debug(f'Gas concentration: {self.gas_concentration:.2f} PPM')
+        try:
+            # For now, assume it's an Image message with intensity value
+            self.gas_concentration = msg.data if hasattr(msg, 'data') else 0.0
+        except Exception as e:
+            self.get_logger().error(f'Error reading gas sensor: {e}')
 
     def detect_defects(self, frame):
         """Advanced defect detection on RGB camera using morphological operations"""
@@ -190,7 +192,7 @@ class InspectionActionServer(Node):
 
     def detect_gas_defects(self):
         """Detect gas leaks using gas sensor"""
-        gas_threshold = self.get_parameter('gas_threshold').value
+        gas_threshold = 50.0  # Default threshold PPM
         
         # Determine if gas leak is detected
         if self.gas_concentration > gas_threshold * 1.5:  # Critical gas level
@@ -209,6 +211,37 @@ class InspectionActionServer(Node):
         )
         
         return defect_type, confidence
+
+    def post_to_api(self, defect_type, confidence, sensor_source, message):
+        """Post inspection results to the FastAPI backend"""
+        try:
+            api_url = "http://localhost:8000/api/inspections/"
+            
+            # Convert defect_type integer to string
+            defect_type_map = {
+                0: "none",
+                1: "crack",
+                2: "overheating",
+                3: "gas_leak"
+            }
+            defect_str = defect_type_map.get(defect_type, "none")
+            
+            payload = {
+                "robot_id": 1,  # Default robot ID
+                "defect_type": defect_str,
+                "confidence": float(confidence),
+                "sensor_source": sensor_source,
+                "inspection_type": "visual",
+                "message": message,
+            }
+            
+            response = requests.post(api_url, json=payload, timeout=5)
+            if response.status_code == 200:
+                self.get_logger().info(f"✓ Posted to API: {response.json()}")
+            else:
+                self.get_logger().error(f"✗ API error: {response.status_code}")
+        except Exception as e:
+            self.get_logger().error(f"✗ Failed to post to API: {e}")
 
     def execute_callback(self, goal_handle):
         self.get_logger().info(f'Received inspection request: {goal_handle.request.inspection_type}')
@@ -264,6 +297,10 @@ class InspectionActionServer(Node):
         self.get_logger().info(f'Final result: {result.message}')
         
         goal_handle.succeed()
+        
+        # Post results to API
+        self.post_to_api(defect_type, confidence, sensor_source, result.message)
+        
         return result
 
 def main():
