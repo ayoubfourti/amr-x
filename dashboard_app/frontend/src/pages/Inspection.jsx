@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react'
+import Toast from '../components/Toast'
 import './Inspection.css'
 
 export default function Inspection() {
   const [inspection, setInspection] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [toast, setToast] = useState(null)
 
   useEffect(() => {
     fetchLatestInspection()
@@ -17,6 +19,14 @@ export default function Inspection() {
       if (!response.ok) throw new Error('No inspection found')
       const data = await response.json()
       setInspection(data)
+      
+      // Show alert if defect detected
+      if (data.defect_type !== 'none') {
+        setToast({
+          message: `⚠️ DEFECT DETECTED: ${data.defect_type.toUpperCase()} (Confidence: ${(data.confidence * 100).toFixed(0)}%)`,
+          type: data.defect_type === 'overheating' ? 'error' : 'warning',
+        })
+      }
     } catch (err) {
       setError(err.message)
     } finally {
@@ -50,6 +60,14 @@ export default function Inspection() {
 
   return (
     <div className="inspection-container">
+      {toast && (
+        <Toast 
+          message={toast.message} 
+          type={toast.type}
+          onClose={() => setToast(null)}
+        />
+      )}
+      
       <h1>Inspection Results</h1>
       
       <div className="inspection-card">
