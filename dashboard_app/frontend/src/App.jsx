@@ -12,6 +12,7 @@ const queryClient = new QueryClient()
 const Alerts = lazy(() => import('./pages/Alerts'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
 const Inspection = lazy(() => import('./pages/Inspection'))
+const InspectionHistory = lazy(() => import("./pages/InspectionHistory"))
 const Login = lazy(() => import('./pages/Login'))
 const Map = lazy(() => import('./pages/Map'))
 const Missions = lazy(() => import('./pages/Missions'))
@@ -33,6 +34,7 @@ const PAGE_TITLES = {
   '/teleoperation': 'Teleoperation',
   '/alerts': 'Alerts',
   '/inspection': 'Inspection Results',
+  '/inspection-history': 'Inspection History',
   '/modules': 'Modules',
   '/users': 'Users',
   '/settings': 'Settings',
@@ -85,6 +87,7 @@ export default function App() {
                   <Route path="/teleoperation" element={<Teleoperation />} />
                   <Route path="/alerts" element={<Alerts />} />
                   <Route path="/inspection" element={<Inspection />} />
+                  <Route path="/inspection-history" element={<InspectionHistory />} />
                   <Route path="/modules" element={<Modules />} />
                   <Route path="/users" element={<Users />} />
                   <Route path="/settings" element={<Settings />} />
