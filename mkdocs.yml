@@ -1,3 +1,8 @@
+site_name: AMR-X Documentation
+theme:
+  name: material
+  language: en
+
 nav:
   - Home: index.md
   - Project:
@@ -36,6 +41,7 @@ nav:
       - Localization Guide: reference/localization.md
       - Inspection API: reference/inspection-api.md
   - Contributing: contributing.md
+
 markdown_extensions:
   - tables
   - admonition
