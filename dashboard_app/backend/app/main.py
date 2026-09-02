@@ -18,15 +18,16 @@ def rosbridge_sync_enabled() -> bool:
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    rosbridge_client = None
+    client = None
     if rosbridge_sync_enabled():
         from app.services.ros_bridge_client import ros_bridge_client
-        rosbridge_client.start()
+        client = ros_bridge_client
+        client.start()
     try:
         yield
     finally:
-        if rosbridge_client is not None:
-            rosbridge_client.stop()
+        if client is not None:
+            client.stop()
 
 app = FastAPI(
     title="AMR-X Dashboard API",

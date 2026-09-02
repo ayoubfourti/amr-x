@@ -31,20 +31,23 @@ def quaternion_to_yaw(x, y, z, w):
     return math.degrees(math.atan2(siny_cosp, cosy_cosp))
 
 
-def get_robot_or_none(db, name):
-    return db.query(Robot).filter(Robot.name == name).first()
+def get_or_create_robot(db, name):
+    robot = db.query(Robot).filter(Robot.name == name).first()
+    if robot is not None:
+        return robot
+
+    robot = Robot(name=name, status="offline")
+    db.add(robot)
+    db.commit()
+    db.refresh(robot)
+    logger.info("Discovered and registered ROS robot %s", name)
+    return robot
 
 
 def handle_robot_state(message):
     db = SessionLocal()
     try:
-        robot = get_robot_or_none(db, ROBOT_NAME)
-        if robot is None:
-            logger.warning(
-                "No registered robot named %s; register it through POST /api/robots/",
-                ROBOT_NAME,
-            )
-            return
+        robot = get_or_create_robot(db, ROBOT_NAME)
 
         position = message["base_pose"]["position"]
         orientation = message["base_pose"]["orientation"]
