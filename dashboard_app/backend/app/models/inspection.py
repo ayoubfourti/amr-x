@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Enum
+from sqlalchemy import Column, Integer, String, Float, DateTime
 from sqlalchemy.sql import func
 from app.db.database import Base
 import enum
@@ -16,7 +16,7 @@ class Inspection(Base):
     robot_id = Column(Integer)
     
     # Defect detection results
-    defect_type = Column(Enum(DefectType), default=DefectType.NONE)
+    defect_type = Column(String(20), default=DefectType.NONE.value)
     confidence = Column(Float)
     sensor_source = Column(String(20))
     

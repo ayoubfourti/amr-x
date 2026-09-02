@@ -56,9 +56,9 @@ function TitleUpdater() {
 
 function Layout() {
   return (
-    <div className="app-container">
+    <div className="app-layout">
       <Sidebar />
-      <main className="main-content">
+      <main className="app-content">
         <TitleUpdater />
         <Suspense fallback={<div>Loading...</div>}>
           <Outlet />

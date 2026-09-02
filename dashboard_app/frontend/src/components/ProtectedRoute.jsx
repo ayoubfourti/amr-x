@@ -1,7 +1,7 @@
-import { Navigate } from 'react-router-dom'
+import { Navigate, Outlet } from 'react-router-dom'
 import { useAuth } from '../hooks/useAuth'
 
-function ProtectedRoute({ children }) {
+function ProtectedRoute() {
   const { isAuthenticated, currentUser } = useAuth()
 
   if (!isAuthenticated) {
@@ -9,10 +9,10 @@ function ProtectedRoute({ children }) {
   }
 
   if (currentUser.status !== 'approved') {
-    return <Navigate to="/pending" replace />
+    return <Navigate to="/pending-approval" replace />
   }
 
-  return children
+  return <Outlet />
 }
 
 export default ProtectedRoute
