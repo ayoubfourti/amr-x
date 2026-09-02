@@ -1,0 +1,37 @@
+stations:
+  charging_dock:
+    x: -3.6693
+    y: 0.6256
+    yaw: 2.8928
+  inspection:
+    x: 1.9867
+    y: -0.0692
+    yaw: 0.2218
+  packing:
+    x: -2.7635
+    y: 4.6026
+    yaw: 0.2033
+  receiving:
+    x: -3.1302
+    y: -3.79
+    yaw: 1.761
+  shipping:
+    x: -2.3762
+    y: 12.5751
+    yaw: 1.4884
+  staging_south:
+    x: 2.0062
+    y: -2.6244
+    yaw: -2.9286
+  storage_center:
+    x: 2.3264
+    y: 5.4886
+    yaw: 2.9135
+  storage_east_a:
+    x: 2.3064
+    y: 9.7773
+    yaw: 0.2215
+  storage_east_b:
+    x: 2.9461
+    y: 11.3143
+    yaw: 0.2387

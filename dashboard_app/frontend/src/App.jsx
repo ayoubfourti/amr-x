@@ -11,6 +11,8 @@ const queryClient = new QueryClient()
 
 const Alerts = lazy(() => import('./pages/Alerts'))
 const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Inspection = lazy(() => import('./pages/Inspection'))
+const InspectionHistory = lazy(() => import("./pages/InspectionHistory"))
 const Login = lazy(() => import('./pages/Login'))
 const Map = lazy(() => import('./pages/Map'))
 const Missions = lazy(() => import('./pages/Missions'))
@@ -31,6 +33,8 @@ const PAGE_TITLES = {
   '/map': 'Live Map',
   '/teleoperation': 'Teleoperation',
   '/alerts': 'Alerts',
+  '/inspection': 'Inspection Results',
+  '/inspection-history': 'Inspection History',
   '/modules': 'Modules',
   '/users': 'Users',
   '/settings': 'Settings',
@@ -50,158 +54,51 @@ function TitleUpdater() {
   return null
 }
 
-function AppLayout() {
-  const location = useLocation()
-
+function Layout() {
   return (
     <div className="app-layout">
       <Sidebar />
-      <button
-        type="button"
-        className="sidebar-overlay"
-        aria-label="Close navigation"
-        onClick={() => {
-          document.body.removeAttribute('data-sidebar')
-          window.dispatchEvent(new CustomEvent('closeSidebar'))
-        }}
-      />
       <main className="app-content">
-        <ErrorBoundary
-          key={location.pathname}
-          fallback={
-            <div
-              style={{
-                padding: '48px 32px',
-                textAlign: 'center',
-                color: '#6b7280',
-                fontSize: 14,
-              }}
-            >
-              <div style={{ fontSize: 32, marginBottom: 16 }}>⚠</div>
-              <div
-                style={{
-                  color: '#e2e8f0',
-                  fontWeight: 600,
-                  marginBottom: 8,
-                  fontSize: 16,
-                }}
-              >
-                This page encountered an error
-              </div>
-              <div style={{ marginBottom: 20 }}>
-                Use the sidebar to navigate to another page, or reload the app.
-              </div>
-              <button
-                type="button"
-                onClick={() => window.location.reload()}
-                style={{
-                  background: '#38bdf8',
-                  color: '#0a0a0f',
-                  border: 'none',
-                  borderRadius: 8,
-                  padding: '10px 24px',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  fontSize: 14,
-                }}
-              >
-                Reload
-              </button>
-            </div>
-          }
-        >
+        <TitleUpdater />
+        <Suspense fallback={<div>Loading...</div>}>
           <Outlet />
-        </ErrorBoundary>
+        </Suspense>
       </main>
     </div>
   )
 }
 
-function ProtectedLayout() {
+export default function App() {
   return (
-    <ProtectedRoute>
-      <AppLayout />
-    </ProtectedRoute>
-  )
-}
-
-function RouteLoader() {
-  return (
-    <div className="route-loader" role="status">
-      <span className="loading-orbit" />
-      <p>Loading command surface…</p>
-    </div>
-  )
-}
-
-function App() {
-  return (
-    <ErrorBoundary
-      fallback={
-        <div
-          style={{
-            minHeight: '100vh',
-            background: '#07080f',
-            color: '#e8eaf6',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            flexDirection: 'column',
-            gap: 16,
-            fontFamily: 'Inter, sans-serif',
-          }}
-        >
-          <div style={{ fontSize: 48 }}>⚠</div>
-          <div style={{ fontSize: 20, fontWeight: 700 }}>AMR-X Dashboard crashed</div>
-          <div style={{ fontSize: 13, color: '#6b7280' }}>An unexpected error occurred.</div>
-          <button
-            onClick={() => window.location.reload()}
-            style={{
-              background: '#00d4aa',
-              color: '#000',
-              border: 'none',
-              borderRadius: 8,
-              padding: '10px 24px',
-              fontWeight: 700,
-              cursor: 'pointer',
-              fontSize: 14,
-              marginTop: 8,
-            }}
-          >
-            Reload App
-          </button>
-        </div>
-      }
-    >
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
         <AuthProvider>
-          <BrowserRouter>
-            <TitleUpdater />
-            <Suspense fallback={<RouteLoader />}>
-              <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/pending" element={<PendingApproval />} />
-                <Route element={<ProtectedLayout />}>
-                  <Route index element={<Dashboard />} />
+          <ErrorBoundary>
+            <Routes>
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/pending-approval" element={<PendingApproval />} />
+              <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                  <Route path="/" element={<Dashboard />} />
                   <Route path="/robots" element={<Robots />} />
                   <Route path="/missions" element={<Missions />} />
                   <Route path="/map" element={<Map />} />
-                  <Route path="/alerts" element={<Alerts />} />
-                  <Route path="/modules" element={<Modules />} />
                   <Route path="/teleoperation" element={<Teleoperation />} />
-                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/alerts" element={<Alerts />} />
+                  <Route path="/inspection" element={<Inspection />} />
+                  <Route path="/inspection-history" element={<InspectionHistory />} />
+                  <Route path="/modules" element={<Modules />} />
                   <Route path="/users" element={<Users />} />
+                  <Route path="/settings" element={<Settings />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </BrowserRouter>
+              </Route>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </AuthProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+      </BrowserRouter>
+    </QueryClientProvider>
   )
 }
-
-export default App

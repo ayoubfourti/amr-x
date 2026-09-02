@@ -344,6 +344,48 @@ python3 navigation/scripts/go_to_goal.py 2.0 8.0        # x y
 python3 navigation/scripts/go_to_goal.py 2.0 8.0 90     # x y yaw(deg)
 ```
 
+### Station mission interface
+
+`station_mission.py` drives the robot through a **sequence** of named stations —
+the multi-stop equivalent of sending one goal at a time. It opens a small window
+with three dropdowns (1st, 2nd, 3rd stop) populated from the active stations
+file. On **Go**, it sends each station in order via `/mission/go_to_station` and
+waits for the mission server to report `arrived at <name>` on `/mission/status`
+before sending the next. No RViz is needed; nothing extra to launch beyond
+`nav2.launch.py`, which already starts the mission server.
+
+Pick the environment's stations with `--stations`, matching the map you launched:
+
+```bash
+python3 navigation/scripts/station_mission.py --stations warehouse
+python3 navigation/scripts/station_mission.py --stations hospital
+```
+
+On start it prints how many stations it loaded and from where — a quick check
+that the right file was picked up:
+
+```
+Loaded 9 stations from .../stations_warehouse.yaml
+```
+
+`--stations` also accepts a full path (`--stations /path/to/file.yaml`); with no
+argument it falls back to the warehouse file.
+
+If the mission stops early, the interface reports which leg failed and why
+(refused goal, failed to reach, unknown station) and does not continue to the
+next stop. A completed run prints `Mission complete — all stations reached.`
+
+**Headless / no display.** If there is no GUI available, add `--cli` for a text
+prompt that lists the stations and reads a sequence by name or number:
+
+```bash
+python3 navigation/scripts/station_mission.py --stations warehouse --cli
+```
+
+The interface is a thin client over the same `/mission/*` topics documented
+above, so anything it does can also be driven directly from the command line or a
+dashboard.
+
 ---
 
 ## Stations
@@ -385,6 +427,129 @@ ros2 param get /mission_server stations_file
 ```
 
 ---
+
+### Station maps
+
+Each environment's stations were created by driving the robot to the location
+and saving its live pose. The layouts below show where they sit.
+
+**Warehouse** — nine stations across goods-in, dispatch, storage, staging, and
+support zones:
+
+<p style="text-align:center">
+  <img src="/docs/assets/images/warehouse_stations.png" alt="Warehouse stations layout" width="380">
+</p>
+
+| Station | x | y | Zone |
+|---|---|---|---|
+| `receiving` | -3.13 | -3.79 | Goods-in (south-west) |
+| `charging_dock` | -3.67 | 0.63 | Robot charging |
+| `packing` | -2.76 | 4.60 | Pack / consolidate |
+| `shipping` | -2.38 | 12.58 | Dispatch (north-west) |
+| `storage_center` | 2.33 | 5.49 | Central floor rack |
+| `storage_east_a` | 2.31 | 9.78 | East racking |
+| `storage_east_b` | 2.95 | 11.31 | East racking (north) |
+| `staging_south` | 2.01 | -2.62 | Floor pallet staging |
+| `inspection` | 1.99 | -0.07 | Quality control |
+
+**Hospital** — eighteen stations across wards, exam rooms, labs, operating and
+recovery rooms, ICUs, and storage:
+
+<p style="text-align:center">
+  <img src="/docs/assets/images/hospital_stations.png" alt="Hospital stations layout" width="320">
+</p>
+
+| Station | x | y | yaw (rad) |
+|---|---|---|---|
+| `Ward_1` | -7.5386 | 6.4389 | -1.09 |
+| `Ward_2A` | -10.2298 | 3.0595 | -0.0307 |
+| `Ward_2B` | -9.9559 | -3.1014 | -0.2779 |
+| `Ward_3` | -8.2119 | -16.7529 | 0.0298 |
+| `Ward_4` | -8.1381 | -30.5524 | 0.0594 |
+| `Operating_Room_A` | -2.8527 | -8.8699 | 1.5953 |
+| `Operating_Room_B` | 2.6734 | -8.6916 | 1.8037 |
+| `Recovery_A` | -2.0611 | -19.6159 | 2.1805 |
+| `Recovery_B` | 2.5312 | -19.6366 | 1.7387 |
+| `ICU_A` | -2.3917 | -27.0476 | 1.4288 |
+| `ICU_B` | 2.3479 | -26.9623 | 1.663 |
+| `Exam1` | 7.471 | 6.1818 | -1.7512 |
+| `Exam2` | 7.753 | -17.4225 | 2.945 |
+| `Exam3` | 7.4263 | -31.0719 | -0.088 |
+| `Exam_4` | 5.3197 | -35.3584 | 1.3704 |
+| `Lab_A` | 10.4595 | 2.7849 | 2.431 |
+| `Lab_B` | 11.2735 | -3.0002 | -3.0407 |
+| `Storage` | -9.5793 | -33.0488 | -0.195 |
+
+The coordinates above are the values stored in `config/stations_hospital.yaml` at
+documentation time. The interface reads that file directly, so any station added
+or updated there appears automatically.
+
+---
+
+## Multiple environments (warehouse and hospital)
+
+The same navigation stack, mission server, and station tooling run against two
+saved maps — the **hospital** and the **warehouse**. Nothing in the code
+changes between them; only launch arguments differ.
+
+Stations are kept in a separate file per environment so the two sets never
+collide:
+
+| Environment | Map | Stations file |
+|---|---|---|
+| Hospital | `Hospital_map.yaml` | `config/stations_hospital.yaml` (18 stations) |
+| Warehouse | `warehouse_harmonic.yaml` | `config/stations_warehouse.yaml` (9 stations) |
+
+Everything that differs is an argument passed at launch:
+
+| Argument | Hospital | Warehouse |
+|---|---|---|
+| `map:=` | `Hospital_map.yaml` | `warehouse_harmonic.yaml` |
+| `stations_file:=` | `stations_hospital.yaml` | `stations_warehouse.yaml` |
+| `keepout_filter:=` | `hospital` | *(omit — default `none`)* |
+
+!!! warning "Match the map to its stations file"
+    The `map:=` and `stations_file:=` arguments must belong to the **same**
+    environment. Loading one map with the other's stations sends the robot to
+    coordinates that do not exist in the current map frame, and every goal
+    fails. Confirm the running server with
+    `ros2 param get /mission_server stations_file`.
+
+The warehouse has no keepout filter because keepout masks are aligned to one
+map's origin and cannot be reused; the warehouse also has none of the floor
+hazards (stairwells) that make keepout necessary in the hospital.
+
+### Running the warehouse
+
+The warehouse is the default world, so no `environment:=` argument is needed and
+the Gazebo GUI can open directly.
+
+```bash
+# Terminal 1 - simulation
+ros2 launch bringup simulation.launch.py rviz:=false
+
+# Terminal 2 - Nav2 + AMCL + map_server + mission server
+ros2 launch navigation nav2.launch.py \
+  map:=$(ros2 pkg prefix navigation)/share/navigation/maps/warehouse_harmonic.yaml \
+  stations_file:=$HOME/amr-x/robotics/navigation/config/stations_warehouse.yaml
+```
+
+Localise in RViz (**2D Pose Estimate**) exactly as for the hospital, then send
+goals or command the robot via the mission server (see "Commanding the robot").
+
+### Running the hospital
+
+The hospital run sequence (headless Gazebo server + separate GUI, asset path,
+obstacle/actor spawning) is documented above under "Navigating a saved map" and
+"Spawning obstacles and actors". Add the hospital stations file to the Nav2
+launch so the mission server loads the right poses:
+
+```bash
+ros2 launch navigation nav2.launch.py \
+  map:=$(ros2 pkg prefix navigation)/share/navigation/maps/Hospital_map.yaml \
+  keepout_filter:=hospital \
+  stations_file:=$HOME/amr-x/robotics/navigation/config/stations_hospital.yaml
+```
 
 ## Keepout zones
 
