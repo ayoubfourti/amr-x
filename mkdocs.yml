@@ -1,7 +1,169 @@
 site_name: AMR-X Documentation
+site_description: Documentation for the AMR-X modular autonomous mobile robot project
+site_url: http://localhost:3000/docs/
+repo_url: https://github.com/cybermech-hub/amr-x
+repo_name: cybermech-hub/amr-x
+edit_uri: edit/main/docs/
+docs_dir: docs
+site_dir: site
+use_directory_urls: true
+
+extra_css:
+  - stylesheets/extra.css
+
 theme:
   name: material
+  custom_dir: overrides
   language: en
+  font: false
+  palette:
+    - scheme: slate
+      primary: indigo
+      accent: cyan
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+    - scheme: default
+      primary: indigo
+      accent: teal
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+  features:
+    - navigation.footer
+    - navigation.top
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.action.edit
+
+plugins:
+  - search
+  - i18n:
+      docs_structure: suffix
+      fallback_to_default: true
+      reconfigure_material: true
+      reconfigure_search: true
+      languages:
+        - locale: en
+          name: 🇬🇧
+          default: true
+          build: true
+          link: /
+        - locale: fr
+          name: 🇫🇷
+          build: true
+          link: /fr/
+          nav_translations:
+            Home: Accueil
+            Project: Projet
+            Current Baseline: Référence actuelle
+            Workstream Overview: Vue d'ensemble des activités
+            Engineering Workstreams: Activités d'ingénierie
+            Mechanical Platform: Plateforme mécanique
+            Modules and Common Interface: Modules et interface commune
+            ROS 2 and Digital Twin: ROS 2 et jumeau numérique
+            Overview: Vue d'ensemble
+            ROS 2 Workspace: Espace de travail ROS 2
+            Simulation Guide: Guide de simulation
+            Dual-arm Simulation: Simulation à deux bras
+            Inspection Module: Module d'inspection
+            Inspection Setup: Configuration de l'inspection
+            Navigation and Perception: Navigation et perception
+            Mapping and Nav2 Guide: Guide de cartographie et Nav2
+            Operator Interfaces: Interfaces opérateur
+            Web Dashboard: Tableau de bord web
+            Digital Twin Maps: Cartes du jumeau numérique
+            Dashboard UX and Architecture: UX et architecture du tableau de bord
+            Qt/QML HMI: IHM Qt/QML
+            Embedded and Electrical: Embarqué et électrique
+            Implementation Status: État de l'implémentation
+            Mission Management: Gestion des missions
+            Architecture and Flow: Architecture et déroulement
+            System Architecture: Architecture système
+            Interface Table: Tableau des interfaces
+            Inspection Architecture: Architecture d'inspection
+            Technical Reference: Référence technique
+            Repository Map: Structure du dépôt
+            Localization Guide: Guide de traduction
+            Inspection API: API d'inspection
+            Contributing: Contribution
+        - locale: de
+          name: 🇩🇪
+          build: true
+          link: /de/
+          nav_translations:
+            Home: Startseite
+            Project: Projekt
+            Current Baseline: Aktueller Projektstand
+            Workstream Overview: Übersicht der Arbeitsbereiche
+            Engineering Workstreams: Technische Arbeitsbereiche
+            Mechanical Platform: Mechanische Plattform
+            Modules and Common Interface: Module und gemeinsame Schnittstelle
+            ROS 2 and Digital Twin: ROS 2 und digitaler Zwilling
+            Overview: Übersicht
+            ROS 2 Workspace: ROS-2-Arbeitsbereich
+            Simulation Guide: Simulationsanleitung
+            Dual-arm Simulation: Doppelarm-Simulation
+            Inspection Module: Inspektionsmodul
+            Inspection Setup: Inspektionseinrichtung
+            Navigation and Perception: Navigation und Wahrnehmung
+            Mapping and Nav2 Guide: Kartierungs- und Nav2-Anleitung
+            Operator Interfaces: Bedienoberflächen
+            Web Dashboard: Web-Dashboard
+            Digital Twin Maps: Karten des digitalen Zwillings
+            Dashboard UX and Architecture: Dashboard-UX und -Architektur
+            Qt/QML HMI: Qt/QML-Bedienoberfläche
+            Embedded and Electrical: Embedded-Systeme und Elektrik
+            Implementation Status: Implementierungsstand
+            Mission Management: Missionsverwaltung
+            Architecture and Flow: Architektur und Ablauf
+            System Architecture: Systemarchitektur
+            Interface Table: Schnittstellentabelle
+            Inspection Architecture: Inspektionsarchitektur
+            Technical Reference: Technische Referenz
+            Repository Map: Repository-Struktur
+            Localization Guide: Übersetzungsanleitung
+            Inspection API: Inspektions-API
+            Contributing: Mitwirken
+        - locale: ar
+          name: 🇹🇳
+          build: true
+          link: /ar/
+          nav_translations:
+            Home: الرئيسية
+            Project: المشروع
+            Current Baseline: الوضع الحالي للمشروع
+            Workstream Overview: نظرة عامة على مسارات العمل
+            Engineering Workstreams: مسارات العمل الهندسية
+            Mechanical Platform: المنصة الميكانيكية
+            Modules and Common Interface: الوحدات والواجهة المشتركة
+            ROS 2 and Digital Twin: ROS 2 والتوأم الرقمي
+            Overview: نظرة عامة
+            ROS 2 Workspace: مساحة عمل ROS 2
+            Simulation Guide: دليل المحاكاة
+            Dual-arm Simulation: محاكاة الذراعين
+            Inspection Module: وحدة الفحص
+            Inspection Setup: إعداد الفحص
+            Navigation and Perception: الملاحة والإدراك
+            Mapping and Nav2 Guide: دليل رسم الخرائط وNav2
+            Operator Interfaces: واجهات المشغّل
+            Web Dashboard: لوحة التحكم عبر الويب
+            Digital Twin Maps: خرائط التوأم الرقمي
+            Dashboard UX and Architecture: تجربة المستخدم وبنية لوحة التحكم
+            Qt/QML HMI: واجهة Qt/QML
+            Embedded and Electrical: الأنظمة المضمنة والكهربائية
+            Implementation Status: حالة التنفيذ
+            Mission Management: إدارة المهام
+            Architecture and Flow: البنية ومسار التنفيذ
+            System Architecture: بنية النظام
+            Interface Table: جدول الواجهات
+            Inspection Architecture: بنية الفحص
+            Technical Reference: المرجع التقني
+            Repository Map: خريطة المستودع
+            Localization Guide: دليل الترجمة
+            Inspection API: واجهة برمجة تطبيقات الفحص
+            Contributing: المساهمة
 
 nav:
   - Home: index.md
@@ -59,3 +221,5 @@ markdown_extensions:
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
