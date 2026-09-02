@@ -212,7 +212,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
     "stations_file",
     default_value=os.path.expanduser(
-        "~/amr-x/robotics/navigation/config/stations.yaml"),
+        "~/amr-x/robotics/navigation/config/stations_warehouse.yaml"),
     description="Named station poses (READ and WRITTEN). Must be a PERSISTENT "
                 "path in the source tree - NOT install/, which colcon build "
                 "overwrites."),
