@@ -1,49 +1,96 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Icon from './Icon'
+import { useAvailableCameras } from '../../hooks/useAvailableCameras'
 import { useRosImage } from '../../hooks/useRosImage'
 import cameraFallback from '../../assets/teleop-camera-front-v2.webp'
 import rearCameraPreview from '../../assets/teleop-camera-rear-v2.webp'
 import deckCameraPreview from '../../assets/teleop-camera-deck-v2.webp'
 import './LiveCameraFeed.css'
 
-const VIEWS = {
-  front: {
+const PREVIEW_VIEWS = [
+  {
+    key: 'front',
     label: 'Front',
     channel: '01',
-    topic: '/camera/color/image_raw/compressed',
+    topic: '/camera/image_raw/compressed',
     preview: cameraFallback,
   },
-  rear: {
+  {
+    key: 'rear',
     label: 'Rear',
     channel: '02',
     topic: '/camera/rear/image_raw/compressed',
     preview: rearCameraPreview,
   },
-  deck: {
+  {
+    key: 'deck',
     label: 'Deck',
     channel: '03',
     topic: '/camera/deck/image_raw/compressed',
     preview: deckCameraPreview,
   },
+]
+
+function cameraMetadata(topic, index) {
+  const normalized = topic.toLowerCase()
+  const known = normalized.includes('rear')
+    ? PREVIEW_VIEWS[1]
+    : normalized.includes('deck') || normalized.includes('top')
+      ? PREVIEW_VIEWS[2]
+      : PREVIEW_VIEWS[0]
+  const cameraName = topic
+    .replace(/^\//, '')
+    .replace(/\/compressed$/, '')
+    .replace(/\/image_raw$/, '')
+    .split('/')
+    .filter((part) => part !== 'camera')
+    .join(' ')
+
+  return {
+    ...known,
+    key: topic,
+    topic,
+    label: cameraName
+      ? cameraName.replace(/(^|[_-])\w/g, (match) => match.replace(/[_-]/, '').toUpperCase())
+      : known.label,
+    channel: String(index + 1).padStart(2, '0'),
+  }
 }
 
 export default function LiveCameraFeed({
   ros,
   connected,
   robotName = 'AMR-X 01',
+  robotOnline = false,
   demo = false,
   compact = false,
   immersive = false,
   onOpenControl,
 }) {
-  const [view, setView] = useState('front')
-  const active = VIEWS[view]
+  const cameraTopics = useAvailableCameras(ros, connected)
+  const views = useMemo(
+    () => cameraTopics.length
+      ? cameraTopics.map(cameraMetadata)
+      : PREVIEW_VIEWS,
+    [cameraTopics],
+  )
+  const [view, setView] = useState(PREVIEW_VIEWS[0].key)
+  const active = views.find((item) => item.key === view) || views[0]
   const { frame, receivedAt } = useRosImage(ros, active.topic, connected)
-  const isLive = connected && Boolean(frame)
+  const isLive = connected && robotOnline && Boolean(frame)
   const source = frame || active.preview
+  const fallbackReason = !robotOnline
+    ? 'ROBOT OFFLINE'
+    : !connected
+      ? 'ROS OFFLINE'
+      : 'NO CAMERA'
+
+  useEffect(() => {
+    if (!views.some((item) => item.key === view)) setView(views[0].key)
+  }, [view, views])
 
   return (
-    <div className={`live-camera-feed ${compact ? 'is-compact' : ''} ${immersive ? 'is-immersive' : ''}`}>
+    <div className={`live-camera-feed ${isLive ? 'is-live' : 'is-preview'} ${compact ? 'is-compact' : ''} ${immersive ? 'is-immersive' : ''}`}>
       <header>
         <div>
           <span className="camera-eyebrow"><Icon name="camera" size={15} /> Perception</span>
@@ -51,14 +98,14 @@ export default function LiveCameraFeed({
           <small>{robotName} · {active.topic}</small>
         </div>
         <div className="camera-view-tabs">
-          {Object.entries(VIEWS).map(([key, item]) => (
+          {views.map((item) => (
             <button
               type="button"
-              className={view === key ? 'active' : ''}
-              onClick={() => setView(key)}
-              aria-pressed={view === key}
+              className={active.key === item.key ? 'active' : ''}
+              onClick={() => setView(item.key)}
+              aria-pressed={active.key === item.key}
               title={`Switch to ${item.label.toLowerCase()} camera`}
-              key={key}
+              key={item.key}
             >
               <i />
               <span>{item.label}</span>
@@ -69,7 +116,7 @@ export default function LiveCameraFeed({
       </header>
       <div
         data-camera-view={view}
-        className={`camera-viewport ${onOpenControl ? 'is-control-launcher' : ''}`}
+        className={`camera-viewport ${isLive ? 'is-live' : 'is-preview'} ${onOpenControl ? 'is-control-launcher' : ''}`}
         onClick={onOpenControl}
         onKeyDown={(event) => {
           if (!onOpenControl || (event.key !== 'Enter' && event.key !== ' ')) return
@@ -80,17 +127,17 @@ export default function LiveCameraFeed({
         tabIndex={onOpenControl ? 0 : undefined}
         aria-label={onOpenControl ? `Open teleoperation controls for ${robotName}` : undefined}
       >
-        <img key={view} src={source} alt={`${active.label} camera view for ${robotName}`} />
-        <div className="camera-vignette" />
-        <div className="camera-scanline" />
-        <span className="camera-corner top-left" />
-        <span className="camera-corner top-right" />
-        <span className="camera-corner bottom-left" />
-        <span className="camera-corner bottom-right" />
+        <img key={active.key} src={source} alt={`${active.label} camera view for ${robotName}`} />
+        {!isLive && <div className="camera-vignette" />}
+        {!isLive && <div className="camera-scanline" />}
+        {!isLive && <span className="camera-corner top-left" />}
+        {!isLive && <span className="camera-corner top-right" />}
+        {!isLive && <span className="camera-corner bottom-left" />}
+        {!isLive && <span className="camera-corner bottom-right" />}
         <span className={`camera-state ${isLive ? 'live' : 'demo'}`}>
-          <i /> {isLive ? 'LIVE' : demo ? 'DEMO FEED' : 'PREVIEW FEED'}
+          <i /> {isLive ? 'LIVE' : demo ? 'DEMO FEED' : fallbackReason}
         </span>
-        <span className="camera-meta">CAM-{view.toUpperCase()} · {isLive ? '30 FPS' : 'REFERENCE IMAGE'}</span>
+        <span className="camera-meta">CAM-{active.label.toUpperCase()} · {isLive ? 'LIVE ROS STREAM' : 'REFERENCE IMAGE'}</span>
         {onOpenControl && (
           <span className="camera-control-launch">
             <Icon name="teleop" size={15} />
@@ -100,7 +147,7 @@ export default function LiveCameraFeed({
       </div>
       <footer>
         <span><i /> {receivedAt ? 'Frame received now' : 'Representative warehouse view'}</span>
-        <span>{isLive ? '1280 × 720' : '1672 × 941'}</span>
+        <span>{isLive ? 'ROS COMPRESSED STREAM' : 'REFERENCE IMAGE'}</span>
       </footer>
     </div>
   )

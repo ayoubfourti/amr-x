@@ -18,15 +18,25 @@ export function useRosImage(ros, topicName, enabled = true) {
       throttle_rate: 100,
     })
 
+    let staleTimer
+
     topic.subscribe((message) => {
       if (!message?.data) return
       const format = String(message.format || 'jpeg').toLowerCase()
       const mime = format.includes('png') ? 'image/png' : 'image/jpeg'
       setFrame(`data:${mime};base64,${message.data}`)
       setReceivedAt(Date.now())
+      window.clearTimeout(staleTimer)
+      staleTimer = window.setTimeout(() => {
+        setFrame(null)
+        setReceivedAt(null)
+      }, 1500)
     })
 
-    return () => topic.unsubscribe()
+    return () => {
+      window.clearTimeout(staleTimer)
+      topic.unsubscribe()
+    }
   }, [ros, topicName, enabled])
 
   return { frame, receivedAt }

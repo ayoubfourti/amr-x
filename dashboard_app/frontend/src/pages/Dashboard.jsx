@@ -708,6 +708,7 @@ function CameraPanel({ ros, connected, robot, demo, onOpenControl }) {
         ros={ros}
         connected={connected}
         robotName={robot?.name || 'AMR-X 01'}
+        robotOnline={robot?.status === 'online'}
         demo={demo}
         onOpenControl={onOpenControl}
       />
@@ -758,7 +759,9 @@ function Dashboard() {
   )
   const missions = previewMode ? DEMO_MISSIONS : (missionQuery.data || [])
   const alerts = previewMode ? DEMO_ALERTS : (alertQuery.data || [])
-  const selectedRobot = robots.find((robot) => robot.id === selectedRobotId) || robots[0]
+  const selectedRobot = robots.find((robot) => robot.id === selectedRobotId)
+    || robots.find((robot) => robot.status === 'online')
+    || robots[0]
   const activeMission = missions.find((mission) => mission.robot_id === selectedRobot?.id && mission.status === 'running')
     || missions.find((mission) => mission.status === 'running')
     || missions[0]
