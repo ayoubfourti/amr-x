@@ -59,7 +59,7 @@
   color: rgba(182, 223, 233, .65);
 }
 
-.teleop-camera-stage .camera-viewport > img {
+.teleop-camera-stage .camera-viewport.is-preview > img {
   filter: saturate(.78) contrast(1.18) brightness(.58) hue-rotate(7deg);
 }
 

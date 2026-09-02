@@ -30,6 +30,8 @@ const COMMANDS = {
   right: { linear: 0, angular: -1 },
 }
 
+const MAX_ANGULAR_SPEED = 1.5
+
 function DrivePad({ direction, onStart, onStop }) {
   const buttons = [
     { direction: 'forward', icon: '↑', label: 'Forward' },
@@ -68,15 +70,24 @@ function Joystick({ maxSpeed, onCommand, onStop }) {
     const rect = padRef.current?.getBoundingClientRect()
     if (!rect) return
     const radius = rect.width / 2
+    const travelRadius = radius - 18
     let x = clientX - (rect.left + radius)
     let y = clientY - (rect.top + radius)
     const distance = Math.hypot(x, y)
-    if (distance > radius - 18) {
-      x = (x / distance) * (radius - 18)
-      y = (y / distance) * (radius - 18)
+    if (distance > travelRadius) {
+      x = (x / distance) * travelRadius
+      y = (y / distance) * travelRadius
+    }
+    const applyDeadzone = (value) => {
+      const magnitude = Math.abs(value)
+      if (magnitude < .08) return 0
+      return Math.sign(value) * ((magnitude - .08) / .92)
     }
     setKnob({ x, y })
-    onCommand((-y / radius) * maxSpeed, -x / radius)
+    onCommand(
+      applyDeadzone(-y / travelRadius) * maxSpeed,
+      applyDeadzone(-x / travelRadius) * MAX_ANGULAR_SPEED,
+    )
   }
 
   const release = () => {
@@ -90,6 +101,7 @@ function Joystick({ maxSpeed, onCommand, onStop }) {
       ref={padRef}
       className="hud-joystick"
       onPointerDown={(event) => {
+        event.preventDefault()
         dragging.current = true
         event.currentTarget.setPointerCapture(event.pointerId)
         update(event.clientX, event.clientY)
@@ -131,9 +143,11 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
   const [selectedRobotId, setSelectedRobotId] = useState(
     () => initialRobotId ?? searchParams.get('robot'),
   )
-  const robot = robots.find((item) => String(item.id) === String(selectedRobotId)) || robots[0]
+  const robot = robots.find((item) => String(item.id) === String(selectedRobotId))
+    || robots.find((item) => item.status === 'online')
+    || robots[0]
   const [mode, setMode] = useState('pad')
-  const [maxSpeed, setMaxSpeed] = useState(.6)
+  const [maxSpeed, setMaxSpeed] = useState(1)
   const [direction, setDirection] = useState('stopped')
   const [linear, setLinear] = useState(0)
   const [angular, setAngular] = useState(0)
@@ -141,8 +155,10 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
   const [cameraExpanded, setCameraExpanded] = useState(false)
   const mapRef = useRef(null)
   const activeKeys = useRef(new Set())
+  const desiredCommand = useRef({ linear: 0, angular: 0 })
 
   const command = useCallback((nextLinear, nextAngular, nextDirection = 'manual') => {
+    desiredCommand.current = { linear: nextLinear, angular: nextAngular }
     setLinear(nextLinear)
     setAngular(nextAngular)
     setDirection(nextDirection)
@@ -153,7 +169,15 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
 
   const startDirection = useCallback((nextDirection) => {
     const values = COMMANDS[nextDirection]
-    if (values) command(values.linear * maxSpeed, values.angular, nextDirection)
+    if (values) command(values.linear * maxSpeed, values.angular * MAX_ANGULAR_SPEED, nextDirection)
+  }, [command, maxSpeed])
+
+  const updateKeyboardCommand = useCallback(() => {
+    const keys = activeKeys.current
+    const nextLinear = ((keys.has('forward') ? 1 : 0) - (keys.has('backward') ? 1 : 0)) * maxSpeed
+    const nextAngular = ((keys.has('left') ? 1 : 0) - (keys.has('right') ? 1 : 0)) * MAX_ANGULAR_SPEED
+    const nextDirection = keys.size === 1 ? [...keys][0] : keys.size ? 'combined' : 'stopped'
+    command(nextLinear, nextAngular, nextDirection)
   }, [command, maxSpeed])
 
   const triggerEmergencyStop = useCallback(() => {
@@ -176,13 +200,13 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
       const nextDirection = KEY_MAP[event.key]
       if (!nextDirection || activeKeys.current.has(nextDirection)) return
       activeKeys.current.add(nextDirection)
-      startDirection(nextDirection)
+      updateKeyboardCommand()
     }
     const keyUp = (event) => {
       const nextDirection = KEY_MAP[event.key]
       if (!nextDirection) return
       activeKeys.current.delete(nextDirection)
-      if (!activeKeys.current.size) stop()
+      updateKeyboardCommand()
     }
     window.addEventListener('keydown', keyDown)
     window.addEventListener('keyup', keyUp)
@@ -193,7 +217,15 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
       window.removeEventListener('blur', stop)
       sendCommand(0, 0)
     }
-  }, [sendCommand, startDirection, stop, triggerEmergencyStop])
+  }, [sendCommand, stop, triggerEmergencyStop, updateKeyboardCommand])
+
+  useEffect(() => {
+    const heartbeat = window.setInterval(() => {
+      const { linear: nextLinear, angular: nextAngular } = desiredCommand.current
+      if (nextLinear || nextAngular) sendCommand(nextLinear, nextAngular)
+    }, 50)
+    return () => window.clearInterval(heartbeat)
+  }, [sendCommand])
 
   useEffect(() => {
     document.body.classList.toggle('teleop-fullscreen-active', cameraExpanded)
@@ -227,6 +259,7 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
           ros={ros}
           connected={connected}
           robotName={robot?.name || 'AMR-X 01'}
+          robotOnline={robot?.status === 'online'}
           demo={demo || isError}
           immersive
         />
@@ -292,7 +325,7 @@ export default function Teleoperation({ initialRobotId = null, onClose = null })
           </div>
           <label className="hud-speed-limit">
             <span><small>Speed limit</small><strong>{maxSpeed.toFixed(1)} m/s</strong></span>
-            <input type="range" min=".1" max="1.5" step=".1" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />
+            <input type="range" min=".1" max="1.2" step=".1" value={maxSpeed} onChange={(event) => setMaxSpeed(Number(event.target.value))} />
           </label>
           <div className="hud-key-hints"><span><kbd>Z</kbd><kbd>↑</kbd> Forward</span><span><kbd>Q</kbd><kbd>D</kbd> Turn</span><span><kbd>S</kbd><kbd>↓</kbd> Reverse</span></div>
         </aside>
