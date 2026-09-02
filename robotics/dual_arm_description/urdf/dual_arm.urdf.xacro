@@ -35,8 +35,7 @@
       </geometry>
       <material
         name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+        <color rgba="1.0 0.45 0.10 1" />
       </material>
     </visual>
     <collision>
@@ -75,8 +74,7 @@
       </geometry>
       <material
         name="">
-        <color
-          rgba="1 0.949019607843137 0.909803921568627 1" />
+       <color rgba="1.0 0.45 0.10 1" />
       </material>
     </visual>
     <collision>
@@ -102,7 +100,7 @@
     <axis
       xyz="1 0 0" />
   
-    <limit lower="0.0" upper="7.2" effort="1000" velocity="20.0"/>
+    <limit lower="-0.001" upper="7.2" effort="1000" velocity="20.0"/>
   </joint>
   <link
     name="rack">
@@ -130,8 +128,7 @@
       </geometry>
       <material
         name="">
-        <color
-          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+        <color rgba="1.0 0.45 0.10 1" />
       </material>
     </visual>
     <collision>
@@ -188,8 +185,7 @@
       </geometry>
       <material
         name="">
-        <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+        <color rgba="1.0 0.45 0.10 1" />
       </material>
     </visual>
     <collision>
@@ -243,8 +239,7 @@
       </geometry>
       <material
         name="">
-        <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+        <color rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -299,7 +294,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -354,7 +349,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -409,7 +404,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -464,7 +459,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -519,7 +514,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -574,7 +569,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -629,7 +624,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -684,7 +679,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -739,7 +734,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -794,7 +789,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -849,7 +844,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -904,7 +899,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -959,7 +954,7 @@
       <material
         name="">
         <color
-          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+          rgba="0.15 0.35 0.75 1" />
       </material>
     </visual>
     <collision>
@@ -1010,137 +1005,136 @@
     <joint name="robot_base_joint">
       <command_interface name="position">
         <param name="p">300.0</param>
-        <param name="i">0.0</param>
+        <param name="i">10.0</param>
         <param name="d">30.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
-    <!-- Left arm: heavy shoulder joints get stronger gains -->
     <joint name="shoulder1_joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">350.0</param>
+        <param name="i">30.0</param>
+        <param name="d">35.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder2_joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">350.0</param>
+        <param name="i">30.0</param>
+        <param name="d">35.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder3_joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">280.0</param>
+        <param name="i">20.0</param>
+        <param name="d">28.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder4_joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">160.0</param>
+        <param name="i">12.0</param>
+        <param name="d">16.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder5_joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">160.0</param>
+        <param name="i">12.0</param>
+        <param name="d">16.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulder6_joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">140.0</param>
+        <param name="i">8.0</param>
+        <param name="d">14.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="wrist_joint">
       <command_interface name="position">
-        <param name="p">80.0</param>
-        <param name="i">0.0</param>
-        <param name="d">8.0</param>
+        <param name="p">120.0</param>
+        <param name="i">6.0</param>
+        <param name="d">12.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
 
-    <!-- Right arm: same tiered gains, mirrored -->
+    <!-- Right arm: same boosted, mirrored gains -->
     <joint name="shoulderR_joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">350.0</param>
+        <param name="i">30.0</param>
+        <param name="d">35.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_2_joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">350.0</param>
+        <param name="i">30.0</param>
+        <param name="d">35.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_3joint">
       <command_interface name="position">
-        <param name="p">200.0</param>
-        <param name="i">0.0</param>
-        <param name="d">20.0</param>
+        <param name="p">280.0</param>
+        <param name="i">20.0</param>
+        <param name="d">28.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_4joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">160.0</param>
+        <param name="i">12.0</param>
+        <param name="d">16.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_5joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">160.0</param>
+        <param name="i">12.0</param>
+        <param name="d">16.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="shoulderR_6joint">
       <command_interface name="position">
-        <param name="p">100.0</param>
-        <param name="i">0.0</param>
-        <param name="d">10.0</param>
+        <param name="p">140.0</param>
+        <param name="i">8.0</param>
+        <param name="d">14.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>
     </joint>
     <joint name="wristR_joint">
       <command_interface name="position">
-        <param name="p">80.0</param>
-        <param name="i">0.0</param>
-        <param name="d">8.0</param>
+        <param name="p">120.0</param>
+        <param name="i">6.0</param>
+        <param name="d">12.0</param>
       </command_interface>
       <state_interface name="position"/>
       <state_interface name="velocity"/>

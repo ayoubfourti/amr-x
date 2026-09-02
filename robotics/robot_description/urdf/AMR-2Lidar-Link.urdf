@@ -4,6 +4,9 @@
      For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
 <robot
   name="AMR-2Lidar-Link">
+  <!-- AMR-X visual finish palette:
+       porcelain body panels, brushed-metal deck and caster forks,
+       rubber-black wheels, and graphite sensor housings. -->
   <link
     name="base_link">
     <inertial>
@@ -20,18 +23,27 @@
         iyz="-0.000168021251934657"
         izz="1.44385592854034" />
     </inertial>
-    <visual>
+    <visual name="body_finish">
       <origin
         xyz="0 0 0"
         rpy="0 0 0" />
       <geometry>
         <mesh
-          filename="package://robot_description/meshes/base_link.STL" />
+          filename="package://robot_description/meshes/base_body_visual.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_porcelain_white">
         <color
-          rgba="1 0 0 1" />
+          rgba="0.82 0.86 0.88 1" />
+      </material>
+    </visual>
+    <visual name="deck_finish">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://robot_description/meshes/base_deck_visual.STL" />
+      </geometry>
+      <material name="amrx_brushed_silver">
+        <color rgba="0.32 0.36 0.39 1" />
       </material>
     </visual>
     <collision>
@@ -69,9 +81,9 @@
           filename="package://robot_description/meshes/FR_Body_Caster_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_brushed_aluminum">
         <color
-          rgba="0.784313725490196 0.784313725490196 0.792156862745098 1" />
+          rgba="0.42 0.46 0.50 1" />
       </material>
     </visual>
     <collision>
@@ -122,9 +134,9 @@
           filename="package://robot_description/meshes/FR_Caster_Wheel_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.501960784313725 0.501960784313725 0.501960784313725 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -175,9 +187,9 @@
           filename="package://robot_description/meshes/FL_Body_Caster_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_brushed_aluminum">
         <color
-          rgba="0.784313725490196 0.784313725490196 0.792156862745098 1" />
+          rgba="0.42 0.46 0.50 1" />
       </material>
     </visual>
     <collision>
@@ -228,9 +240,9 @@
           filename="package://robot_description/meshes/FL_Caster_Wheel_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.949019607843137 0.949019607843137 1 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -281,9 +293,9 @@
           filename="package://robot_description/meshes/BR_Body_Caster_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_brushed_aluminum">
         <color
-          rgba="0.784313725490196 0.784313725490196 0.792156862745098 1" />
+          rgba="0.42 0.46 0.50 1" />
       </material>
     </visual>
     <collision>
@@ -334,9 +346,9 @@
           filename="package://robot_description/meshes/BR_Caster_Wheel_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.949019607843137 0.949019607843137 1 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -387,9 +399,9 @@
           filename="package://robot_description/meshes/BL_Body_Caster_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_brushed_aluminum">
         <color
-          rgba="0.784313725490196 0.784313725490196 0.792156862745098 1" />
+          rgba="0.42 0.46 0.50 1" />
       </material>
     </visual>
     <collision>
@@ -440,9 +452,9 @@
           filename="package://robot_description/meshes/BL_Caster_Wheel_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.501960784313725 0.501960784313725 0.501960784313725 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -493,9 +505,9 @@
           filename="package://robot_description/meshes/DR_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -546,9 +558,9 @@
           filename="package://robot_description/meshes/DL_Link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_rubber_black">
         <color
-          rgba="0.250980392156863 0.250980392156863 0.250980392156863 1" />
+          rgba="0.035 0.04 0.045 1" />
       </material>
     </visual>
     <collision>
@@ -599,9 +611,9 @@
           filename="package://robot_description/meshes/Lidar2_link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_sensor_graphite">
         <color
-          rgba="1 0 0 1" />
+          rgba="0.06 0.08 0.10 1" />
       </material>
     </visual>
     <collision>
@@ -652,9 +664,9 @@
           filename="package://robot_description/meshes/Lidar1_link.STL" />
       </geometry>
       <material
-        name="">
+        name="amrx_sensor_graphite">
         <color
-          rgba="1 0 0 1" />
+          rgba="0.06 0.08 0.10 1" />
       </material>
     </visual>
     <collision>

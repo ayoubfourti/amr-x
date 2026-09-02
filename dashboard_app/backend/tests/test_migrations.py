@@ -42,6 +42,7 @@ class DatabaseMigrationTests(unittest.TestCase):
             expected_tables = {
                 "alembic_version",
                 "alerts",
+                "inspections",
                 "missions",
                 "modules",
                 "robot_logs",
@@ -59,7 +60,7 @@ class DatabaseMigrationTests(unittest.TestCase):
                 revision = connection.execute(
                     text("SELECT version_num FROM alembic_version")
                 ).scalar_one()
-            self.assertEqual(revision, "0001_initial_schema")
+            self.assertEqual(revision, "0002")
 
             schema_check = subprocess.run(
                 [*command[:-2], "check"],

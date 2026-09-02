@@ -1,9 +1,15 @@
 moveit_controller_manager: moveit_simple_controller_manager/MoveItSimpleControllerManager
 
+trajectory_execution:
+  allowed_execution_duration_scaling: 2.0
+  allowed_goal_duration_margin: 5.0
+  allowed_start_tolerance: 0.02
 moveit_simple_controller_manager:
   controller_names:
     - left_arm_controller
     - right_arm_controller
+    - base_controller
+    - pinion_position_controller
 
   left_arm_controller:
     action_ns: follow_joint_trajectory
@@ -30,3 +36,18 @@ moveit_simple_controller_manager:
       - shoulderR_5joint
       - shoulderR_6joint
       - wristR_joint
+
+  base_controller:
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - robot_base_joint
+
+  pinion_position_controller:
+    action_ns: follow_joint_trajectory
+    type: FollowJointTrajectory
+    default: true
+    joints:
+      - pinion_joint
+

@@ -104,6 +104,12 @@ def main():
     components = connected_components(vertices)
     groups = classify(vertices, components)
     for name, path in OUTPUTS.items():
+        # Newer CAD exports provide the LiDARs as separate link meshes. Keep
+        # the last valid integrated-LiDAR visual for legacy robot variants
+        # instead of replacing it with an empty STL.
+        if not groups[name]:
+            print(f"{path.relative_to(ROOT)}: skipped (no matching triangles)")
+            continue
         write_binary_stl(path, records, groups[name], name)
         print(f"{path.relative_to(ROOT)}: {len(groups[name])} triangles")
 

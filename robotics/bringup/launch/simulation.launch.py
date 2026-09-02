@@ -7,7 +7,10 @@
 #   2. Gazebo                 (warehouse world)
 #   3. spawn the AMR-X robot   (from the /robot_description topic)
 #   4. ros_gz_bridge          (cmd_vel, odom, scan, imu, joint_states, clock, tf)
-#   5. RViz                    (visualisation)
+#   5. rosbridge + rosapi      (dashboard WebSocket and topic discovery)
+#   6. image_transport         (browser-compatible compressed camera stream)
+#   7. module_manager          (high-level /robot_state for fleet discovery)
+#   8. RViz                    (visualisation)
 #
 #   ros2 launch bringup simulation.launch.py
 #   ros2 launch bringup simulation.launch.py rviz:=false
@@ -160,6 +163,41 @@ def generate_launch_description():
         }],
     )
 
+    # ---- Dashboard ROS connection and camera stream ------------------------
+    rosbridge = Node(
+        package="rosbridge_server",
+        executable="rosbridge_websocket",
+        name="rosbridge_websocket",
+        output="screen",
+    )
+    rosapi = Node(
+        package="rosapi",
+        executable="rosapi_node",
+        name="rosapi",
+        output="screen",
+    )
+    camera_republisher = Node(
+        package="image_transport",
+        executable="republish",
+        name="camera_compressed_republisher",
+        output="screen",
+        parameters=[{
+            "in_transport": "raw",
+            "out_transport": "compressed",
+        }],
+        remappings=[
+            ("in", "/camera/image_raw"),
+            ("out/compressed", "/camera/image_raw/compressed"),
+        ],
+    )
+    module_manager = Node(
+        package="module_manager",
+        executable="module_manager_node",
+        name="module_manager",
+        output="screen",
+        parameters=[{"use_sim_time": use_sim_time}],
+    )
+
     # ---- RViz ---------------------------------------------------------------
     rviz = Node(
         package="rviz2",
@@ -206,5 +244,9 @@ def generate_launch_description():
         gazebo,
         delayed_bridge,
         delayed_spawn,
+        rosbridge,
+        rosapi,
+        camera_republisher,
+        module_manager,
         rviz,
     ])

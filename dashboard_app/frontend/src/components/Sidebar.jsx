@@ -25,6 +25,13 @@ const groups = [
     ],
   },
   {
+    label: 'Inspection',
+    links: [
+      { to: '/inspection', label: 'Latest Result', icon: 'alert' },
+      { to: '/inspection-history', label: 'History', icon: 'chart' },
+    ],
+  },
+  {
     label: 'System',
     links: [
       { to: '/alerts', label: 'Alerts', icon: 'alert' },
